@@ -1,0 +1,20 @@
+// ***************************************************************
+//      Hello World
+//
+// Cicla fra gli sfondi del desktop, cambiandoli ogni 10 secondi.
+// ***************************************************************
+
+// Il valore predefinito per il ritardo di ripetizione di un ciclo di uno script è di circa 5 secondi.
+// Per cambiare questo valore impostiamo il parametro 'Delay' con un numero intero equivalente ai secondi.
+// N.B.: Impostando 'Delay' a '0' lo script verrà eseguito una sola volta, ma il processo continuerà
+//       a funzionare.
+Delay=10 // impostiamo un ritardo di 10 secondi per ogni ciclo.
+
+// verifichiamo il valore dell'indice corrente per l'immagine attuale...
+if(System.WallpaperIndex<4){
+    // ...se l'indice è minore di quattro (il massimo finora supportato) lo incrementa di uno...
+    System.WallpaperIndex+=1
+}else{
+    // ...altrimenti reimposta l'indice a uno e ricomincia.
+    System.WallpaperIndex=1
+}

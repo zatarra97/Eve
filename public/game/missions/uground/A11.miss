@@ -1,0 +1,47 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A11"
+Name="La Cura"
+
+// Tipo Missione...
+MissionType="LocalFileExists"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Arriva la medicina!"
+MissionBeginBody[1]="Bene amico, volevi la cura per tutti i tuoi mali? Eccoti servito!"+chr(13)+chr(10)+"Esegui il file che ho allegato a questo messaggio (esatto, è un file! Che ti aspettavi una donna?), si chiama 'netpatch6231'."+chr(13)+chr(10)+"Lancialo direttamente dal Menu Applicazioni ed aspetta la fine della procedura di aggiornamento. Al termine dovresti trovare nel sistema il nuovo kernel di NetComm chiamato 'sys.network6231'. "+chr(13)+chr(10)+""+chr(13)+chr(10)+"Appena hai fatto tutto contattami per email."+chr(13)+chr(10)+""+chr(13)+chr(10)+"1r0nCh4ng"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Arriva la medicina!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName="sys.network6231"
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=5
+NextMission="uground\a12.miss"
+ServerIPToRemove=""
+ReplyMailText="Ok, ho eseguito la patch e sembra che tutto funzioni normalmente."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddFile(System,"netpatch6231",2,-1,netpatch6231,System.CurrUser)

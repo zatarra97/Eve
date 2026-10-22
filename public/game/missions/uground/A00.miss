@@ -1,0 +1,42 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A00"
+Name="Campagna Underground"
+
+// Tipo Missione...
+MissionType="ChatPartecipation"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=0
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP="412.23.0.69"
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="uground\A01.miss"
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

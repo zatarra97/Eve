@@ -1,0 +1,42 @@
+{
+  "name": "eve",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -b",
+    "import": "tsx scripts/import-original.ts",
+    "version:patch": "node scripts/version-bump.js patch",
+    "version:minor": "node scripts/version-bump.js minor",
+    "version:major": "node scripts/version-bump.js major"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "fflate": "^0.8.3",
+    "immer": "^11.2.9",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.88.0",
+    "sharp": "^0.35.5",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  },
+  "description": "Eve — remake web di Mother (2005), simulatore di hacking di v4ldemar.",
+  "license": "CC-BY-NC-SA-3.0"
+}

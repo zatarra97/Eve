@@ -1,0 +1,49 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A03"
+Name=" Licenziamento Illegittimo (1a. parte)"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Come và pivello?"
+MissionBeginBody[1]="Allora "+System.CurrUser+", vedo che te la passi bene. Complimenti!"+chr(13)+chr(10)+"Cominci ad avere un Ranking interessante. La communità ti stà prendendo sempre piu in considerazione. Insomma non sei rimasto di certo con le mani in mano, eh? Oppure è stata solo fortuna? Eheheh..."+chr(13)+chr(10)+"Scherzi a parte, avrei un piccolo favore da chiederti: Non è che per puro caso, navigando per il Network, ti sei imbattuto in qualche notizia riguardante un certo Paolo Stagna?"+chr(13)+chr(10)+"E' un mio carissimo amico italiano. Sono giorni che tento di contattarlo per telefono ma senza risultato. Sono un pò preoccupato. Mi era giunta voce che stesse passando un periodo molto delicato soprattutto con il lavoro, non vorrei che gli fosse accaduto qualcosa di spiacevole. Purtroppo Paolo è un tipo alquanto introverso e solitario e ti garantisco che è un bel problema riuscire a fargli confessare anche il più inutile sfogo personale."+chr(13)+chr(10)+"Mmmm... Non sono per niente tranquillo. Facciamo cosi, se ti capita di trovare qualche informazione e me la comunichi te ne sarò veramente grato!"+chr(13)+chr(10)+"Per ora è tutto, ci risentiamo poi."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Come và pivello?"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="uground\A04.miss"
+ServerIPToRemove=""
+ReplyMailText="Ho trovato alcune informazioni riguardo il tuo amico e purtroppo non sono affatto belle. E' stato schedato da Intrapol. Sembra che abbia fatto un gran casino sul server della società per cui lavorava. Ora è in stato di fermo, agli arresti domiciliari."+chr(13)+chr(10)+"Mi dispiace 1r0nch4ng ma è tutto ciò che sono riuscito a scoprire. Se posso aiutarti in qualche altro modo fammelo sapere..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Risarcimento record per Wellmark Italy..."
+MissionEndNewsBody[1]="La Wellmark Italy, giovane società italiana, pare aver subito ingenti danni da un suo ex dipendente il quale sembra sia riuscito a violare il mainframe centrale della società, danneggiando irreversibilmente tutti i sorgenti di un progetto software in sviluppo oramai da piu di sei anni."+chr(13)+chr(10)+"Paolo Stagna, questo il nome del colpevole, si è da subito difeso, affermando di aver eseguito un accesso non autorizzato al server di Wellmark solo nel tentativo di trovare qualche informazione circa il presunto (come lui stesso continua a sostenere) licenziamento illegittimo di cui è stato vittima."+chr(13)+chr(10)+"Il presidente della società ha da subito smentito tali affermazioni, precisando che la pratica di licenziamento è un evento accaduto come conseguenza e cronologicamente in successione alla violazione informatica, rappresentando di fatto la motivazione per la quale Stagna è stato sollevato dal suo incarico, e non quindi prima del crimine."+chr(13)+chr(10)+"Le documentazioni in possesso degli inquirenti confermano quanto affermato finora dal presidente della Wellmark, tuttavia, come tiene a precisare la difesa di Stagna: 'Esistono differenti modalità per comunicare un imminente licenziamento. Ricordo come la legge consenta ed approvi la validità di comunicazioni sia verbali che per mezzo Posta Elettronica, di comunicazioni di importanza non marginale, quale ad esempio l'avvio di una pratica di legittimo licenziamento.'"
+

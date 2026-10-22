@@ -1,0 +1,4 @@
+// Questo script definisce lo stato iniziale degli eventi di gioco.
+LoadMission("def\000.miss")        // Inizio del gioco.
+LoadMission("uground\A00.miss")    // Prima missione per la campagna della Comunità Underground.
+LoadMission("xmiss\nmcha-01.miss") // Prima missione della sfida di n3v3r_MIND.

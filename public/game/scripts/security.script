@@ -1,0 +1,33 @@
+// *************************************************************
+//      Advanced Security
+//
+// Questo script analizza costantemente tutte le risorse remote
+// quando si è connessi ad un host e, nel caso in cui rilevasse
+// un file di log, provvede all'istante ad eliminarlo.
+// *************************************************************
+
+// Il valore predefinito per il ritardo di ripetizione di un ciclo di uno script è di circa 5 secondi.
+// Per cambiare questo valore impostiamo il parametro 'Delay' con un numero intero equivalente a secondi.
+// N.B.: Impostando 'Delay' a '0' lo script verrà eseguito una sola volta, ma il processo continuerà
+//       a funzionare.
+Delay=3 // In questo specifico caso lo script verrà eseguito ogni 3 secondi.
+
+// Prima di tutto verifichiamo se il sistema è online.
+if(System.OnLine){
+    // In seguito verifichiamo se l'accesso all'host remoto è stato forzato.
+    if(Host.Forced){
+        // Quindi si procede con la ricerca del file 'log.connections' mediante la funzione 'FindRemoteFile'.
+        // Questa funzione restituisce l'indice numerico della risorsa cercata. Nel caso in cui non la trovasse
+        // restituisce il valore '-1'. In questo specifica caso memorizziamo l'indice restituito dalla funzione
+        // nella variabile 'FileIndex'.
+        FileIndex=FindRemoteFile("log.connections")
+        
+        // Se l'indice è diverso da '-1' procediamo con l'eliminazione remota tramite il comando 'DeleteRemoteFile'.
+        if(FileIndex<>-1){
+            DeleteRemoteFile(FileIndex)
+            
+            // Infine scriviamo una riga tramite console che ci avverte dell'esito positivo dell'operazione.
+            ConsoleStdOut("Lo script ha rilevato un log e lo ha eliminato!")
+        }
+    }
+}

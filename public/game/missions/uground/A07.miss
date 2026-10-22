@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A07"
+Name="Leggittimo Sospetto (1a. parte)"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Complimenti!"
+MissionBeginBody[1]="Hey "+System.CurrUser+","+chr(13)+chr(10)+"Allora amico, se non sbaglio non ti ho ancora fatto i complimenti per come hai buttato giù web4.telemark!"+chr(13)+chr(10)+"Senza il tuo aiuto non credo che saremmo riusciti a rubare quei files. Approposito, mi ha detto RoM4N che vi siete già sentiti per email e che ti ha ricompensato con una parte dei crediti guadagnati dalla sottoscrizione."+chr(13)+chr(10)+"Quanto ti ha dato? 60 Crediti? Che razza di tirchio!"+chr(13)+chr(10)+"Ne abbiamo racimolati ben 300 a testa per quest'hacking... poteva trattarti un pò meglio!"+chr(13)+chr(10)+"Comunque sia, ti sei fatto altri amici. Dovresti sentire come parlano bene di te nella community!"+chr(13)+chr(10)+"Va bene, ora ti lascio alle tue cose. Ci sentiamo presto."+chr(13)+chr(10)+"BYEZ!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"1ronCh4ng"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Complimenti!"
+TargetMailAttachment="bin.bdoor_trace"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=35
+NextMission="uground\A08.miss"
+ServerIPToRemove=""
+ReplyMailText="Hey 1ron, guarda un pò cosa ho trovato in giro per il Network..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="1ronCh4ng@mother"
+MissionEndSubject[1]="???"
+MissionEndBody[1]="Ma dove cavolo l'hai trovata questa roba?"+chr(13)+chr(10)+""+System.CurrUser+", questo è una parte del codice di Mother! C'è una Backdoor impressionante qui dentro. Non posso crederci: Mi metto subito al lavoro per tentare di scoprirne qualcosa in piu."+chr(13)+chr(10)+"Nel frattempo mi raccomando, acqua in bocca! Non ne parlare con nessuno e non mi cercare, soprattutto per email, mi farò vivo io. Anzi... elimina subito questo messaggio!!"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

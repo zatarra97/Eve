@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* Palette e font di Mother OS */
+@theme {
+	--color-mo-bg: #04060c;
+	--color-mo-panel: #071226;
+	--color-mo-panel-2: #0b2a5c;
+	--color-mo-line: #3a8fe0;
+	--color-mo-line-dim: #1d4f8c;
+	--color-mo-text: #e6f0ff;
+	--color-mo-accent: #6fb8ff;
+	--color-mo-ok: #2fae4a;
+	--color-mo-alert: #d8252c;
+	--font-mono: "Share Tech Mono", ui-monospace, monospace;
+	--font-title: "Michroma", "Share Tech Mono", sans-serif;
+}
+
+html,
+body,
+#root {
+	height: 100%;
+	margin: 0;
+	background: #000;
+	overflow: hidden;
+}
+
+body {
+	font-family: var(--font-mono);
+	color: var(--color-mo-text);
+	user-select: none;
+}
+
+/* Scrollbar sottile nello stile dei pannelli */
+.mo-scroll {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-mo-line) transparent;
+}
+
+/* Icone server sulla Network Map */
+@keyframes mo-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+.mo-spin {
+	animation: mo-spin 2.4s linear infinite;
+}
+
+@keyframes mo-blink {
+	50% {
+		opacity: 0;
+	}
+}
+.mo-cursor::after {
+	content: "_";
+	animation: mo-blink 1s steps(1) infinite;
+}

@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A09"
+Name="Leggittimo Sospetto (2a. parte)"
+
+// Tipo Missione...
+MissionType="LocalFileExists"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="???"
+MissionBeginBody[1]="43.43.1.12"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="???"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName="bin.a4b3792"
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="uground\A10.miss"
+ServerIPToRemove="43.43.1.12"
+ReplyMailText="Messaggio ricevuto..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="1ronCh4ng@mother"
+MissionEndSubject[1]="Forse li freghiamo!"
+MissionEndBody[1]="Credo di essere riuscito a rintracciare il problema: La mail che stai leggendo utilizza un nuovo algoritmo di cifratura che mi permette di scriverti senza il rischio di essere intercettato. Per il momento è un sistema abbastanza sicuro. Comunque, torniamo a noi..."+chr(13)+chr(10)+"Stò lavorando ad una patch per Mother che possa risolvere il problema di Netconn e bypassare la Backdoor. Nel frattempo, per l'amor di Dio, non fare niente che possa insospettire l'Underground! Restatene buono e continua a portare avanti i tuoi compiti. Io cercherò di seguirti a distanza. Anzi, ho qualche sorpresina in serbo per i nostri amici. Tu cerca di sottoscrivere qualche missione, quando sarà necessario mi farò vivo io."+chr(13)+chr(10)+"Ci volevano fregare no? Bene, ora lo facciamo noi il doppio gioco!"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

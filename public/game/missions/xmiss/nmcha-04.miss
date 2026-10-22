@@ -1,0 +1,57 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-04"
+Name="La sfida di n3v3r_MIND - Parte 4a."
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="Te la sei voluta!"
+MissionBeginBody[1]="Ok, ora basta! Mi hai proprio stufata pivellino!!"+chr(13)+chr(10)+"Vediamo se dopo questa riuscirai ancora a collegarti al Network!"+chr(13)+chr(10)+"Senza rancore tesorino..."+chr(13)+chr(10)+""+chr(13)+chr(10)+"La tua dolce n3v3r_MIND"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="Te la sei voluta!"
+if(FindLocalFile("log.unauthaccess")<>-1)TargetMailAttachment="log.unauthaccess"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=5
+ServerIPToRemove=""
+if(FindLocalFile("log.unauthaccess")<>-1){
+    NextMission="xmiss\nmcha-05.miss"
+    ReplyMailText="Spiacente piccola, ma mi hai fatto solo il solletico! Aspetta... che cosa abbiamo qua? Riconosci questo file? E tuo se non sbaglio... Oddio, mi chiedo cosa ti accadrebbe se finisse nella mani sbagliate... Mah!"
+}else{
+    ReplyMailText="Spiacente piccola, ma mi hai fatto solo il solletico! Ora però non ho piu tempo di giocare, mi dispiace tesoro. Però è stato divertente!"
+}
+
+// Messaggi di fine Missione...
+if(FindLocalFile("log.unauthaccess")=-1){
+    MissionEndMessages=1
+    
+    MissionEndFrom[1]="n3v3r_MIND@mother"
+    MissionEndSubject[1]="Già ti sei arreso?"
+    MissionEndBody[1]="Ahaha... stò scherzando. Comunque bravo, complimenti davvero, cosi puoi raccontare in giro di essere stato battuto da n3v3r_MIND senza grandi conseguenze! Ti saluto tesorino... n3v3r_MIND WINS!!"
+}
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+instance_create(0,0,virMotherBreaker)

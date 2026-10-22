@@ -1,0 +1,53 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="000"
+Name="Benvenuto nell'Underground"
+
+// Tipo Missione...
+MissionType=""
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="admin@mother"
+MissionBeginSubject[1]="Un benvenuto da tutta la community!"
+MissionBeginBody[1]="Congratulazioni per aver aderito a Mother."+chr(13)+chr(10)+"Da questo momento in poi sei un membro effettivo della nostra community. Puoi cominciare da subito ad utilizzare tutte le applicazioni fornite con l'installazione base del Client di Mother."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Se hai ricevuto questa mail vuol dire che il tuo account è stato attivato ed è perfettamente operativo. Puoi quindi usufruire di tutti i nostri servizi gratuiti, tra cui:"+chr(13)+chr(10)+""+chr(13)+chr(10)+"1. Connetterti a 'jimmyhardware.mothernet', dove potrai trovare le ultime novità e le migliori componenti hardware, tutte disponibili per l'acquisto online mediante transazioni sicure, veloci ed affidabili."+chr(13)+chr(10)+""+chr(13)+chr(10)+"2. Trovare nuovi amici grazie all'accesso esclusivo al chat server 'ivoice.mothernet' uno dei più famosi computer del Network, nonchè punto di ritrovo di milioni di membri della nostra comunità!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"3. Grazie alla collaborazione con la comunità Underground i nuovi utenti di Mother possono contare su un accesso gratuito ed esclusivo ai canali 'sutra.underground' e 'warez.underground', due tra i server più conosciuti del Network di news e vendita online di software."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Allora, cosa stai aspettando?"+chr(13)+chr(10)+"Inizia subito il tuo viaggio nel Network. Buon Divertimento con Mother!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"The Mother Sys Administrator"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToNetworkMap("547.2.8.791")
+AddToNetworkMap("632.639.14.633")
+AddToNetworkMap("666.underground.0.1")
+AddToNetworkMap("666.underground.0.2")
+AddToNetworkMap("412.23.0.69")
+AddToNetworkMap("393.1.256.82")
+AddToNetworkMap("912.1.1.225")

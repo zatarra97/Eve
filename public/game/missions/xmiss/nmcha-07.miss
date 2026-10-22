@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-07"
+Name="La sfida di n3v3r_MIND - Parte 7a."
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="Devo ringraziarti?"
+MissionBeginBody[1]="A questo punto non sò piu cosa dire... dovrei ringraziarti?"+chr(13)+chr(10)+"Mi spingi in un burrone, per poi tirarmi su per i capelli all'ultimo minuto. Ok, per stavolta ho imparato la lezione, garantito!"+chr(13)+chr(10)+"Però non riesco ancora a capire bene se quello che provo nei tuoi confronti sia più odio o più ammirazione. Bah!"+chr(13)+chr(10)+"Comunque tu ora conosci il mio volto, sai come mi chiamo e di dove sono giusto? Io non sò niente di te. Tipo 'come ti chiami?' o 'Quanti anni hai?'."+chr(13)+chr(10)+"Eppure te lo giuro, mi piacerebbe davvero conoscerti meglio! Davvero..."+chr(13)+chr(10)+"Se mi dici almeno di dove sei potrei venire nella tua zona a trovarti di persona. Credimi, sarei davvero disposta a fare qualsiasi cosa"+chr(13)+chr(10)+"solo per incontrarti anche una sola volta!"+chr(13)+chr(10)+"Che ne dici?"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="Devo ringraziarti?"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=20
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="Ehm... E' meglio se lasci perdere... Potrei essere tuo padre... E poi forse potresti rimanere delusa... Addio."+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S.: Comunque dopo tutto la sfida l'hai vinta tu."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="n3v3r_MIND@mother"
+MissionEndSubject[1]="Bugiardo!"
+MissionEndBody[1]="Bugiardo, mi hai stracciata!"+chr(13)+chr(10)+"Ok... Però un pò mi dispiace! Se dovessi cambiare idea..."+chr(13)+chr(10)+"Ti saluto "+System.CurrUser+", e grazie ancora. :*"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Alexia Zimmermann (aka n3v3r_MIND)"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

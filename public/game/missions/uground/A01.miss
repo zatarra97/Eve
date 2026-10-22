@@ -1,0 +1,52 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A01"
+Name="Ammissione nella Community"
+
+// Tipo Missione...
+MissionType="FileDeleting"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="s0ftm4rk@mother"
+MissionBeginSubject[1]="AIUTOOOOOO!!"
+MissionBeginBody[1]="Ciao "+System.CurrUser+". Prima di tutto perdonami se ti importuno per email. Noi non ci conosciamo (o almeno credo), ti ho notato sulla lista utenti della chat, sei nuovo nella community vero? Non te la prenderai se ho dato una sbirciatina ai tuoi dati personali. Il fatto è che ho un dannato bisogno di aiuto. Ho notato che come Ranking non sei affatto male quindi ho pensato di rivolgermi a te."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Mi sono cacciato in un gran bel casino: Ho violato un paio di account su 'eurodigibank.eurogroup' e mi hanno scoperto. Il mio IP è bannato e quei bastardi hanno già inviato i log a quelli della Intrapol. Capisci? Hanno il mio IP! SANNO PURE COME MI CHIAMO!! E' questione di ore, forse minuti e mi ritroverò la POLIZIA IN CASA!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ho le mani legate: Quelli dell'Underground hanno disabilitato il mio account e non posso effettuare altre registrazioni. E come se non bastasse con l'IP bannato non posso connettermi a nessun terminale remoto. Praticamente sono nella merda fino al collo!!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Mi chiedevo se potevi darmi una mano. Gli 'amici' dell'Underground non ne vogliono sapere, hanno praticamente cancellato qualsiasi traccia del mio account dai loro server."+chr(13)+chr(10)+""+chr(13)+chr(10)+"NON VOGLIO ANDARE IN GALERA! Tu sei l'unica speranza che mi rimane."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Quello che dovresti fare è tentare di entrare nel server crimediv.intrapol, cercare il dossier che contiene tutti i dati riguardanti la cazzata che ho fatto ed eliminarlo definitivamente!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Il server è conosciuto come uno dei piu inviolabili e per giunta il sysadmin è uno tosto ma non hanno un ottima banda e quindi con qualche protezione in più dovresti essere al sicuro."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Io non ho soldi per pagarti però conosco molti dati di account sui netbanking server. Se ti interessano potrei fornirteli."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Per semplificarti le cose ho allegato a questa mail il collegamento a crimediv.intrapol, se apri la network map dovresti trovarlo."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ti prego, sei la mia unica speranza!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"    s0ftm4rk :("+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S.: Nel caso in cui ti possano servire, eccoti degli IP di qualche proxy. Sono delle ottime macchine su cui si può contare:"+chr(13)+chr(10)+""+chr(13)+chr(10)+"      proxy.devtest:"+chr(13)+chr(10)+"          232.451.593.12"+chr(13)+chr(10)+""+chr(13)+chr(10)+"      shadow.bellavista:"+chr(13)+chr(10)+"          212.192.168.3"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="s0ftm4rk@mother"
+TargetMailSubject="AIUTOOOOOO!!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="911.intrapol.1.132"
+RefRemoteFileToDelete="data.unsecure-8541569"
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="uground\A02.miss"
+ServerIPToRemove=""
+ReplyMailText="s0ftm4rk... Non devi più preoccuparti, ho risolto tutto io."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="s0ftm4rk@mother"
+MissionEndSubject[1]="Ogni tuo desiderio è un ordine!"
+MissionEndBody[1]="Che Dio ti benedica amico! Non so cosa dire. Ti sono eterno debitore. Ti prometto che non dimenticherò mai quello che hai fatto per me. Hai la mia parola d'onore."+chr(13)+chr(10)+""+chr(13)+chr(10)+"A tua completa disposizione, s0ftm4rk."+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S. Ti avevo promesso alcuni account. Collegati a eurodigibank.eurogroup e prova questi:"+chr(13)+chr(10)+""+chr(13)+chr(10)+"     Username: JJkarl"+chr(13)+chr(10)+"     Password: icntrst"+chr(13)+chr(10)+""+chr(13)+chr(10)+"     Username: MarkBx"+chr(13)+chr(10)+"     Password: krish"+chr(13)+chr(10)+""+chr(13)+chr(10)+"     Username: Kelly"+chr(13)+chr(10)+"     Password: LOVE"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToNetworkMap("911.intrapol.1.132")
+

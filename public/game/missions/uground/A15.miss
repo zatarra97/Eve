@@ -1,0 +1,51 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A15"
+Name="la silenziosa vendetta (Parte 3)"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Cominci a farmi paura..."
+MissionBeginBody[1]="Hey "+System.CurrUser+", stai cominciando a spaventarmi per davvero!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Sei riuscito persino a fregare Betruger, cioè quello che è ritenuto come il piu bravo Hacker della community dopo D1l3mm4!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Suppongo quindi che ora sia giunto il momento del mirror di karma.underground giusto?"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Se ce la fai amico, giuro che ti faccio fare a mie spese un monumento in mezzo a piazza Tienanmen! Ehehehe..."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Cominci a farmi paura..."
+TargetMailAttachment="run.2943_side"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=80
+NextMission="uground\a16.miss"
+ServerIPToRemove=""
+ReplyMailText="E con questo siamo a tre, credi possa bastare?"
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="1ronCh4ng@mother"
+MissionEndSubject[1]="Sei il migliore!"
+MissionEndBody[1]="Hey amico, tu sei il migliore lo sai si?! Ma ti rendi conto cosa sei riuscito a combinare?!?!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Inoltre stai riuscendo persino a convincermi che ce la possiamo fare!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Sono alibito, davvero!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Comunque, dammi il tempo di studiare per bene questi script. Appena scopro qualcosa ti ricontatto subito, stanne certo!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S.: Riguardo la statua in tuo onore: Vado subito ad ordinare la sua costruzione, ahahaha!"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+

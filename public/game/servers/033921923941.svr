@@ -1,0 +1,44 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=0
+MapY=0
+ServerName="033921923941"
+IP="033921923941"
+WelcomeText=""
+ServerType=""
+TerminalInterface=Phone
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=9000
+Net=100
+
+// Eccezioni...
+CantBeHacked=true
+CantBeNuked=true
+CantBeDestroyed=true
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction="underground"
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=1
+
+FileName[1]="rec.audio"
+FileDim[1]=5
+FileImg[1]=global.snd_phone_admin[3] // puntatore a risorsa del campione wav per la voce dell'admin.
+FileContents[1]="%SYSTEM%"
+FileOwner[1]=""
+

@@ -1,0 +1,38 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=256
+MapY=166
+ServerName="web4.telemark"
+IP="10.258.26.13"
+WelcomeText="Web4 Telemark"+chr(13)+chr(10)+"Questo è un Webserver! E' impossibile accedere tramite terminale ai suoi contenuti, utilizzate un Browser per navigare all'interno del sito."
+ServerType="Web Server"
+TerminalInterface=-1
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=true
+FirewallMask="10.258.1.119"
+
+// Specifiche Hardware...
+Cpu=9000
+Net=200
+
+// Eccezioni...
+CantBeHacked=false
+CantBeNuked=false
+CantBeDestroyed=false
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=0
+

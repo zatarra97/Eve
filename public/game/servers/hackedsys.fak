@@ -1,0 +1,29 @@
+// configurazione principale.
+MapX=0
+MapY=0
+ServerName=""
+ServerType=""
+TerminalInterface=-1
+WelcomeText="Comunicato IntraPOL: Server sotto sequestro."+chr(13)+chr(10)+"L'integrità di questo sistema è stata violata da un attacco informatico. Tutti i servizi erogati sono stati momentaneamente sospesi e sono state avviate delle indagini."+chr(13)+chr(10)+"Il server verrà rimesso in funzione il prima possibile."
+Background=global.spr_intrapol_logo
+IP=""
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+Logged=true
+Hacked=false
+
+// configurazione hardware.
+Cpu=90000
+Net=90000
+
+// configurazione account.
+Users=0
+
+// file system...
+TotFiles=0
+
+// parametri aggiuntivi:
+CantBeHacked=true
+CantBeNuked=true
+CantBeDestroyed=true

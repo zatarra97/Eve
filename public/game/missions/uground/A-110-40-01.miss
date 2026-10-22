@@ -1,0 +1,52 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-110-40-01"
+Name="Posta Straordinaria"
+
+// Tipo Missione...
+MissionType="FileDeleting"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-110-40-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-110-40-01"
+MissionBeginBody[1]="Sembra che un certo Ming Woo Lo, impiegato della Divisione Nipponica di Telemark, sia venuto in possesso dei log di un fileserver societario violato alcune settimana fa da un membro dell'Underground."+chr(13)+chr(10)+"Le informazioni in nostro possesso sono pochissime e piuttosto imprecise. Woo Lo sostiene di possedere prove schiaccianti riguardo un upload di Spyworm all'interno del suddetto server."+chr(13)+chr(10)+"Effettivamente una sottoscrizione di questo tipo pare sia stata accettata e portata a termine poco più di due settimane fa, tuttavia non possiamo dire con certezza se stiamo parlando della stessa cosa."+chr(13)+chr(10)+"Altri membri dell'Underground sono riusciti nel frattempo a violare il personal server di Woo Lo ma non hanno trovato alcuna informazione utile."+chr(13)+chr(10)+"Proprio stamattina invece ci è arrivata una mail che segnala come un nostro membro sia riuscito con l'inganno a far parlare Woo Lo in chat il quale ha stupidamente fornito informazioni circa un mailserver e un suo indirizzo privato."+chr(13)+chr(10)+"Abbiamo anche verificato se la Intrapol stia indagando su un crimine del genere commesso di recente ma non abbiamo scoperto niente di niente."+chr(13)+chr(10)+"Da ciò deduciamo quindi che o il nostro amico sta barando oppure non ha ancora mosso le informazioni nel verso giusto."+chr(13)+chr(10)+"Qui entri in gioco tu. Trova questa email, verifica che contenga effettivamente dati compromettenti e, in tal caso, eliminala. Poi, se sarà il caso, penseremo direttamente noi a questo Ming Woo Lo!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-110-40-01@underground"
+TargetMailSubject="Sottoscrizione No. A-110-40-01"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="52.27.961.45"
+RefRemoteFileToDelete="RE: Log intercettati da nippon2.telemark."
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=40
+ExtraRanking=20
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="Ho portato a termine la sottoscrizione, aspetto la mia ricompensa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-110-40-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Ottimo lavoro!"+chr(13)+chr(10)+"Abbiamo già provveduto a effettuare un accredito di 40 Cr. direttamente sul tuo conto, verifica con i tuoi occhi."+chr(13)+chr(10)+"Ti salutiamo, ringraziandoti e invitandoti a tornare presto su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="La controversa figura dell'Hacker"
+MissionEndNewsBody[1]="'Noi non siamo il vostro nemico!' - Quante volte i dipendenti di Intrapol di tutto il mondo, si sono ritrovati a dover leggere questa frase, magari appesa ai log che testimoniavano un ennesima e misteriosa violazione, in un qualunque database criminale del circuito Secure.NET? Come definireste voi gli Hacker dell'Underground? Semplici criminali? Abili mistificatori? Oppure i nuovi Robin Hood della 2a era digitale? Una cosa è certa: Ovvero, che dir si voglia, da un recente rapporto della Commissione Mondiale di Intrapol per le Analisi delle Attività Illegali sul Network è emerso che oltre il 40% delle organizzazioni criminali considerate di 1o. livello (riguardandi quindi principalmente terrorismo e pedofilia) sono state sgominate attraverso un operato non legalmente riconosciuto dagli organi competenti, il piu delle volte rivendicato da membri dell'Underground. I vertici mondiali di Intrapol, seppur restii a giudicare favorevoli questi tipi di violazioni, che ovviamente rappresentano degli atti criminali perseguibili, non nascondono una loro sempre piu crescente 'simpatia' nei confronti di questi misteriosi 'benefattori'. Tuttavia, l'opinione pubblica di tutto il mondo non è di sicuro in linea con le idee di Intrapol, considerando che ancora riconosce negli Hacker una figura minacciosa per la stabilità dei sistemi informatici di tutto il Network."

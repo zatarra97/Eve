@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="001-110"
+Name="Una vecchia conoscenza."
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="Tikhomir@intrapol"
+MissionBeginSubject[1]="Sottoscrizione No. 001-110"
+MissionBeginBody[1]="Di recente cè un tizio per il Network che pare abbia una passione sfrenata per i Netbanking Server. Infatti, nonostante abbia rischiato di grosso ultimamente, continua imperterrito a sottrarre piccole somme di denaro da conti online, di volta in volta diversi. Mi era giunta voce che la divisione nord europea di Intrapol era quasi riuscita a prenderlo, ma con un abile mossa costui è riuscito ad accedere al database criminale e cancellare ogni sua traccia."+chr(13)+chr(10)+"In gamba il bastardello eh? Forse potresti anche conoscerlo: si chiama Miguel Martinez, e da quello che mi risulta era un tempo noto nell'Underground come s0ftm4rk... Comunque... Il tuo compito è quello di penetrare nel suo personal server e vedere se possiede ancora il file 'log.translations', documento dove di solito vengono memorizzate le informazioni circa le transazioni online che si effettuano via terminale."+chr(13)+chr(10)+"Se ho capito bene come ragiona, Martinez sicuramente custodirà gelosamente questo file, dato che rappresenta il 'trofeo ideale' delle sue conquiste."+chr(13)+chr(10)+"Il server che devi violare è 'personal.s0ftm4rknet', ti ci puoi collegare attraverso l'indirizzo '199.112.112.172'. Non tentare di risolverlo, è protetto dal Server Hiding."+chr(13)+chr(10)+"In bocca al lupo agente!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="Tikhomir@intrapol"
+TargetMailSubject="Sottoscrizione No. 001-110"
+TargetMailAttachment="log.translations"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=10
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="Uhmmm... Lavoro eseguito."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-110-40-01@underground"
+MissionEndSubject[1]="Complimenti..."
+MissionEndBody[1]="Bene, hai fatto davvero un ottimo lavoro! Spero che sia stato altrettanto bravo a non farti scoprire."+chr(13)+chr(10)+"Torna a visitare 'altproject.intrapolru' piu avanti: potrebbe esserci qualche altro lavoretto per te."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

@@ -1,0 +1,46 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-06"
+Name="La sfida di n3v3r_MIND - Parte 6a."
+
+// Tipo Missione...
+MissionType="FileDeleting"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="NOOOO!!"
+MissionBeginBody[1]="NOOOO! Ma che cavolo hai fatto?! Sei un maledetto, meschino BASTARDO!"+chr(13)+chr(10)+"Non credevo fossi capace di un gesto simile... ad essere sincera mi stavo persino affezionando a te. Io volevo solo giocare... Mi divertivo con te IDIOTA! Io non ti ho fatto niente di cosi cattivo, perchè?"+chr(13)+chr(10)+"Si ok, ti ho infettato il pc con il MotherBreaker, ma cavolo: al massimo formattavi tutto e risolvevi il problema!"+chr(13)+chr(10)+"Non sò se te ne rendi conto: HAI DISTRUTTO LA MIA VITA: Mi hanno schedato su crimediv.intrapol, il canale SecureNET ha bloccato il mio IP. Mi hanno espulsa da XfreezE, non ho più nessuno in grado di aiutarmi... Ho solo SEDICI anni... CRISTO SANTO! Mi incrimineranno, mi sbatteranno in un centro di riabilitazione sociale, poi in galera... NON VOGLIO ANDARE IN GALERA!"+chr(13)+chr(10)+"Lo sai quant'è la pena per tutte quelle violazioni, dieci anni! HAI CAPITO MALEDETTO BASTARDO, 10 SCHIFOSI ANNI DI GALERA!"+chr(13)+chr(10)+"Va bene... Ok... Hai vinto tu, ma a quale prezzo? Io... io volevo solo giocare con te... SEMPLICEMENTE GIOCARE!"+chr(13)+chr(10)+"Maledetto stronzo..."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="NOOOO!!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="911.intrapol.1.132"
+RefRemoteFileToDelete="data.unsecure-423657998"
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="xmiss\nmcha-07.miss"
+ServerIPToRemove=""
+ReplyMailText="Mi dispiace... Comunque sono riuscito a rimediare. Perdonami..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

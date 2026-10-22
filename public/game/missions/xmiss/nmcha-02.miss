@@ -1,0 +1,48 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-02"
+Name="La sfida di n3v3r_MIND - Parte 2a."
+
+// Tipo Missione...
+MissionType="LocalFileExists"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="IDIOTA!"
+MissionBeginBody[1]="Ma bene, bravo...!"+chr(13)+chr(10)+"Mi spieghi per quale motivo hai cancellato quel file?"+chr(13)+chr(10)+"Chi saresti? L'ennesimo patetico eroe che difende i più deboli? Eppure, visto il tempo che ho impiegato a rintracciarti non mi sembri molto bravo..."+chr(13)+chr(10)+"Mmm... se posso darti un consiglio... vedi di farti gli affari tuoi la prossima volta, ok?"+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S.: Dimenticavo: tutte queste cose che vedi su schermo... sono opera mia. Prendile come un incentivo per farti capire che questa volta hai davvero pestato il piede sbagliato."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="IDIOTA!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName="UAVsys"
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=15
+NextMission="xmiss\nmcha-03.miss"
+ServerIPToRemove=""
+ReplyMailText="Brrr... che paura!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+instance_create(0,0,virScreenHacker)
+

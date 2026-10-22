@@ -1,0 +1,47 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A13"
+Name="la silenziosa vendetta (Parte 1)"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="CALMA!"
+MissionBeginBody[1]="Aspetta... Non è mica cosi semplice come credi! Innanzi tutto dobbiamo cercare di organizzarci come si deve. Dobbiamo partire dalla triade: Sutra, Warez e Karma, rispettivamente amministrati da abDUCtion, Betruger e DhYsRhITmi4. Hai capito bene amico: I tre 'generali' dell'underground, i fidati 'eBrother' di D1l3mm4! Hai una certa idea contro chi ci stiamo mettendo? Vabbè, andiamo avanti che è meglio..."+chr(13)+chr(10)+"Ho scoperto gli IP dei tre mirror della triade: slave.666wearegone.0.1 (sutra), slave.666wearegone.0.2 (warez) e slave.666wearegone.0.3 (karma). Tutti e tre server hanno uno script interno che dovrebbe dare il via a tutto il funzionamento del cluster. Questo script è si comune, ma è stato diviso in tre parti custodite dai rispettivi Admin. Se riusciamo a recuperare un pezzo alla volta nel seguente ordine (sutra-warez-karma), potrei provare a ricostruirlo, e una volta completo potremmo mandarlo ad IntraPOL e farli finire tutti in galera! Però dopo resterebbe il problema di: master.666wearegone.0.1, ovvero il core cluster. Sono sicuro che D1l3mm4, vedendosi alle strette farebbe partire un attacco informatico contro tutto il Network. Come diavolo facciamo dopo a contrapporci alla banda passante disponibile dall'unione di millioni di client di Mother sparsi per tutto il mondo? Facciamo cosi, nel frattempo vedi se riesci a recuperare questi script, dovrebbero chiamarsi run.XXXXX_side, dove al posto di XXXXX ci dovrebbe essere il nome corrispondente della macchina nella triade."+chr(13)+chr(10)+"Comincia da sutra, poi penseremo agli altri. Appena entri in possesso di questi script mandameli per email e... per l'amor di Dio non farti beccare o qui rischiamo un altro crollo strutturale!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="CALMA!"
+TargetMailAttachment="run.2941_side"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=75
+NextMission="uground\a14.miss"
+ServerIPToRemove=""
+ReplyMailText="Hai per caso bisogno di questo file?"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+

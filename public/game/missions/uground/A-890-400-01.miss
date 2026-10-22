@@ -1,0 +1,60 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-890-400-01"
+Name="Operazione Occhio Indiscreto"
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-890-400-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-890-400-01"
+MissionBeginBody[1]="Lo scopo principale di questa sottoscrizione è riuscire a caricare sul server centrale europeo di Mecca Technologies uno speciale Spyworm che abbiamo appositamente creato per rilevare degli specifici transiti di informazioni verso la sede americana della corporazione. A prima vista potrebbe sembrarti un gioco da ragazzi, tuttavia sono mesi e mesi che i nostri membri cercano di violare 'main1.meccatech' senza ottenere risultato alcuno. Infatti questo server è equipaggiato col nuovissimo sistema di accesso a controllo vocale (VRLS). Si vocifera in giro che finora solamente un Cracker della crew di XFreeze sia riuscito a bypassare il VRLS. Proprio per questo motivo, in caso di esito positivo, questo hacking verrà retribuito con ben 400 Crediti! Alla presente mail è stato allegato il file 'exe.dbrun', lo Spyware che dovrai provvedere a caricare sulla macchina, oltre che il collegamento sulla tua Network Map del server. Ti auguriamo buona fortuna, ne avrai bisogno!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-890-400-01@underground"
+TargetMailSubject="Sottoscrizione No. A-890-400-01"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="799.15.21.1"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="exe.dbrun"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=400
+ExtraRanking=110
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="Ci sono riuscito! Il file è sul server, verificate con i vostri occhi. Ora sono in attesa della mia ricompensa, grazie..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-890-400-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Complimenti "+System.CurrUser+", questa volta hai compiuto davvero un lavoro notevole!"+chr(13)+chr(10)+"Il tuo operato è stato eccellente, nessuno mai prima d'ora era riuscito a spingersi tanto avanti con un server protetto dal VRLS. Hai dimostrato di essere un elemento fondamentale per la nostra organizzazione, degno di tutta la stima ed il rispetto che l'Underground ti concede."+chr(13)+chr(10)+"A presto "+System.CurrUser+"!"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=2
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Violato il VRLS di Meccatech!"
+MissionEndNewsBody[1]="E' di poco fà la notizia che qualcuno sembra sia riuscito attraverso un abile stratagemma a violare l'intergrita di uno dei server piu famosi del Network in ambito di sicurezza: main1.meccatech."+chr(13)+chr(10)+"Il fiore all'occhiello di tutto il parco macchine di Mecca Technologies, tra l'alto dotato del rivoluzionario sistema di riconoscimento vocale remoto VRLS (Voice Recognition Login System), è stato penetrato da un hacker il quale sembra sia riuscito a bypassare senza alcun problema (e quindi restando nel piu totale anonimato) il tanto temuto meccanismo di login."+chr(13)+chr(10)+"A seguito di questo reato Meccatech ha istituito una speciale commissione d'indagine il cui compito consiste, sia nel far luce al piu presto sulle eventuali tecniche adottate dal misterioso hacker per bypassare il VRLS, sia sull'operato di quest'ultimo all'interno del File Server, altro aspetto sul quale sembra essersi posato uno alone di mistero."
+
+MissionEndNewsServerName[2]="sutra.underground"
+MissionEndNewsTitle[2]="Meccatech abbassa la testa, tutta la verità sul VRLS..."
+MissionEndNewsBody[2]="'Il tanto decantato VRLS non è cosi sicuro come vogliono farci credere!' - Afferma D1l3mm4, durante il suo primo commento a caldo riguardo la notizia della violazione di main1.meccatech, server da sempre considerato come l'Ammiraglia del Network."+chr(13)+chr(10)+"'Voi credete davvero che sia stato uno dei nostri?' - Continua D1l3mm4, rivolgendosi alla giornalista - 'Anche io! Solo un membro dell'underground poteva riuscire in una simile impresa. Tutttavia, mia cara, queste sono solamente tesi, ipotesi, illazioni o perche no insinuazioni gratuite. Ora aspetto chiunque riesca a dimostrare quanto finora affermato da Mecca Technologies.'"+chr(13)+chr(10)+"Questa quindi in definitiva la risposta del capo fondatore della Community Underground, riguardo le accuse mosse da Mecca Technologies in primis, ed alimentate dall'opinione pubblica di mezzo mondo, che vedono in un ipotetico membro della comunità Underground il principale responsabile della violazione del Voice Recognition Login System di Meccatech."
+
+// Script iniziale.
+AddToNetworkMap("799.15.21.1")
+AddFile(System,RefRemoteFileUploaded,221,-1,"bin",System.CurrUser)

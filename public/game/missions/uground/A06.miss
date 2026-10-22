@@ -1,0 +1,52 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A06"
+Name="Operazione Fuoco Incrociato"
+
+// Tipo Missione...
+MissionType="ServerDestruction"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="RoM4N@mother"
+MissionBeginSubject[1]="Richiesta aiuto..."
+MissionBeginBody[1]="Ciao collega,"+chr(13)+chr(10)+"Prima di tutto scusa se ti sono piombato in questo modo nella mail! Ho avuto il tuo indirizzo da 1ronCh4ng, il quale mi ha parlato molto bene di te."+chr(13)+chr(10)+"Avrei da proporti un modesto ingaggio. Io e 1ron abbiamo fra le mani un hacking davvero interessante: Dobbiamo agire parallelamente per rubare alcuni file su di un server della Telemark che sembra contengano delle informazioni riguardo una truffa su scala mondiale!"+chr(13)+chr(10)+"Il problema è che quei bastardi degli admin hanno configurato il nostro obbietivo come Webserver, impedendo quindi qualsiasi tipo di accesso attraverso le normali porte di comunicazione. Praticamente l'unica cosa che si può fare è tentare di buttarlo giù, per poi sfruttare l'instante successivo al ripristino per accedere e rubare i files."+chr(13)+chr(10)+"I dati da scaricare sono parecchi, per questo motivo dobbiamo agire in due. Ma non possiamo pensare direttamente noi al drop down del server, non avremmo poi il tempo materiale per fregarci i files."+chr(13)+chr(10)+"A questo punto, pensavo, potresti entrare in gioco te. Noi siamo operativi, se vuoi partecipare devi semplicemente buttare giù il bastardo e farci un fischio."+chr(13)+chr(10)+"Comunque vada, grazie per l'attenzione."+chr(13)+chr(10)+""+chr(13)+chr(10)+"RoM4N"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="RoM4N@mother"
+TargetMailSubject="Richiesta aiuto..."
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="10.258.26.13"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=60
+ExtraRanking=10
+NextMission="uground\A07.miss"
+ServerIPToRemove=""
+ReplyMailText="il Server è down... forza ragazzi, dateci dentro!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="RoM4N@mother"
+MissionEndSubject[1]="YEP!"
+MissionEndBody[1]="Fantastico "+System.CurrUser+"!"+chr(13)+chr(10)+"Ci siamo presi i files amico, anche e soprattutto grazie al tuo intervento. Davvero, non ho parole. Ti prego di accettare 60 Cr., è una piccola parte della ricompensa ottenuta per quest'hacking."+chr(13)+chr(10)+"Ti porto i saluto di 1ronCh4ng e ti faccio i miei."+chr(13)+chr(10)+"Grazie ancora e a risentirci presto!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"RoM4N"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToNetworkMap("10.258.26.13")
+

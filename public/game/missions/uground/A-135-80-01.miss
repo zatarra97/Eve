@@ -1,0 +1,60 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-135-80-01"
+Name="Il Cavallo di Troia"
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-135-80-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-135-80-01"
+MissionBeginBody[1]="Da alcune segnalazioni ricevute negli ultimi giorni pare che anche Puresun si stia preparando al transito dei propri dati relativi alla fine del trimestre amministrativo."+chr(13)+chr(10)+"Durante il precedente periodo non siamo riusciti a rintracciare le informazioni a causa di un fatto decisamente singolare. Praticamente tutti i server utilizzati per il transito dati erano letteralmente spariti dal Network per tutta la durata dello scambio delle informazioni!"+chr(13)+chr(10)+"Cosa sia realmente accaduto ancora non ci è chiaro anche se abbiamo il sospetto che abbiano utilizzato una qualche specie di rete privata scollegata fisicamente dal Network."+chr(13)+chr(10)+"Visto e considerato che siamo più che sicuri che la storia si ripeterà, abbiamo bisogno che tu riesca a penetrare in un loro server e a caricare al suo interno uno speciale programma Spyworm che abbiamo allegato alla mail."+chr(13)+chr(10)+"Una volta dentro, questo programma rintraccierà localmente tutte le informazioni che ci servono attivandosi automaticamente nel momento in cui il server si scollegherà dal Network."+chr(13)+chr(10)+"Poi ce le rimanderà non appena l'accesso alla rete sarà ripristinato distruggendosi automaticamente."+chr(13)+chr(10)+"Non siamo riusciti a trovare l'indirizzo IP di questa macchina tuttavia qualcuno afferma di aver ottenuto il servername 'subcorp.puresun' da una backtrace su un personal server di un ex membro assunto come Admin da Puresun. Abbiamo provato a cercare qualche altra informazione riguardo ma non è stato possibile trovare niente! Credo quindi che difficilmente riuscirai a trovare un modo per accedere in maniera pulita."+chr(13)+chr(10)+"Non mi soffermo ulteriormente sull'importanza di eseguire questa missione con la massima discrezione possibile!"+chr(13)+chr(10)+"Portando a termine con successo questa sottoscrizione guadagnerai la cifra di 80 Cr."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-135-80-01@underground"
+TargetMailSubject="Sottoscrizione No. A-135-80-01"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="115.898.14.892"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="exe.database"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=80
+ExtraRanking=20
+NextMission=""
+ServerIPToRemove="RefServerIP"
+ReplyMailText="Ho caricato quel file che mi avete dato su quel server, potete verficare da soli. Aspetto la mia ricompensa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-135-80-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Perfetto "+System.CurrUser+"!"+chr(13)+chr(10)+"Hai fatto un ottimo lavoro con questa sottoscrizione. Abbiamo già provveduto a effettuare un accredito di 80 Cr. direttamente sul tuo conto."+chr(13)+chr(10)+"Ti salutiamo, ringraziandoti e invitandoti a tornare presto su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=2
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Puresun nella bufera, con ENSAT e Telemark?"
+MissionEndNewsBody[1]="A brevissima distanza da una prima rivendicazione di alcuni presunti illeciti tra ENSAT e Telemark, per l'ennesima volta rivendicati da un misterioso utente che sembra faccia parte dell'Underground, ecco che Intrapol riceve un altra segnalazione, ampiamente documentata da alcune informazioni sensibili 'misteriosamente' comparse sui server dell'organizzazione, che vede coinvolta nel ipotetico giro illegale anche la società Puresun. Restiamo in attesa di ulteriori sviluppi quindi, quando tutte le corporazioni coinvolte in questi presunti illeciti avranno fornito le loro versioni ufficiali dei fatti, che siamo sicuri non tarderanno a pervenire."
+
+MissionEndNewsServerName[2]="sutra.underground"
+MissionEndNewsTitle[2]="Continuano gli illeciti Puresun"
+MissionEndNewsBody[2]="Continuano gli illeciti! Questa volta sembra giunto il turno di Puresun, corporazione che, grazie all'ennesimo intervento di uno dei nostri ragazzi, sembra essere coinvolta negli illeciti che già precedentemente hanno visto traffici di denaro sporco tra Telemark che ENSAT. Si allarga il giro quindi! Prima di chiudere, non dimenticandoci di ringraziare sentitamente colui che ci ha permesso di venire in possesso delle informazioni sufficienti per poter sostenere e denunciare questo ennesimo atto criminale, vi invito a ritornare in seguito per ulteriori aggiornamenti circa gli sviluppi di questa vicenda."
+
+// Script iniziale.
+AddFile(System,"exe.database",12,-1,"bin",System.CurrUser)
+

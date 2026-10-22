@@ -1,0 +1,39 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+
+// Configurazione principale del Server...
+MapX=0
+MapY=0
+ServerName="hideway.bentekcorp"
+IP="147.12.36.100"
+WelcomeText="Bentek Corporation Network"+chr(13)+chr(10)+"Hideway Proxy Server Privato"
+ServerType=""
+TerminalInterface=-1
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=1000
+Net=100
+
+// Eccezioni...
+CantBeHacked=true
+CantBeNuked=true
+CantBeDestroyed=true
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=0
+

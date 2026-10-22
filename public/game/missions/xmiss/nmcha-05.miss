@@ -1,0 +1,46 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-05"
+Name="La sfida di n3v3r_MIND - Parte 5a."
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="Aspetta, ti prego!"
+MissionBeginBody[1]="Hey aspetta! Ti prego..."+chr(13)+chr(10)+"Non avrai mica in mente di fare quello che stò pensando, vero?"+chr(13)+chr(10)+"Avanti, era solo un gioco! Una stupida sfida che hai vinto. Hai capito? HAI VINTO TU, OK?"+chr(13)+chr(10)+"Ora non fare sciocchezze, ti prego... TI SCONGIURO!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="Aspetta, ti prego!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="911.intrapol.1.132"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="log.unauthaccess"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=-40
+NextMission="xmiss\nmcha-06.miss"
+ServerIPToRemove=""
+ReplyMailText="Ops... Dovevo caricare un file su crimediv.intrapol ma... mi sà che ho sbagliato file!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

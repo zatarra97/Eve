@@ -1,0 +1,39 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=251
+MapY=211
+ServerName="hide.sanandreashubs"
+IP="10.258.1.119"
+WelcomeText="San Andreas Proxy's Hubs - Telemark Corporation"
+ServerType="Proxy Server"
+TerminalInterface=-1
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=9000
+Net=100
+
+// Eccezioni...
+CantBeHacked=false
+CantBeNuked=false
+CantBeDestroyed=false
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=0
+
+

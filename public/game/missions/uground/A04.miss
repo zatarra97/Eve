@@ -1,0 +1,62 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A04"
+Name="Licenziamento Illegittimo (2a. parte)"
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Dobbiamo fare qualcosa!"
+MissionBeginBody[1]="Eccomi "+System.CurrUser+"."+chr(13)+chr(10)+"Allora, la situazione è la seguente: Ho trovato il modo di parlare con Paolo, il quale mi ha spiegato tutto."+chr(13)+chr(10)+"Ha fatto una coglionata! Lo hanno licenziato illegittimamente e lui, per protesta, ha violato il server della società. Paolo non è un Hacker, a malapena lo potrei definire un Lamer, figurati che tipo di danni possa aver causato! Il problema è che lui ha confessato di aver operato come protesta proprio perche sostiene di essere stato licenziato illegittimamente. Mentre quel porco del presidente della società dice che non aveva altra scelta a causa della necessità di dover effettuare dei tagli al personale."+chr(13)+chr(10)+"Stronzate! Hanno licenziato Paolo e qualche ora dopo già c'era un'altra persona al suo posto. Devo trovare il modo di fargliela pagare a questi bastardi! E soprattutto devo aiutare Paolo. Che ne dici di darmi una mano?"+chr(13)+chr(10)+"Paolo sostiene che il suo ex datore di lavoro abbia lasciato sul fileserver file.wellmark un file di testo camuffato contenente prove schiaccianti che potrebbero inchiodare il presidente della società. Certo, Paolo ha commesso un crimine, ma se riuscissimo a dimostrare che la sua è stata solo una 'leggittima protesta' la sua condanna si ridurrebbe a una banale multa da pagare."+chr(13)+chr(10)+"Per fare ciò dovremmo trovare il modo non solo di entrare in possesso di questo file ma anche di recapitarlo in qualche maniera alla Intrapol!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Dobbiamo fare qualcosa!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="911.intrapol.1.132"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="dat.sell-20111213"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=50
+NextMission="uground\A05.miss"
+ServerIPToRemove="RefServerIP"
+ReplyMailText="Bingo!"+chr(13)+chr(10)+"Ho trovato quel file e l'ho caricato sul server di Intrapol. Credo che ora il tuo amico possa stare più che tranquillo."+chr(13)+chr(10)+"Alla prossima 1r0nch4ng!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=2
+
+MissionEndFrom[1]="1ronCh4ng@mother"
+MissionEndSubject[1]="Sei un grande!"
+MissionEndBody[1]="Fantastico "+System.CurrUser+", hai fatto davvero un lavoro eccellente!"+chr(13)+chr(10)+"Ora sono proprio curioso di vedere come cazzo farà a uscire fuori da questa storia quello stronzo del presidente della Wellmark!!"+chr(13)+chr(10)+"Alla prossima amico!"
+
+MissionEndFrom[2]="pstagna@freemail"
+MissionEndSubject[2]="GRAZIE!!!"
+MissionEndBody[2]="Ciao "+System.CurrUser+"."+chr(13)+chr(10)+"Innanzi tutto perdona la mia intrusione, ho avuto il tuo indirizzo da 1r0nch4ng."+chr(13)+chr(10)+"Volevo semplicemente ringraziarti di cuore per quello che hai fatto per me, ti sono eterno debitore."+chr(13)+chr(10)+"Grazie al tuo intervento Intrapol ha ridotto la mia pena. Niente reclusione quindi ma solo una multa di 2000 Cr. che, considerando come si stanno mettendo le cose, riuscirò a pagare senza alcun problema grazie al cospicuo risarcimento danni che otterrò dalla Wellmark."+chr(13)+chr(10)+"Non so veramente cosa dirti "+System.CurrUser+", grazie ancora, di tutto cuore!"+chr(13)+chr(10)+"Sappi che per qualsiasi tipo di evenienza io sarò sempre a tua completa disposizione."+chr(13)+chr(10)+"Un sincero saluto."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Paolo Stagna"
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=2
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Nuovi sviluppi per il caso Stagna..."
+MissionEndNewsBody[1]="E' di pochi minuti fà la notizia che vede Paolo Stagna, ex dipendente della Wellmark Italy, scagionato da tutte le accuse mosse in suo favore dai vertici stessi della presidenza societaria."+chr(13)+chr(10)+"Infatti pare che Intrapol, grazie all'intervento di un misterioso collaboratore 'occasionale', sia venuta in possesso di un documento che dimostrerebbe la totale estraneità ai fatti di Stagna. La stessa Intrapol ha ammesso di avere in mano prove tangibili riguardo un vero e proprio complotto nei confronti del malcapitato ex dipendente, messo in piedi dallo stesso Presidente della società, coadiuvato dall'aiuto di un ingegnere informatico, che avrebbe dovuto prendere il posto di Stagna all'interno della società."+chr(13)+chr(10)+"Il direttore della divisione Italiana di Intrapol ha tenuto a precisare: 'Non sappiamo chi, e per quale motivo, possa avere di sua spontanea iniziativa caricato sui nostri server tali informazioni. Dalla precisione con la quale sembra sia stata eseguita questa violazione, sospettiamo si tratti di uno dei tanti membri della Community Underground. Comunque, per questa volta siamo disposti a chiudere un occhio: L'operato di questo misterioso Hacker ci ha permesso di smascherare un grave ingiustizia. Non voglio essere frainteso ma, se possano portare tali risultati, beh... ben vengano altri tentativi di intrusione come questo!'"
+
+MissionEndNewsServerName[2]="sutra.underground"
+MissionEndNewsTitle[2]="Intrapol ringrazia l'Underground!"
+MissionEndNewsBody[2]="Propro cosi ragazzi: Sembra che un nostro membro sia riuscito a smascherare un complotto a discapito di un ex dipendente di una società italiana, trovando le prove della sua innocenza e caricandole direttamente sul database di Intrapol!"+chr(13)+chr(10)+"Il nostro misterioso amico ovviamente per portare a termine il suo compito e mantenere il suo anonimato è dovuto penetrare in crimediv.intrapol attraverso vie non 'propriamente' legali, tuttavia l'organo di vigilanza Online non solo non ha deciso di perseguire l'atto con delle indagini a tal proposito, ma piuttosto si è complimentato personalmente per l'operato!"+chr(13)+chr(10)+"Questa è una delle rare occasioni in cui dovremmo veramente essere fieri di cio che facciamo, come lo facciome, e soprattutto perchè lo facciamo."
+
+

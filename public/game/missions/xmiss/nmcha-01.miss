@@ -1,0 +1,42 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-01"
+Name="La sfida di n3v3r_MIND - Parte 1a."
+
+// Tipo Missione...
+MissionType="FileDeleting"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=0
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=true
+
+// Condizioni principali...
+RefServerIP="191.15.43.982"
+RefRemoteFileToDelete="exe.hotmeat"
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="xmiss\nmcha-02.miss"
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

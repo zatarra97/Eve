@@ -1,0 +1,52 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A20"
+Name="Conclusione"
+
+// Tipo Missione...
+MissionType=""
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1r0nch4ng@mother"
+MissionBeginSubject[1]="FANTASTICO!"
+MissionBeginBody[1]="E' fantastico "+System.CurrUser+"... TU SEI UN MITO!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"Ma ti rendi conto amico mio: SIAMO NELLA STORIA!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"Certo, nessuno mai lo sapra, o meglio nessuno saprà che siamo noi quelli che hanno buttato su tutto questo casino, ma vuoi mettere! Ahahahaha!!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"Comunque, io ora stacco: Ci voglio dare un taglio a tutta questa storia. Che ne sò, magari mi faccio una vacanza, magari mi dici di dove sei e ti vengo a conoscere di persona, che ne dici? Ahahaha!! Ok, ok, stavo scherzando!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"Adesso siamo veramenti giunti al termine di questa avventura."+chr(13)+chr(10)+
+"Sono davvero orgoglioso di aver collaborato con te "+System.CurrUser+" e spero con tutto il cuore di potermi ritrovare in futuro di nuovo al tuo fianco, magari in circostanze un pò meno complicate di questa!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"Ti saluto quindi amico mio: A presto!"+chr(13)+chr(10)+chr(13)+chr(10)+
+"1r0nch4ng"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+

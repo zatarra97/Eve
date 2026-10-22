@@ -1,0 +1,46 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="nmcha-03"
+Name="La sfida di n3v3r_MIND - Parte 3a."
+
+// Tipo Missione...
+MissionType="ServerDestruction"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="n3v3r_MIND@mother"
+MissionBeginSubject[1]="Avvertimento..."
+MissionBeginBody[1]="Ah... ora fai anche lo spiritoso eh? Mi sà che non realizzato bene contro chi ti stai mettendo, amico!"+chr(13)+chr(10)+"Ti lo ripeto: il virus era solo un avvertimento, e ti garantisco che sono stata molto buona con te! (esatto, proprio cosi, sono una femminuccia!)"+chr(13)+chr(10)+"Quindi, vedi di non farmi piu arrabbiare ok?"+chr(13)+chr(10)+"Bacioni! :***"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="n3v3r_MIND@mother"
+TargetMailSubject="Avvertimento..."
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="515.42.xfreeze.74"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=30
+NextMission="xmiss\nmcha-04.miss"
+ServerIPToRemove=""
+ReplyMailText="Mi sà che sei TU che non hai ancora capito bene contro chi ti sei messa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+

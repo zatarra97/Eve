@@ -1,0 +1,47 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A18"
+Name="La distruzione dell'Underground (Parte 1)"
+
+// Tipo Missione...
+MissionType="ClusterDestruction"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1r0nch4ng@mother"
+MissionBeginSubject[1]="Ci siamo!"
+MissionBeginBody[1]="Allora amico, ci siamo... ...ma dico io: ti rendi conto di cosa stiamo per combinare? Stiamo per distruggere l'Underground!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Va bene dai, non perdiamoci in chiacchiere. Ti ricordi quel famoso file che veniva generato dai tre script che hai recuperato a suo tempo? E' la chiave per accedere a master.666wearegone.0.1, e guarda caso il tuo caro 1r0nch4ng te la serve su di un piatto d'argento! L'ho allegata a questa mail, quindi la troverai nella tua Flashram."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Allora quello che devi fare lo dovresti sapere no? Collegati al Mainframe e fallo a pezzi una volta per tutte! La cosa migliore è quella di operare attraverso la console. Una volta dentro, elimina tutti i file di sistema e riavvia la macchina, cosi che al successivo riavvio... PUF! Gli macherà la terra sotto ai piedi, ehehehe (chissà perche ti sto dicendo come fare, del resto lo dovresti sapere da solo no? Perdonami Maestro, ma non stò piu nella pelle, ahahaha!)."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ah, dimenticavo... dico se hai ancora qualcosa da sistemare in sutra, karma e warez fallo prima di qualsiasi altra cosa, anche perche dopo il crollo del Mainframe non credo che rimarranno connessi al Network, eheheheh."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ok dai, ti lascio lavorare. In bocca al Lupo Amico!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=true
+
+// Condizioni principali...
+RefServerIP="master.666wearegone.0.1"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=750
+NextMission="uground\a19.miss"
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Il circuito Underground svanito nel nulla?"
+MissionEndNewsBody[1]="Il noto circuito mondiale dell'Underground sembra essere caduto in disgrazia: E' di qualche minuto fà infatti la notizia della sparizione dal Network dei due principali punti di riferimento della Community, ovvero i server Sutra e Warez, noti 'luoghi' di ritrovo di millioni di Hacker sparsi per il mondo."+chr(13)+chr(10)+"Vista e considerata la natura piuttosto 'segreta' di questi ultimi, non si hanno ulteriori notizie a riguardo delle motivazione che hanno causato la loro l'assenza dall'intero circuito mondiale del Network."+chr(13)+chr(10)+chr(13)+chr(10)+"Alcuni suppongo che si tratti di una normale routine di manutenzione, anche se a dire il vero, molti altri riconoscono che l'avvenimento in se per se potrebbe nascondere qualcosa di ben piu grave, considerando che in quasi dieci anni di attività è la prima volta che i server dell'Underground 'svaniscono' di colpo agli occhi dei loro seguaci senza nemmeno fornire il ben piu minimo avvetimento."+chr(13)+chr(10)+chr(13)+chr(10)+"A seguito di questa vicenda gli Analisti dell'Organizzazione Mondiale per la Monitorizzazione del Traffico di Rete hanno rilevato dei dati sconcertanti: Da quando i server dell'Underground sono spariti, il Network ha subito come una specie di accelerazione o meglio, come lo stesso Capo Analista Roger Billman ha dichiarato, 'è come se il traffico medio in uso in tutta la rete mondiale sembra essere diminuito di colpo di circa 3 millioni di unità!'."+chr(13)+chr(10)+chr(13)+chr(10)+"Se questo dato venisse confermato ufficialmente, ciò vorrebbe dire che per anni quei tre server non hanno fatto altro che 'rallentare' tutto il traffico di rete nel Network, come se fossero stati in grado di communicare segretamente di continuo con millioni di client sparsi per il mondo."+chr(13)+chr(10)+chr(13)+chr(10)+"Intrapol ha immediatamente avviato delle indagini su largha scala per far luce sull'accaduto."+chr(13)+chr(10)+"Non ci resta quindi che restare in attesa di ulteriori sviluppi."
+
+// Script iniziale.

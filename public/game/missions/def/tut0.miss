@@ -1,0 +1,45 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="tut0"
+Name="Tutorial Fase 1"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Piccoli Lamer crescono!!"
+MissionBeginBody[1]="Hey "+System.CurrUser+"! Non ci posso credere!! Cosi anche tu sei entrato a far parte della comunità? Benvenuto, amico mio."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Allora, come ti trovi con il tuo nuovo sistema operativo? Sono felice che anche tu sia dei nostri, però ora devi darti da fare. Il Network è pieno di opportunità per gente come te. Dovresti cominciare a farti qualche amico, prova su qualche chat server (ad esempio ivoice.mothernet ospita la chat ufficiale di noi 'ragazzacci' dell'underground!). Solitamente è il miglior modo per cominciare a farti delle conoscenze. Inoltre, esiste una grande comunità di Hacker, meglio conosciuta come Underground. Io ci sono dentro già da qualche mese. E' davvero un gran bel gruppo, ti consiglio di informarti. Prova a visitare il server sutra.underground, se hai installato Mother da poco dovresti averlo direttamente nella tua Network Map."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Con questo è tutto! Per il momento ti saluto e, mi raccomando, se hai qualche problema con Mother non esitare a contattarmi, mandami una mail e vedrò cosa posso fare."+chr(13)+chr(10)+""+chr(13)+chr(10)+"    1ronCh4ng"+chr(13)+chr(10)+""+chr(13)+chr(10)+"P.S. Non mi mandare mai allegati, a meno che io non te lo chieda esplicitamente. Uso un sistema di protezione che elimina tutti i messaggi con allegati non richiesti. Anzi, ti consiglio di fare così con chiunque vuoi contattare."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Piccoli Lamer crescono!!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="def\tut1.miss"
+ServerIPToRemove=""
+ReplyMailText="1ronCh4ng? Ci conosciamo??"+chr(13)+chr(10)+"Ehehe... Beh un aiutino non mi dispiacerebbe affatto!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+

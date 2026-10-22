@@ -1,0 +1,86 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=400
+MapY=99
+ServerName="microsoft.ziobill"
+IP="goodies.192.168.1"
+WelcomeText="Attenzione! Sei entrato in un server di massima sicurezza della Microsoft ©, solo il personale autorizzato può accedervi. Ma se siete di Gamesradar vi faccio entrare senza problemi e magari vi faccio anche un pompino."
+ServerType="File Server"
+TerminalInterface=FileServer
+Background=-1
+
+// Sistemi di protezione...
+Protection=Login
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=2000
+Net=100
+
+// Eccezioni...
+CantBeHacked=false
+CantBeNuked=false
+CantBeDestroyed=false
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=2
+
+Username[1]="Admin"
+Password[1]="test"
+UserClass[1]="Sysadmin"
+UserRanking[1]=100
+UserCredits[1]=0
+
+Username[2]="Guest"
+Password[2]="test"
+UserClass[2]=""
+UserRanking[2]=10
+UserCredits[2]=0
+
+// Definizione del File System...
+TotFiles=6
+
+FileName[1]="sys.kernel"
+FileDim[1]=5
+FileImg[1]=-1
+FileContents[1]="%BIN%"
+FileOwner[1]="Admin"
+
+FileName[2]="sys.system"
+FileDim[2]=20
+FileImg[2]=-1
+FileContents[2]="%BIN%"
+FileOwner[2]="Admin"
+
+FileName[3]="sys.network"
+FileDim[3]=10
+FileImg[3]=-1
+FileContents[3]="%BIN%"
+FileOwner[3]="Admin"
+
+FileName[4]="log.connections"
+FileDim[4]=2
+FileImg[4]=-1
+FileContents[4]="%BIN%"
+FileOwner[4]="Admin"
+
+FileName[5]="txt.quelli di gamesradar sono PRO"
+FileDim[5]=1
+FileImg[5]=-1
+FileContents[5]="come da titolo XD ''-_-"
+FileOwner[5]="Admin"
+
+FileName[6]="img.porno"
+FileDim[6]=1
+FileImg[6]=-1
+FileContents[6]="ci speravi eeeee?! ahuahuahuahu"
+FileOwner[6]="Admin"
+

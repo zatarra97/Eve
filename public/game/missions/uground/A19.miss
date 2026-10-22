@@ -1,0 +1,69 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A19"
+Name="La distruzione dell'Underground (Parte 2)"
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="WOOOOOW!!!"
+MissionBeginBody[1]="Porca puttana "+System.CurrUser+"... CE L'HAI FATTA!!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ma ti rendi minimamente conto di COSA CAVOLO SIAMO RIUSCITI A FARE! Uff... ok... mi calmo."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Bene, 'Ed ora?' dirai tu. Beh... ora D1l3mm4 è poco piu che un patetico Lamer. Molto probabilmente in questo preciso istante se la sarà già fatta sotto. Non ha piu difese, il suo 'Impero' gli si è frantumato fra le mani! Cos'altro dobbiamo fare quindi se non FARGLI FARE LA FINE CHE MERITA?! Le prove che abbiamo raccolto durante tutta questa storia potrebbero sostenere accuse piu che tangibili sull'operato dei Capi dell'Underground. Peccato solo che non ci siano abbastanza informazioni per poter legare il nome di D1l3mm4 a Jaques Louis De Bout. Dobbiamo riuscire a trovare il suo punto di appoggio, un qualche server che utilizzava per archiviare tutta la documentazione del suo piano. Ed una volta in possesso di questi file caricarli direttamente su crimediv. Io credo che comincierò a muovermi sul fronte Bentek... diamoci da fare amico, finiamola una volte per tutte con questa storia!"+chr(13)+chr(10)+"Mi metto subito al lavoro quindi, se riesci a scoprire qualcosa, mi raccomando, fammelo sapere!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="WOOOOOW!!!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="911.intrapol.1.132"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="arc.triad"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=800
+NextMission="uground\a20.miss"
+ServerIPToRemove=""
+ReplyMailText="Amico... dai un pò un occhiata su crimediv.intrapol? Ahahaha, D1l3mm4 è fottuto!!"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=2
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Nuovi sconcertanti sviluppi sul 'Crollo' dell'Underground..."
+MissionEndNewsBody[1]="Ci è appena giunta voce da parte degli organi competente di Intrapol, riguardo un misterioso Hacker che sembra aver fornito tutta la documentazione relativa ad un folle piano di controllo dell'intero Network messo in atto dal famossissimo Hacker D1l3mm4."+chr(13)+chr(10)+"Sembra che il noto guru dell'Underground, oramai da anni a capo dei vertici dell'organizzazione, trammasse di nascosto a discapito dell'utenza mondiale del tanto acclamato sistema operativo Mother."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Non ci è dato sapere oltre per il momento se non che Intrapol dice di essere riuscita ad individuare la persona fisica che risponde al nome di D1l3mm4."+chr(13)+chr(10)+"Tuttavia, pur uscendone piuttosto malconcia, la Community Underground viene elogiata dal capo della divisione americana di Intrapol, soprattutto per essere riuscita a sgominare i piani di questo folle, che molto probabilmente avrebbero portato ad un potenziale secondo crollo informatico mondiale."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Si ringraziano quindi i misteriosi artefici, che essendo obbligati a mantenere nascosta la loro identità, vivranno nella consapevolezza di, pur non avendo ricevuto personalmente i doverosi elogi, essere definiti come dei veri e propri salvatori del Network."+chr(13)+chr(10)+"A presto con nuovi aggiornamenti sulla vicenda."
+
+MissionEndNewsServerName[2]="newsman.wreports"
+MissionEndNewsTitle[2]="Arrestato D1l3mm4!"
+MissionEndNewsBody[2]="ULTIMO AGGIORNAMENTO: E' di qualche minuto fà la notizia che vede concludersi definitivamente la vicenda relativa al crollo dell'Underground. Sembra che Intrapol sia riuscita a smascherare e mettere mani sul responsabile di tutto il perverso piano di controllo globale del Network. Dietro la figura del tanto elogiato Master Hacker D1l3mm4, si celava il giovane imprenditore Francese Jacques De Bout, noto ai piu come maggiore azionista della società Bentek. Dal poco che è trapelato circa le indagini di Intrapol, pare che con questa manovra De Bout si volesse garantire il totale predominio di mercato della divisione Bentek al suo comando. Se tutto ciò venisse ufficialmente confermato, sarebbe davvero un duro colpo, nonche grande beffa, per tutti coloro che hanno prestato servizio nella comunità Underground, che lottando a loro credo contro il predominio delle corporazioni mondiali, non facevano altro che favorirne una in particolare. Restiamo in attesa di aggiornamenti quindi..."
+
+// Script iniziale.
+OfflineRemoveServer("666.underground.0.1")
+OfflineRemoveServer("666.underground.0.2")
+OfflineRemoveServer("666.underground.0.3")
+if(FindLocalFile("log.clientconn1")>0) DeleteLocalFile(FindLocalFile("log.clientconn1"))
+if(FindLocalFile("log.clientconn2")>0) DeleteLocalFile(FindLocalFile("log.clientconn2"))
+if(FindLocalFile("log.clientconn3")>0) DeleteLocalFile(FindLocalFile("log.clientconn3"))
+if(FindLocalFile("log.clientconn4")>0) DeleteLocalFile(FindLocalFile("log.clientconn4"))
+if(FindLocalFile("log.clientconn5")>0) DeleteLocalFile(FindLocalFile("log.clientconn5"))
+if(FindLocalFile("exe.clustercore")>0) DeleteLocalFile(FindLocalFile("exe.clustercore"))
+if(FindLocalFile("KEY.FG2GB9GD1EF2")>0) DeleteLocalFile(FindLocalFile("KEY.FG2GB9GD1EF2"))
+AddFile(FindServer("393.1.256.82"),"RE: URGENTE!",1,-1,"Da [jbvie@freemail]"+chr(13)+chr(10)+"A: [j.debout@bentekmail:147.12.36.471] (<hideway.bentekcorp:147.12.36.100>)"+chr(13)+chr(10)+"Oggetto: RE: URGENTE!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Oh fatto tutto come mi hai detto Jacques. Ho anche ricontrollato il sistema di login, ma è rimasto tutto come era..."+chr(13)+chr(10)+"Cosa sta succedendo Amore? Che cosa è questa storia? E poi che c'entrano quei pazzi dell'Underground?!"+chr(13)+chr(10)+"Ti prego, sono molto preoccupata, rispondi appena puoi!!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"> ===== MESSAGGIO ORIGINALE: ====="+chr(13)+chr(10)+"> Jannet, mi serve immediatamente il tuo aiuto!"+chr(13)+chr(10)+"> E' successo un vero casino: Qualcosa o forse qualcuno ha praticamente distrutto piu di 5 anni di lavoro: Server spariti, puff... Cosi, nel nulla!! Milioni di megabyte di informazioni sono andate a farsi fottere! Ma la cosa peggiore è che ora non abbiamo piu nemmeno contatti con l'Underground."+chr(13)+chr(10)+"> Comunque Tesoro, ti ho allegato a questa mail il file 'arc.triad'. E' un archivio protetto che contiene importantissime informazioni riguardo tutta questa storia. Devi metterle sul tuo personal server, credo che sia il posto piu sicuro per il momento."+chr(13)+chr(10)+"> MI RACCOMANDO: Appena hai caricato il tutto ELIMINA L'ALLEGATO DALLA MAIL!! Anzi se puoi cancella direttamente questo messaggio, ok?"+chr(13)+chr(10)+"> Appena hai fatto tutto avvertimi, al resto poi ci penso io."+chr(13)+chr(10)+"> Ciao Amore."+chr(13)+chr(10)+">"+chr(13)+chr(10)+"> P.S.: Molto probabilmente provvederò a cambiare la campionatura audio del sistema di Login del server, quindi tieni presente che non dovresti piu riuscire ad accederci, almeno fin quando le cose non si saranno sistemate.","jbvie")
+AddToChatLog("412.23.0.69","<jbvie> Non capisco cosa c'entra, però si ho un server proprio in america. E' nuovo di zecca, ed il mio ragazzo ci ha installato quel nuovo sistema di protezione, come si chiama? Quello con il controllo vocale degli accessi... Comunque il server è hime.bentekamerica")
+AddToChatLog("412.23.0.69","<marychik> Controllo vocale dici jbvie? Ah si! il VRSL!! Credo cosi si chiami. O almeno cosi dice quel pazzo, ehehehe...")
+AddToChatLog("412.23.0.69","<jbvie> Pazzo dici?!")
+AddToChatLog("412.23.0.69","<marychik> Ahahaha jbvie, proprio cosi! E' un tizio Italiano che ho conosciuto di recente. Dice che fà il Programmatore di Videogame e vanta di continuo la sua eccezionale bravura... Mah, secondo me è un fallito!")

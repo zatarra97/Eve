@@ -1,0 +1,48 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="tut1"
+Name="Tutorial Fase 2"
+
+// Tipo Missione...
+MissionType=""
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Ecco l'aiuto..."
+MissionBeginBody[1]="Allora, vedo che non hai perso il senso dell'umorismo! E vedo anche che hai bisogno di aiuto... Dunque, per facilitarti le cose ho allegato a questa mail un piccolo programmino. Tutti gli allegati che ricevi vengono automaticamente salvati nella tua flashram, quindi dovresti trovare una nuova voce nel menu del Pulsante Applicazioni, e più precisamente 'tut_hack-1.0'. Avvialo e segui attentamente le istruzioni, dovrebbe essere più che sufficiente!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddFile(System,"tut_hack-1.0",3,-1,tut_hack,System.CurrUser)
+

@@ -1,0 +1,54 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-120-50-01"
+Name="Informazioni Riservate"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-120-50-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-120-50-01"
+MissionBeginBody[1]="Questi ultimi giorni rappresentano un momento molto delicato per le corporazioni mondiali. Infatti la chiusura dei bilanci annuali coincide con l'attuale periodo. Come puoi immaginare, in questi casi i protocolli di sicurezza delle società coinvolte raggiungono livelli a dir poco paranoici che le spingono persino a configurare server provvisori con il solo scopo di fornire un appoggio sicuro al transito delle loro informazioni sensibili."+chr(13)+chr(10)+"Il nostro canale anonimo di informatori ci ha segnalato che da qualche giorno è operativo nel Network un nuovo file server che dovrebbe servire da appoggio per la società ENSAT. Questa società è da anni coinvolta in un accordo illegale con Telemark atto a garantire a entrambe posizioni dominanti nei loro rispettivi settori di mercato. Telemark paga ENSAT per riprogrammare l'hardware dei propri satelliti al fine di garantire maggiori prestazioni per il proprio traffico dati!"+chr(13)+chr(10)+"Fino ad ora non abbiamo mai avuto la possibilità di poter raccogliere prove concrete a favore di quelle che sembrano solo illazioni ma ora le cose sono cambiate. Sembra infatti che uno dei nostri agenti abbia rintracciato un traffico dati protetto da una chiave di cifratura proprietaria a 8196 bit dal server centrale di Telemark verso l'indirizzo ip 432.561.12.15. Abbiamo analizzato una piccola parte dei dati e, tentando di ricostruire la struttura bit a bit, siamo riusciti a risalire al nome di un file, 'dat.unreg7285923', che con molta probabilità potrebbe contenere le informazioni che stiamo cercando da più di due anni."+chr(13)+chr(10)+"Il tuo compito è quello di penetrare in questo server e rubare il file in questione quindi inviarlo allo stesso indirizzo di questa mail, possibilmente senza lasciare la minima traccia di violazione remota. Il server è provvisorio quindi ENSAT non dovrebbe aver investito molto sui sistemi di protezione. Molto probabilmente sarà protetto da una semplice interfaccia di login e quindi non dovrebbe essere un problema violarlo. Tuttavia cerca di restare il più possibile nell'anonimato ed evita l'uso di password cracker. Il file da scaricare è molto grande e non sappiamo se possiedi banda sufficiente per tirarlo giù e impedire contemporaneamente un backtrace. La strategia migliore potrebbe essere quella di cercare di investigare sull'Admin e trovare un modo per conoscere i dati di autenticazione. Puoi provare a vedere se trovi qualcosa su IVoice riguardante ENSAT, l'Admin dovrebbe essere un vecchio hacker della comunità."+chr(13)+chr(10)+"Il compenso per questa missione è di 50 crediti. Riceverai il pagamento direttamente sul tuo conto attraverso il sistema automatico di accredito una volta che avrai consegnato il file via email protetta."+chr(13)+chr(10)+"Come ultima cosa ti ricordo che questa casella di email è stata configurata per ricevere solamente messaggi che contengano come allegato il file che devi recuperare. Non utilizzarla per altri motivi. In caso di esito positivo questa casella verrà eliminata automaticamente."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-120-50-01@underground"
+TargetMailSubject="Sottoscrizione No. A-120-50-01"
+TargetMailAttachment="dat.unreg7285923"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=50
+ExtraRanking=15
+NextMission=""
+ServerIPToRemove="432.561.12.15"
+ReplyMailText="Missione conclusa! I miei soldi please..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-120-50-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Ottimo lavoro!"+chr(13)+chr(10)+"Abbiamo già provveduto a effettuare un accredito di 50 Cr. direttamente sul tuo conto, verifica con i tuoi occhi."+chr(13)+chr(10)+"Ti salutiamo, ringraziandoti e invitandoti a tornare presto su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="sutra.underground"
+MissionEndNewsTitle[1]="ENSAT gioca sporco..."
+MissionEndNewsBody[1]="Grazie ad una nostra recente operazione, siamo venuti a conoscenza di alcuni dettagli riguardo i bilancia della società ENSAT, che testimoniano di come questa corporazione da diverso tempo a questa parte, sia coinvolta in illeciti di denaro con alcuni partner mondiali, tra cui Telemark. Tutta la documentazioni dettagliata è gia stata consegnata ad Intrapol, dalla quale auspichiamo un celere e risolutivo intervento. Restate in attesa di futuri aggiornamenti quindi. Nel frattempo, un doveroso ringraziamento da parte di tutta la community, ai misteriosi utenti che ci hanno permesso di venire in possesso di tali informazioni. Grazie ancora ragazzi!"
+
+

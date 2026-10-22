@@ -1,0 +1,47 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A14"
+Name="la silenziosa vendetta (Parte 2)"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Fantastico!"
+MissionBeginBody[1]="Cioè: ci sei riuscito!"+chr(13)+chr(10)+"Hai fregato la prima parte dello script?!?! Ahahaha, non ho parole davvero "+System.CurrUser+"!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Comunque non facciamoci prendere da facili entusiasmi ok? Ora devi pensare a recuperare il secondo frammento sul mirror di warez.underground. Appena ce l'hai (se ce la fai a prenderlo ovviamente ;P) mandamelo subito."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Spero tu ce la faccia "+System.CurrUser+", in bocca al lupo!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Fantastico!"
+TargetMailAttachment="run.2942_side"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=85
+NextMission="uground\a15.miss"
+ServerIPToRemove=""
+ReplyMailText="Che per caso ti serve anche questo?"
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+

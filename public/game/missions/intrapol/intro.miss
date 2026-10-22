@@ -1,0 +1,49 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="intro"
+Name="Strategie alternative"
+
+// Tipo Missione...
+MissionType=""
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="Tikhomir@intrapol"
+MissionBeginSubject[1]="Accesso non autorizzato!"
+MissionBeginBody[1]="Complimenti "+System.CurrUser+"!"+chr(13)+chr(10)+"Lascia che mi presenti. Mi chiamo Tikhomir e sono un agente della divisione russa Intrapol. Ho visto il lavoretto che hai portato a termine per l'Underground sul server di FinalNET. Lavoro pulito, senz'altro. Tuttavia sono riuscito a rintracciarti quindi, non sei stato poi cosi attento giusto?"+chr(13)+chr(10)+""+chr(13)+chr(10)+"In questo momento ti starai chiedendo per quale motivo ti è arrivata questa mail, invece di una notifica di violazione, eh? Semplice, credo che sia un vero peccato che un talento come il tuo venga bruciato sul nascere, a causa di una stupidissima distrazione, non credi anche tu? Comunque, tagliamo la testa al toro e veniamo al dunque: Avrei una proposta da farti..."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Da qualche mese è operativo nel Network un nostro Subscription Server. Lo sò che ti sembrerà stravagante, ma stiamo tentando una strategia completamente diversa, un aproccio che possa dimostrarsi ben piu risolutivo rispetto ai risultati delle strategie finora adottate. Ti stai chiedendo se tutto ciò è legale? Ti rispondo io: No! Ma cè una grande differenze tra cio che è illegale e ciò che è criminale, giusto? A volte, se usata a fin di bene, l'illegalità può essere una valida risorsa per combattere il crimine. Tu ne sai qualcosa verò? Sono o non sono gli stessi principi sui quali si basa l'Underground?"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ok, bene. Comunque, tornando alla proposta: ho fatto sparire io stesso qualsiasi traccia dell'errore che hai commesso durante la tua ultima violazione. Cosa voglio in cambio? Voglio che valuti attentamente cosa ho da offrirti. Questo non è un ricatto. Non voglio ne soldi, ne piaceri sotto banco. E nemmeno voglio metterti contro i tuoi 'padroni'. 'Attenzione', ecco cosa ti stò chiedendo: la tua attenzione verso la mia causa. Vieni a dare un occhiata alle sottoscrizioni, forse ci puoi trovare qualcosa di interessante. Nessuno ti obbliga ad accettarle. Sei libero di fare quello che vuoi. Sappi però che non ci saranno premi in denaro. La mia divisione non ha autorizzato questo tipo di operazioni, anzi nemmeno ne è a conoscenza! Quindi non esistono ne finanziamenti, ne fondi per pagare eventuali sottoscrittori."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Puoi accedere al server collegandoti a '911.intrapol.1.1'. La connessione è protetta da Firewall, utilizza il proxy 'ax54.russianlinker'. Dimenticavo: Non tentare la risoluzione del server, la macchina è protetta dal Server Hiding. Questo è tutto. Spero tu voglia accettare la mia proposta. In caso contrario nessun rancore."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Tikhomir"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToNetworkMap("911.intrapol.1.1")
+AddToNetworkMap("911.intrapol.1.254")
+

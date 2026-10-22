@@ -1,0 +1,40 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=1100
+MapY=400
+ServerName="ivoice.mothernet"
+IP="412.23.0.69"
+WelcomeText="ivoice.mothernet Chat Server Ufficiale della Community di Mother"
+ServerType="Chat Server"
+TerminalInterface=ChatServer
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=9000
+Net=100
+
+// Eccezioni...
+CantBeHacked=true
+CantBeNuked=true
+CantBeDestroyed=true
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=0
+
+Logs=0
+

@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A17"
+Name="Ignari Alleati"
+
+// Tipo Missione...
+MissionType="ClusterCreation"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="Ci sono novità!"
+MissionBeginBody[1]="Abbiamo fatto Bingo amico!!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Sbirciando per bene nel codice degli script che ti sei fregato sono riuscito a capire come farli funzionare parallelamente. Volendo, posso anche riuscire a simulare le condizioni tali per cui gli script vengano eseguiti in remoto senza destare alcun sospetto!"+chr(13)+chr(10)+"E non finisce qui: Questi script creano un file binario molto simile ai dump della memoria delle chiavi cifrate hardware. Hai presente? Che sia la nostra chiave d'accesso per master.666wearegone.0.1?!"+chr(13)+chr(10)+"Non oso immaginare cosa possiamo fare quindi... e non vedo l'ora di fargli il culo a strisce a quel francese di merda!"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ma facciamo il punto della situazione: Ti ho allegato alla mail questa presunta chiave di accesso MA, prima di tutto, come dovresti già sapere, se tentiamo di accedere ad un server protetto da chiave cifrata con un semplice dump, parte subito il backtrace: Figuriamoci quindi quanto ci metterebbe D1l3mm4 a rintracciarci con un Cluster! Allora ho pensato di affidarci ad alcuni 'inconsapevoli' alleati, cosi tanto per avere un pò di 'fiato in piu'."+chr(13)+chr(10)+"Praticamente il piano è questo: Ci facciamo un piccolo Cluster pure noi sfruttando la larghezza di banda di qualche Personal Server, giusto quello che basta per permetterci di avere abbastanza copertura per poter accedere indisturbati a master.666wearegone.0.1."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Ho allegato a questa mail il file 'exe.clustercore', ovvero una particolare backdoor che dovrai caricare su almeno 5 Personal Server (non credo sia per te un problema trovarli no?)."+chr(13)+chr(10)+"Una volta installato, questo programmino si collegherà al tuo sistema e metterà a tua completa disposizione tutta la banda della macchina che lo ospita."+chr(13)+chr(10)+"A connessione stabilita, tutte le info verranno memorizzate direttamente sulla tua flashram in appositi file chiamati 'dat.clusterconnX' (dove al posto di 'X' ci troverai il numero corrispondente all'ID della connessione)."+chr(13)+chr(10)+"Tutto chiaro?"+chr(13)+chr(10)+""+chr(13)+chr(10)+"Bene, allora mettiamoci subito al lavoro: Cerca questi 5 Personal Server, caricaci le Backdoor, quindi ricontattami per email."+chr(13)+chr(10)+"E mi raccomando: Che non ti venga in mente di fare stronzate su master.666wearegone.0.1, per carita! Quando sarà il momento giusto glie lo friggeremo quel cazzo di server!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="Ci sono novità!"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+ClusterExeName="exe.clustercore"
+ClusterMaxClients=5
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=55
+NextMission="uground\a18.miss"
+ServerIPToRemove=""
+ReplyMailText="Ok, io qui ho finito, quando vuoi sono pronto..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddFile(System,"KEY.FG2GB9GD1EF2",1,-1,"%SYSTEM%",System.CurrUser)
+AddFile(System,"exe.clustercore",8,-1,"%SYSTEM%",System.CurrUser)

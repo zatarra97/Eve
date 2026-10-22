@@ -1,0 +1,11 @@
+// *************************************************************
+//      Hello World
+//
+// Visualizza un box messaggio e interrompe lo script.
+// *************************************************************
+
+// Visualizza un box messaggio contenente il testo specificato nela parametro.
+MsgBox("Hello World!")
+
+// Interrompe l'esecuzione delle script.
+ExitScript() // interrompe l'esecuzione ciclica dello script.

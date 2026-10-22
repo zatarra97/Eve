@@ -1,0 +1,56 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-135-150-01"
+Name="Una piccola lezione"
+
+// Tipo Missione...
+MissionType="FileDeleting"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-135-150-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-135-150-01"
+MissionBeginBody[1]="Grazie per aver accettato questa sottoscrizione."+chr(13)+chr(10)+"Il tuo compito è quello di penetrare il file server 'athem.finalnet' e cancellare il file 'dat.reg728-772'."+chr(13)+chr(10)+"Non c'è niente di particolare dietro questa operazione se non una nostra legittima risposta all'affronto dell'ex membro SirBrown, il quale non solo ha deciso di abbandonarci per un'offerta da parte della corporazione FinalNET ma pare che abbia fornito alla Intrapol importanti informazioni su nostre precedenti azioni."+chr(13)+chr(10)+"Vista l'importanza 'etica' di questa missione abbiamo deciso di premiare chiunque riesca nell'impresa con un importo di 150 Crediti."+chr(13)+chr(10)+"Come ultima cosa ti avvertiamo di aver allegato alla presente il link per la tua NetworkMap ad athem.finalnet."+chr(13)+chr(10)+"Ringraziandoti ancora per aver accettato la nostra proposta ti salutiamo con un in bocca al lupo ricordandoti di utilizzare questo indirizzo solo ed esclusivamente per notificare l'avvenuto compimento della missione."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-135-150-01@underground"
+TargetMailSubject="Sottoscrizione No. A-135-150-01"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="837.762.1.3"
+RefRemoteFileToDelete="dat.reg728-772"
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=150
+ExtraRanking=25
+NextMission="intrapol\intro.miss"
+ServerIPToRemove="RefServerIP"
+ReplyMailText="SirBrown non è più un problema ora. Aspetto la mia ricompensa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-135-150-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Complimenti!"+chr(13)+chr(10)+"Sei riuscito a completare con successo questa missione. Abbiamo già provveduto a effettuare un accredito di 150 Cr. direttamente sul tuo conto."+chr(13)+chr(10)+"Ti salutiamo, ringraziandoti e invitandoti a tornare presto su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="La sicurezza di Mother messa in serio pericolo..."
+MissionEndNewsBody[1]="Il noto sistema operativo Mother, famoso per la sua presunta quasi totale 'immunità' nei confronti delle attuali minacce virali informatiche, sembra questa volta essere stato preso di mira da un gruppo di Crackers, i quali sono riusciti a creare un virus informatico in grado di intaccare e danneggiare irreversibilmente il tanto decantato sottosistema di rete di questo OS. A quanto pare il virus (chiamato MotherXucker) sembra sia in grado di danneggiare irreversibilmente il modulo per la gestione delle connessioni remote, al punto da rendere Mother completamente inutilizzabile! Il team di sviluppo di Mother, ha annunciato ufficialmente di essere al lavoro per correggere quanto prima il bug che dovrebbe permettere al virus di agire indisturbato. Nel frattempo, in attesa di futuri aggiornamenti, invitiamo tutti gli utenti di questo sistema operativo di fare molta attenzione ad eventuali downloads poco sicuri, magari munendosi preventivamente di un buon antivirus. Gli stessi programmatori di Mother ci hanno invitato a rendere ufficiale il rilascio di una versione gratuita di UAVsys, noto antivirus sviluppato appositamente per gli utenti dell'Underground, reperibile sul solo Software Server warez.underground."
+
+// Script iniziale.
+AddToNetworkMap("837.762.1.3")
+

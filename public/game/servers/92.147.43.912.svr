@@ -1,0 +1,38 @@
+/* ***********************************************************************************************
+     File di definizione Server generato automaticamente da 'ServerMaker' [Mother's EditTools]
+*********************************************************************************************** */
+
+// Configurazione principale del Server...
+MapX=732
+MapY=413
+ServerName="web.neowase"
+IP="92.147.43.912"
+WelcomeText="Webserver 'web.neowase'"+chr(13)+chr(10)+"Nessuna informazioni di questo server è accessibile tramite un Terminal Server. Aprire un Browser e digitare l'indirizzo 'http2://web.neowase'."
+ServerType="Web Server"
+TerminalInterface=-1
+Background=-1
+
+// Sistemi di protezione...
+Protection=-1
+Firewall=false
+FirewallMask="*.*.*.*"
+
+// Specifiche Hardware...
+Cpu=9000
+Net=60
+
+// Eccezioni...
+CantBeHacked=false
+CantBeNuked=false
+CantBeDestroyed=false
+
+// Impostazioni di MissGen...
+AllowRandomMission=false
+MissGenFaction=""
+
+// Definizione degli Account...
+Users=0
+
+// Definizione del File System...
+TotFiles=0
+

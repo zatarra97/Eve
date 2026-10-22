@@ -1,0 +1,56 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-110-40-02"
+Name="Il Cancro del Network"
+
+// Tipo Missione...
+MissionType="ServerDestruction"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-110-40-02@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-110-40-02"
+MissionBeginBody[1]="C'è giunta l'ennesima inquietante segnalazione che rivendica l'esistenza di un fileserver mascherato da sito web corporativo, operante lo scambio e l'archiviazione di materiale pedofilo."+chr(13)+chr(10)+"Il server in questione è 'web.neowase' ma, anche se porta il nome della Neowa Sud Electrics, non svolge alcun tipo di funzione per questa società anzi, la stessa azienda sud africana ha dimostrato di non essere in alcun modo responsabile dell'esistenza di tale server."+chr(13)+chr(10)+"In questo caso è nostro dovere agire tempestivamente al fine di eliminare una volta per tutte questo server dal Network."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-110-40-02@underground"
+TargetMailSubject="Sottoscrizione No. A-110-40-02"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="92.147.43.912"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=40
+ExtraRanking=5
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="E' stato un vero piacere buttare giù questo server! Ora però parliamo di ricompensa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-110-40-02@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Ottimo lavoro!"+chr(13)+chr(10)+"La cifra di 40 Cr. è stata accreditata direttamente sul tuo conto, controlla pure."+chr(13)+chr(10)+"Ti salutiamo, ringraziandoti e invitandoti a tornare presto su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Telemark, il nemico numero 1 dell'Underground!"
+MissionEndNewsBody[1]="Da quanto ammesso da Telemark stessa, coadiuvata da i resoconti ufficiali delle ultime analisi statistiche riguardo la sicurezza informatica mondiale, pare che la corporazione europea sia il bersaglio preferito di Hacker, o anche semplici utenti, della comunità Underground. 'Non riusciamo bene a comprendere il perche di questa ondata di odio nei nostri confronti' - questa la piu che leggittima affermazione dell'Amministratore Delegato della Divisione Nord Europea di Telemark, aggiungendo che: 'Se questa tendenza non avrà il giusto ridimensionamento, saremo costretti ad intervenire, attraverso un massiccio investimento che prevedra il finanziamento di speciali commissioni di indagine, proprio al fine di supportare Intrapol nel tenttivo di porre fine a questa inutile ed immotivata guerra dell'Underground nei nostri confronti'. Insomma, Telemark tira fuori i denti!"
+
+// Script iniziale.
+AddToNetworkMap("92.147.43.912")
+

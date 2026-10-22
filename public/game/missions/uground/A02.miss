@@ -1,0 +1,48 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A02"
+Name="Benvenuto su karma.underground"
+
+// Tipo Missione...
+MissionType="GetRanking"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="staff@underground"
+MissionBeginSubject[1]="Un ringraziamento dalla Community"
+MissionBeginBody[1]="Caro "+System.CurrUser+", la comunità Underground ha apprezzato molto quello che hai fatto per riscattare un suo membro. Non è la prima volta che s0ftm4rk si mette nei guai ma questa volta aveva superato ogni limite. Avevamo deciso, nostro malincuore, di espellere s0ftm4rk dall'Underground tuttavia, grazie al tuo esemplare intervento, abbiamo deciso di concedere al ragazzo un'altra chance. Con ciò non vogliamo che tu ci fraintenda. Il nostro compito all'interno del Network è chiaro: salvaguardare la libertà di informazione. E purtroppo, considerando le attuali leggi, la riservatezza delle nostre identità è il fondamento primo della nostra community, anche se il suo mantenimento deve costare la libertà di qualcuno. Se vuoi (a meno che tu non l'abbia già fatto) ti invitiamo a visitare sutra.underground. Lì potrai leggere il nostro manifesto, le regole sulle quali si basa la comunità."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Come ultima cosa vogliamo dirti che abbiamo analizzato i tui dati, constatato che lavori decisamente bene e che sai difendere il tuo anonimato. Considerando che l'underground ha bisogno di gente come te, permettici di offriti l'accesso a karma.underground. Da questo server puoi avere accesso a tutte le 'proposte di lavoro' della community, il modo più diretto per renderti effettivamente conto di quali sono le battaglie che combattiamo tutti i giorni e, soprattutto, del motivo che ci spinge ad affrontarle."+chr(13)+chr(10)+""+chr(13)+chr(10)+"Per il momento ti salutiamo, ringraziandoti nuovamente per tutto ciò che hai fatto."+chr(13)+chr(10)+""+chr(13)+chr(10)+"D1l3mm4 e l'intero staff della comunità Underground."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom=""
+TargetMailSubject=""
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=250
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=0
+NextMission="uground\A03.miss"
+ServerIPToRemove=""
+ReplyMailText=""
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToNetworkMap("666.underground.0.3")
+

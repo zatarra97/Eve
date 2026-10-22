@@ -1,0 +1,50 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A12"
+Name="Rivelazioni"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="1ronCh4ng@mother"
+MissionBeginSubject[1]="CHE CASINO!"
+MissionBeginBody[1]="Benone. Ora possiamo finalmente stare tranquilli e studiare una contromossa. Dobbiamo riuscire a trovare maggiori informazioni possibili. Temo che uscire fuori da questa storia non sarà facile come violare un VRLS! Comunque, se nel frattempo riesci a scoprire qualche cosa in piu su D1l3mm4 e la Bentek, non esitare a contattarmi. E mi raccomando: Cerca di non cambiare atteggiamento verso la community. Del resto anche loro sono vittime di questa grande menzogna tanto quanto noi!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="1ronCh4ng@mother"
+TargetMailSubject="CHE CASINO!"
+TargetMailAttachment="doc.mother"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=0
+ExtraRanking=15
+NextMission="uground\a13.miss"
+ServerIPToRemove=""
+ReplyMailText="1r0n, guarda cosa sono riuscito a trovare, non crederai ai tuoi occhi! Dobbiamo fare qualcosa: Credo che ora sia giunto il momento di pensare a quel verme di D1l3mm4..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=0
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=0
+
+// Script iniziale.
+AddToChatLog("412.23.0.69","<TheJudge> Beh, io sapevo che D1l3mm4 aveva partecipato alla famosa 'Mietitura di TelemarkONE', giusto?")
+AddToChatLog("412.23.0.69","<Gold3n^HATE> D1l3mm4 alla 'Mietitura di TelemarkONE?!?! Ma sei sicuro?")
+AddToChatLog("412.23.0.69","<H1sTeR1A> Si confermo, D1l3mm4 ha partecipato alla Mietitura di TelemarkONE. Non si sà niente a riguardo perche pare che allora utilizzasse un altro nick...")
+AddToChatLog("412.23.0.69","<H1sTeR1A> E' verò, la Mietitura di TelemarkONE è stata una delle piu grandi sconfitte dell'Underground, tuttavia sò per certo che in quel caso D1l3mm4 è stato l'unico a non farsi beccare.")

@@ -1,0 +1,56 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-210-180-01"
+Name="Partnership sospetta"
+
+// Tipo Missione...
+MissionType="SendMailTo"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-210-180-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-210-180-01"
+MissionBeginBody[1]="Grazie ad un spyworm caricato sul server di Puresun siamo venuti a conoscenza di strani movimenti di denaro verso il conto privato della divisione australiana di FinalNET."+chr(13)+chr(10)+"Abbiamo anche intercettato un flusso di dati criptati dai server americani di Puresun, verso il server australian.finalnet. Da quel poco che siamo riusciti a decifrare sembra che si tratti di una specie di aggiornamento di un file di progetto."+chr(13)+chr(10)+"E' come se Puresun controllasse a distanza un piano di aggiornamento software per FinalNET, spostando piccole cifre alla volta, aggiornando questo file come se fosse una 'TODO LIST', esattamente dopo ogni movimento di denaro."+chr(13)+chr(10)+"Devi trovare il file in questione, riuscire a rubarlo e spedircelo per email. Il nome è syd.01735331621."+chr(13)+chr(10)+"Cerca di essere molto riservato, e stai particolarmente attento: l'Admin è Papav3ro, una vecchia conoscenza dell'Underground, un Code Hacker molto in gamba!"
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-210-180-01@underground"
+TargetMailSubject="Sottoscrizione No. A-210-180-01"
+TargetMailAttachment="syd.01735331621"
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP=""
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded=""
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=180
+ExtraRanking=20
+NextMission=""
+ServerIPToRemove="837.719.21.439"
+ReplyMailText="Eccovi il file... Dove sono i miei soldi?"
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-210-180-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Fantastico!"+chr(13)+chr(10)+"Abbiamo già provveduto a versare 140 Cr. sul tuo conto. Complimenti "+System.CurrUser+", ti aspettiamo nuovamente su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="newsman.wreports"
+MissionEndNewsTitle[1]="Il triangolo Puresun, ENSAT e Telemark? Solo illazioni!"
+MissionEndNewsBody[1]="Questa sembra essere la conclusione definitiva riguardo la vicenda che ha visto coinvolte tre delle corporazioni mondiali piu grandi del Network, accusate di illeciti e movimentazioni sospette di denaro. In pratica, sembra che tutte le parti in causa siano riuscite a dimostrare che, le presunte informazioni caricate da misteriosi utenti del Network nei server di Intrapol non siano state altro che un abile manipolazione di dati, atta a screditare l'operato delle corporazioni coinvolte. E' ora lecito attendersi una risposta da parte dei vertici della community Underground, la quale sembra essere la principale sostenitrice delle accuse rivolte ai tre colossi mondiali."
+
+// Script iniziale.
+AddToNetworkMap("837.719.21.439")
+

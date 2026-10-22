@@ -1,0 +1,57 @@
+/* **************************************************************************************************
+     File di definizione Missione generato automaticamente da 'MissionMaker' [Mother's EditTools]
+************************************************************************************************** */
+
+// Identificativi Missione...
+ID="A-410-230-01"
+Name="L'Installer"
+
+// Tipo Missione...
+MissionType="FileUploading"
+
+// Messaggi di inizio Missione...
+MissionBeginMessages=1
+
+MissionBeginFrom[1]="A-410-230-01@underground"
+MissionBeginSubject[1]="Sottoscrizione No. A-410-230-01"
+MissionBeginBody[1]="Con un pizzico di fortuna siamo riusciti a rintracciare il particolare server che periodicamente Telemark utilizza per gestire gli aggiornamenti remoti delle proprie macchine remote."+chr(13)+chr(10)+"Considerando che questi upgrade software coinvolgono la maggiorparte dei server europei ed asiatici della società, ben comprenderai l'importanza dell'occasione che ci si pone dinnanzi: se riuscissimo a caricare uno software in grado di replicarsi autonomamente ed in maniera completamente invisibile, su tutte le macchine della corporazione, potremmo ottenere la possibilità di monitorare costantemente Telemark!"+chr(13)+chr(10)+"Qui entri in gioco tu: abbiamo allegato alla presente il file 'exe.setupnt' che andrebbe caricato su 'east3.telemark' (il cui collegamento della Network Map è stato anch'esso allegato a questo messaggio). Questa volta però non si tratta di una violazione qualunque. Infatti la macchina in questione è protetta da un sistema di autenticazione basato su chiave cifrata. In pratica per poter accedere al server dovresti possedere un dispositivo simile ad una Flash Ram, fisicamente collegato su uno slot USB del tuo computer!"+chr(13)+chr(10)+"Detta cosi sembra essere un impresa impossibile, tuttavia sembra che qualcuno sia riuscito a trovare un modo per bypassare il sistema di sicurezza."+chr(13)+chr(10)+"Queste sono le uniche informazioni in nostro possesso a tal riguardo. Ti auguriamo buona fortuna, sperando in un tuo brillante successo."
+
+// Mail a cui rispondere per concludere la missione...
+TargetMailFrom="A-410-230-01@underground"
+TargetMailSubject="Sottoscrizione No. A-410-230-01"
+TargetMailAttachment=""
+NoMailNeeded=false
+
+// Condizioni principali...
+RefServerIP="10.258.291.47"
+RefRemoteFileToDelete=""
+RefRemoteFileUploaded="exe.setupnt"
+TargetChatServerIP=""
+RankingToGet=0
+LocalFileName=""
+
+// Parametri di fine Missione...
+Credits=230
+ExtraRanking=70
+NextMission=""
+ServerIPToRemove=""
+ReplyMailText="Il file è stato caricato come richiesto. Aspetto la mia ricompensa..."
+
+// Messaggi di fine Missione...
+MissionEndMessages=1
+
+MissionEndFrom[1]="A-410-230-01@underground"
+MissionEndSubject[1]="Sottoscrizione completata!"
+MissionEndBody[1]="Complimenti "+System.CurrUser+"!"+chr(13)+chr(10)+"Questa volta hai davvero fatto un ottimo lavoro! Abbia già accreditato sul tuo conto i 130 Cr promessi."+chr(13)+chr(10)+"Ti ringraziamo ancora, invitandoti a tornare nuovamente su karma.underground."
+
+// Eventuali News da aggiungere a fine Missione...
+MissionEndNews=1
+
+MissionEndNewsServerName[1]="sutra.underground"
+MissionEndNewsTitle[1]="Integrità dei sistemi Telemark a rischio..."
+MissionEndNewsBody[1]="Ci è appena giunta la notizia riguardo una violazione effettuata da un nostro membro sul server est-europeo di Telemark. Pare che l'utente in questione sia riuscito niente meno che a violare il famigerato e tanto temuto sistema di autenticazione a chiave cifrata! Telemark sembra aver accusato il colpo in maniera piuttosto pesante, considerando che a seguito della violazione ha deciso di istituire una speciale commissione interna, con il solo scopo di far luce su eventuali responsabilità attribuibili al personale coinvolto nella gestione sia del server east3.telemark, che di privteam.telemark, macchina privata finora utilizzata dagli amministratori di sistema della corporazione come strumento di appoggio per operazioni di scambio dati."
+
+// Script iniziale.
+AddToNetworkMap("10.258.291.47")
+AddFile(System,"exe.setupnt",39,-1,"bin",System.CurrUser)
+

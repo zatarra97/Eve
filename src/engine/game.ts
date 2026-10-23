@@ -22,6 +22,8 @@ export type GameEvent =
 	| { type: "traced"; ip: string }
 	| { type: "console"; line: string }
 	| { type: "ui"; action: "msgbox" | "console" | "sysmon" | "netmap"; arg?: string | number }
+	/** Apertura di un programma in flashram: id = FileContents (uavsys, momamp…), name = nome del file */
+	| { type: "program"; id: string; name: string }
 
 /** Operazione che richiede tempo (download, cracking…), mostrata nel Sysmon */
 export interface Task {

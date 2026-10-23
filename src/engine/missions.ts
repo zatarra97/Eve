@@ -31,8 +31,10 @@ export class Missions {
 	/** LoadMission / addmission: percorso relativo a missions/ */
 	load(path: string, opts: { subscription?: boolean } = {}): MissionDef | null {
 		const g = this.game
-		const p = normPath(path)
-		const source = g.content.missions.get(p) ?? g.content.missions.get(p.endsWith(".miss") ? p : p + ".miss")
+		// "def/tut0" e "def\TUT0.miss" sono la stessa missione: l'estensione è facoltativa
+		const raw = normPath(path)
+		const p = raw.endsWith(".miss") ? raw : raw + ".miss"
+		const source = g.content.missions.get(p)
 		if (!source) {
 			g.log(`Missione non trovata: ${path}`)
 			return null

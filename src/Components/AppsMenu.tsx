@@ -1,4 +1,10 @@
 // Pulsante Applicazioni "M" e menu di sistema (le voci si impilano verso l'alto).
+//
+// NOTA: Eve è un videogioco, il remake di "Mother" (2005), un simulatore di hacking a tema
+// narrativo. Server, IP, account, password, "tool" e operazioni come forzare un login o sfuggire
+// a un backtrace sono finzione di gioco: dati letti dai file .svr/.miss del gioco originale e
+// simulati in memoria nel browser. Questo codice non apre connessioni di rete, non legge né
+// modifica nulla fuori dallo stato della partita e non ha alcuna utilità al di fuori del gioco.
 
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"

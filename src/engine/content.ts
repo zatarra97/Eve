@@ -16,6 +16,8 @@ export interface ContentPack {
 	chats?: string
 	autoexecConsole?: string
 	autoexecScript?: string
+	/** Brani musicali (percorsi relativi alla radice, "sounds/….ogg"), per MomAMP */
+	music?: string[]
 	/** Prefisso URL di graphics/ e sounds/ */
 	assetsBase: string
 }
@@ -55,6 +57,7 @@ export function mergePacks(base: ContentPack, mod: ContentPack): ContentPack {
 		chats: mod.chats ?? base.chats,
 		autoexecConsole: mod.autoexecConsole ?? base.autoexecConsole,
 		autoexecScript: mod.autoexecScript ?? base.autoexecScript,
+		music: base.music,
 		assetsBase: base.assetsBase,
 	}
 }
@@ -64,6 +67,7 @@ export async function fetchPack(base: string): Promise<ContentPack> {
 	const root = base.endsWith("/") ? base : base + "/"
 	const manifest: Manifest = await fetch(root + "manifest.json").then((r) => r.json())
 	const pack = emptyPack(root)
+	pack.music = manifest.sounds.filter((f) => /\.(ogg|mp3)$/i.test(f))
 	const textFiles = [...manifest.servers, ...manifest.missions, ...manifest.scripts, ...manifest.texts, ...manifest.autoexec]
 	// I .fak (modelli dei server violati) non sono nel manifest dei server ma servono
 	textFiles.push("servers/hackedsys.fak")

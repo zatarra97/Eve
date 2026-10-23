@@ -1,6 +1,6 @@
 // Desktop di Mother: ciclo di gioco, eventi del motore e composizione dei pannelli.
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState, type ReactNode } from "react"
 import { asset } from "@/assets"
 import { Game } from "@/engine/game"
 import { loadAccount, saveAccount } from "@/engine/save"
@@ -11,10 +11,25 @@ import AppsMenu from "@/Components/AppsMenu"
 import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
+import { MomAmp, MomPad, TutHack, UAVsys } from "@/Components/Programs"
 import Sysmon from "@/Components/Sysmon"
-import { Dialog, Panel, TabButton } from "@/Components/ui"
+import Terminal from "@/Components/Terminal"
+import { Dialog } from "@/Components/ui"
 
 const TICK_MS = 250
+
+/** Finestre dei programmi per identificativo (FileContents del file in flashram) */
+const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => ReactNode> = {
+	mompad: MomPad,
+	uavsys: UAVsys,
+	momamp: MomAmp,
+	tut_hack: TutHack,
+}
+
+interface OpenProgram {
+	id: string
+	name: string
+}
 
 /** Riga di stato in alto a sinistra: localhost, composizione dell'indirizzo, server connesso */
 function StatusLine() {
@@ -24,41 +39,6 @@ function StatusLine() {
 	if (c?.status === "dialing") text = `// chiamata remota...\n// ${c.target.slice(0, Math.ceil(c.target.length * c.dial))}`
 	else if (c) text = `// connesso a ${game.network.server(c.target)?.name ?? c.target}`
 	return <div className="absolute top-0 left-1 z-10 text-[12px] leading-[13px] whitespace-pre text-mo-accent">{text}</div>
-}
-
-/** Area del server connesso (i terminali veri e propri non sono ancora implementati) */
-function RemoteArea() {
-	const game = useGame()
-	const host = game.network.host
-	if (!host) return null
-	return (
-		<>
-			<div className="absolute top-4 left-2.5 z-10 w-[750px] font-title text-[15px] leading-[21px] whitespace-pre-wrap text-[#cfd8e6]">{host.welcome}</div>
-			<Panel className="absolute top-[110px] left-2 z-10 w-[752px] p-2 text-mo-accent">
-				{host.type || "Server"} — terminale non ancora disponibile in Eve.
-			</Panel>
-		</>
-	)
-}
-
-/** MomPad: blocco note salvato con l'account */
-function MomPad({ onClose }: { onClose: () => void }) {
-	const game = useGame()
-	return (
-		<Panel className="absolute top-[120px] left-[calc(50%-250px)] z-40 flex h-[360px] w-[500px] flex-col bg-[#071226]/95 p-1.5">
-			<div className="mb-1 font-title text-[12px] text-mo-accent">MomPad</div>
-			<textarea
-				autoFocus
-				value={game.state.notepad}
-				onChange={(e) => game.act(() => (game.state.notepad = e.target.value))}
-				className="mo-scroll min-h-0 flex-1 resize-none bg-transparent text-[12.5px] text-white outline-none"
-				spellCheck={false}
-			/>
-			<div className="mt-1 flex justify-end">
-				<TabButton onClick={onClose}>Chiudi</TabButton>
-			</div>
-		</Panel>
-	)
 }
 
 export default function Desktop() {
@@ -76,7 +56,18 @@ export default function Desktop() {
 	const showDialog = useApp((s) => s.showDialog)
 	const closeDialog = useApp((s) => s.closeDialog)
 	const [askTutorial, setAskTutorial] = useState(!game.state.tutorialDone)
-	const [notepad, setNotepad] = useState(false)
+	// Programmi aperti; l'ultimo è in primo piano
+	const [programs, setPrograms] = useState<OpenProgram[]>([])
+
+	const openProgram = useCallback(
+		(name: string, id: string) => {
+			const key = id.toLowerCase()
+			if (!PROGRAMS[key]) return showDialog(`'${name}': programma non ancora disponibile in Eve.`)
+			setPrograms((list) => [...list.filter((p) => p.id !== key), { id: key, name }])
+		},
+		[showDialog],
+	)
+	const closeProgram = (id: string) => setPrograms((list) => list.filter((p) => p.id !== id))
 
 	// Ciclo di gioco con il tempo reale trascorso (il desktop si rimonta a ogni partita)
 	useEffect(() => {
@@ -102,6 +93,9 @@ export default function Desktop() {
 				case "message":
 					showDialog(e.text, e.title)
 					break
+				case "program":
+					openProgram(e.name, e.id)
+					break
 				case "disconnected":
 					if (e.reason) showDialog(e.reason)
 					break
@@ -112,7 +106,7 @@ export default function Desktop() {
 					break
 			}
 		})
-	}, [game, setRight, showDialog, setConsole, setNetmap])
+	}, [game, setRight, showDialog, setConsole, setNetmap, openProgram])
 
 	// Musica di sottofondo secondo le impostazioni dell'account
 	useEffect(() => {
@@ -157,11 +151,6 @@ export default function Desktop() {
 		endGame()
 	}
 
-	function openProgram(name: string, id: string) {
-		if (id.toLowerCase() === "mompad") setNotepad(true)
-		else showDialog(`'${name}': programma non ancora disponibile in Eve.`)
-	}
-
 	function startTutorial() {
 		game.act(() => {
 			game.state.tutorialDone = true
@@ -179,11 +168,14 @@ export default function Desktop() {
 	return (
 		<div className="absolute inset-0" style={{ background: `url("${asset(`graphics/wallpaper_${game.state.settings.wallpaper}.jpg`)}") center / cover` }}>
 			<StatusLine />
-			<RemoteArea />
+			<Terminal />
 			{right ? <MailPanel /> : <Sysmon />}
 			{netmapOpen && <NetworkMap />}
 			{consoleOpen && <ConsolePanel />}
-			{notepad && <MomPad onClose={() => setNotepad(false)} />}
+			{programs.map((p) => {
+				const Program = PROGRAMS[p.id]
+				return <Program key={p.id} name={p.name} onClose={() => closeProgram(p.id)} />
+			})}
 			<AppsMenu onProgram={openProgram} onNetmap={openNetmap} onLogout={logout} />
 			<MailBar />
 

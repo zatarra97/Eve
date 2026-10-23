@@ -20,9 +20,13 @@ export function playSound(name: string, volume = 0.6) {
 
 const TRACKS = ["01 - Lonelyness is better of some other things.ogg", "02 - Streaming Overdrive.ogg"]
 let music: HTMLAudioElement | null = null
+/** Musica di sottofondo richiesta dalle impostazioni (resta in pausa mentre suona MomAMP) */
+let musicOn = false
+let player: HTMLAudioElement | null = null
 
 export function setMusic(on: boolean) {
-	if (!on) {
+	musicOn = on
+	if (!on || (player && !player.paused)) {
 		music?.pause()
 		return
 	}
@@ -37,4 +41,26 @@ export function setMusic(on: boolean) {
 		})
 	}
 	void music.play().catch(() => {})
+}
+
+/** MomAMP: suona un brano (URL completo) al posto della musica di sottofondo */
+export function playTrack(url: string, onEnded: () => void) {
+	stopTrack(false)
+	music?.pause()
+	player = new Audio(url)
+	player.volume = 0.5
+	player.addEventListener("ended", onEnded)
+	void player.play().catch(() => {})
+}
+
+/** Ferma MomAMP; la musica di sottofondo riprende se è attiva nelle impostazioni */
+export function stopTrack(resume = true) {
+	player?.pause()
+	player = null
+	if (resume) setMusic(musicOn)
+}
+
+/** Posizione e durata (secondi) del brano di MomAMP */
+export function trackTime(): { pos: number; dur: number } {
+	return { pos: player?.currentTime ?? 0, dur: player && Number.isFinite(player.duration) ? player.duration : 0 }
 }

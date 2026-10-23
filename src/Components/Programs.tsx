@@ -357,6 +357,12 @@ const LED_FRAMES = 10
 /** Backmirror: mostra l'avanzamento del backtrace sulla sessione in corso */
 export function BackMirror({ name, onClose }: { name: string; onClose: () => void }) {
 	const game = useGame()
+	// Finché è aperto il backtrace rallenta (BACKMIRROR_TRACE_SPEED)
+	useEffect(() => {
+		const network = game.network
+		network.setBackmirror(true)
+		return () => network.setBackmirror(false)
+	}, [game])
 	const trace = game.network.connection?.trace
 	const progress = trace ? Math.min(1, trace.elapsed / trace.total) : 0
 	const frame = trace ? 6 + Math.min(3, Math.floor(progress * 4)) : 0

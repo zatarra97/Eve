@@ -7,6 +7,7 @@
 // modifica nulla fuori dallo stato della partita e non ha alcuna utilità al di fuori del gioco.
 
 import {
+	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
 	SERVER_REFRESH_S,
 	connectionBandwidth,
@@ -62,7 +63,14 @@ export class Network {
 	breach: Breach | null = null
 	/** Nodi impostati sulla Network Map prima di connettersi */
 	pendingNodes: string[] = []
+	/** backmirror aperto: rallenta il backtrace in corso */
+	backmirror = false
 	readonly localIP = "127.0.0.1"
+
+	/** Apertura/chiusura della finestra di backmirror */
+	setBackmirror(open: boolean) {
+		this.backmirror = open
+	}
 
 	constructor(game: Game) {
 		this.game = game
@@ -226,6 +234,7 @@ export class Network {
 	disconnect(reason?: string) {
 		if (!this.connection) return
 		this.abortBreach()
+		this.leaveTraces()
 		this.connection = null
 		this.pendingNodes = []
 		this.game.log("Disconnesso dal Network.")
@@ -237,6 +246,7 @@ export class Network {
 	logout() {
 		if (!this.connection) return
 		this.abortBreach()
+		this.leaveTraces()
 		this.connection.logged = undefined
 		this.connection.forced = false
 		this.game.changed()
@@ -356,7 +366,7 @@ export class Network {
 		this.game.cancelTask(b.taskId)
 	}
 
-	/** Accesso ottenuto come admin: ranking alla prima violazione, tracce nei log e reato notificato più tardi */
+	/** Accesso ottenuto come admin: ranking alla prima violazione e tracce nei log del server */
 	private forceAccess(srv: ServerState, admin: ServerUser) {
 		const c = this.connection!
 		const g = this.game
@@ -367,7 +377,6 @@ export class Network {
 			g.state.ranking += violationRanking(admin.ranking)
 		}
 		srv.traces = { at: g.now, ranking: admin.ranking }
-		g.schedule(CRIME_NOTIFICATION_S, "crime", { ip: srv.ip })
 		g.log(`Accesso forzato a ${srv.name} come ${admin.username}.`)
 		g.emit({ type: "sound", name: "access" })
 		g.missions.check()
@@ -423,16 +432,28 @@ export class Network {
 	}
 
 	/**
-	 * Intrapol notifica un reato: in diretta quando il backtrace si completa, altrimenti
-	 * CRIME_NOTIFICATION_S dopo l'accesso forzato se le tracce sono ancora nei log del server.
+	 * Fine della sessione (disconnessione o logout): se nei log del server restano le tracce
+	 * dell'accesso forzato, Intrapol notificherà il reato CRIME_NOTIFICATION_S più tardi.
+	 * Finché si resta connessi conta solo il backtrace in tempo reale.
 	 */
-	notifyCrime(ip: string, caughtLive: boolean) {
+	private leaveTraces() {
+		const srv = this.servers[this.connection?.target ?? ""]
+		if (!srv?.traces || srv.removed) return
+		this.game.schedule(CRIME_NOTIFICATION_S, "crime", { ip: srv.ip, at: srv.traces.at })
+	}
+
+	/**
+	 * Intrapol notifica un reato: in diretta quando il backtrace si completa, altrimenti
+	 * CRIME_NOTIFICATION_S dopo la fine della sessione se le tracce sono ancora nei log del server.
+	 * tracesAt identifica le tracce per cui la notifica differita è stata programmata.
+	 */
+	notifyCrime(ip: string, caughtLive: boolean, tracesAt?: number) {
 		const g = this.game
 		const srv = this.server(ip)
 		if (!srv) return
 		const traces = srv.traces
-		// Notifiche programmate per accessi precedenti a un nuovo accesso forzato: si aspetta quella più recente
-		if (!caughtLive && (!traces || g.now - traces.at < CRIME_NOTIFICATION_S * 1000 - 1)) return
+		// Tracce cancellate, già notificate o sostituite da un accesso forzato più recente: niente reato
+		if (!caughtLive && (!traces || traces.at !== tracesAt)) return
 		const penalty = crimePenalty(traces?.ranking ?? this.adminOf(srv)?.ranking ?? 0, caughtLive)
 		g.state.ranking = Math.max(0, g.state.ranking - penalty.ranking)
 		g.state.credits = Math.max(0, g.state.credits - penalty.credits)
@@ -568,7 +589,7 @@ export class Network {
 		}
 		// Backtrace: se si completa con la connessione ancora aperta si viene presi in diretta
 		if (c?.trace && c.status === "connected") {
-			c.trace.elapsed += dt / 1000
+			c.trace.elapsed += (dt / 1000) * (this.backmirror ? BACKMIRROR_TRACE_SPEED : 1)
 			if (c.trace.elapsed >= c.trace.total) this.notifyCrime(c.target, true)
 		}
 		// Server sotto sequestro che tornano online

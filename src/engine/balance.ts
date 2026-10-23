@@ -56,6 +56,9 @@ export function traceSeconds(serverNet: number, adminRanking: number, hops: numb
 	return base * 1.5 ** clusterClients
 }
 
+/** Velocità del backtrace con backmirror aperto: rallentato del 30% */
+export const BACKMIRROR_TRACE_SPEED = 0.7
+
 /** Secondi per trasferire un file (MB) con la banda libera (MBps) */
 export function transferSeconds(dimMB: number, freeMBps: number): number {
 	return Math.max(0.5, (dimMB * 8) / Math.max(1, freeMBps))

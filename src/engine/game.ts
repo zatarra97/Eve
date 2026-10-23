@@ -184,7 +184,7 @@ export class Game {
 					this.missions.afterEnd(e.payload.path as string)
 					break
 				case "crime":
-					this.network.notifyCrime(e.payload.ip as string, false)
+					this.network.notifyCrime(e.payload.ip as string, false, e.payload.at as number | undefined)
 					break
 				case "refreshServer":
 					this.network.restoreServer(e.payload.ip as string)

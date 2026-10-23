@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 import { describe, expect, it } from "vitest"
-import { CRIME_NOTIFICATION_S, SERVER_REFRESH_S, crackSeconds, crimePenalty, traceSeconds, violationRanking } from "./balance"
+import { BACKMIRROR_TRACE_SPEED, CRIME_NOTIFICATION_S, SERVER_REFRESH_S, crackSeconds, crimePenalty, traceSeconds, violationRanking } from "./balance"
 import { addToPack, emptyPack, type ContentPack } from "./content"
 import { Game } from "./game"
 
@@ -244,9 +244,13 @@ describe("partita", () => {
 			const messages: string[] = []
 			game.onEvent((e) => e.type === "message" && messages.push(e.text))
 			const ranking = crackLogin(game)
+			expect(game.state.events.some((e) => e.kind === "crime")).toBe(false)
 			game.network.disconnect()
+			expect(game.state.events.filter((e) => e.kind === "crime")).toHaveLength(1)
 
-			game.advance(CRIME_NOTIFICATION_S * 1000)
+			game.advance(CRIME_NOTIFICATION_S * 1000 - 500)
+			expect(game.state.ranking).toBe(ranking)
+			game.advance(500)
 			const penalty = crimePenalty(ADMIN_RANKING, false)
 			expect(game.state.ranking).toBe(ranking - penalty.ranking)
 			expect(game.state.credits).toBe(60)
@@ -284,6 +288,7 @@ describe("partita", () => {
 			expect(game.network.deleteRemoteFile(log)).toBe(true)
 			expect(game.state.servers[LOGIN].traces).toBeUndefined()
 			game.network.disconnect()
+			expect(game.state.events.some((e) => e.kind === "crime")).toBe(false)
 			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
 			expect(game.state.ranking).toBe(ranking)
 			expect(game.state.servers[LOGIN].seizedUntil).toBeUndefined()
@@ -313,14 +318,72 @@ describe("partita", () => {
 			expect(game.state.servers[ARCHIVES].seizedUntil).toBeUndefined()
 		})
 
-		it("notifica ancora connessi al server violato: disconnessione e sequestro", () => {
+		it("restando connessi conta solo il backtrace in tempo reale", () => {
 			const game = setup()
 			const ranking = crackLogin(game)
-			// Il backtrace di servid.telemark finirebbe dopo la notifica: la notifica arriva prima
-			game.advance(CRIME_NOTIFICATION_S * 1000)
+			const trace = game.network.connection!.trace!
+			// Il backtrace di servid.telemark dura più di CRIME_NOTIFICATION_S: nessuna notifica differita intanto
+			expect(trace.total - trace.elapsed).toBeGreaterThan(CRIME_NOTIFICATION_S + 1)
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 500)
+			expect(game.network.connection?.forced).toBe(true)
+			expect(game.state.ranking).toBe(ranking)
+
+			game.advance(Math.ceil((trace.total - trace.elapsed) * 1000) + 250)
+			const penalty = crimePenalty(ADMIN_RANKING, true)
 			expect(game.network.connection).toBeNull()
+			expect(game.state.ranking).toBe(ranking - penalty.ranking)
+			expect(game.state.credits).toBe(60 - penalty.credits)
+			expect(game.state.servers[LOGIN].seizedUntil).toBeDefined()
+			// Preso in diretta: la disconnessione non programma un secondo reato
+			expect(game.state.events.some((e) => e.kind === "crime")).toBe(false)
+		})
+
+		it("logout con le tracce nei log: reato notificato dopo CRIME_NOTIFICATION_S", () => {
+			const game = setup()
+			const ranking = crackLogin(game)
+			game.network.logout()
+			expect(game.network.needsAuth()).toBe(true)
+			game.network.disconnect()
+			// Logout e disconnessione programmano entrambi la notifica, ma il reato è uno solo
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
 			expect(game.state.ranking).toBe(ranking - crimePenalty(ADMIN_RANKING, false).ranking)
 			expect(game.state.servers[LOGIN].seizedUntil).toBeDefined()
+		})
+
+		it("nuovo accesso forzato dopo il logout: vale la notifica della sessione più recente", () => {
+			const game = setup()
+			const ranking = crackLogin(game)
+			game.network.logout()
+			game.advance(1_000)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			const tracesAt = game.state.servers[LOGIN].traces!.at
+			game.network.disconnect()
+			const crimes = game.state.events.filter((e) => e.kind === "crime")
+			expect(crimes.map((e) => e.payload.at)).toEqual([expect.any(Number), tracesAt])
+
+			// La notifica programmata al logout riguarda tracce ormai sostituite: ignorata
+			game.advance(crimes[1].at - game.now - 500)
+			expect(game.state.ranking).toBe(ranking)
+			game.advance(1_000)
+			expect(game.state.ranking).toBe(ranking - crimePenalty(ADMIN_RANKING, false).ranking)
+		})
+
+		it("backmirror aperto rallenta il backtrace", () => {
+			const game = setup()
+			install(game, "rootbreaker", "1.1")
+			connect(game, LOGIN)
+			expect(game.network.startCrack()).toBeNull()
+			const trace = game.network.connection!.trace!
+			game.advance(10_000)
+			expect(trace.elapsed).toBeCloseTo(10)
+			game.network.backmirror = true
+			game.advance(10_000)
+			expect(BACKMIRROR_TRACE_SPEED).toBeCloseTo(0.7)
+			expect(trace.elapsed).toBeCloseTo(10 + 10 * BACKMIRROR_TRACE_SPEED)
+			game.network.backmirror = false
+			game.advance(1_000)
+			expect(trace.elapsed).toBeCloseTo(11 + 10 * BACKMIRROR_TRACE_SPEED)
 		})
 
 		it("i Proxy Server contano doppio nel backtrace; disconnettersi interrompe l'attacco", () => {

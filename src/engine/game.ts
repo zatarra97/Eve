@@ -91,6 +91,7 @@ export class Game {
 	static load(content: ContentPack, state: GameState, opts: GameOptions = {}): Game {
 		const game = new Game(content, state, opts)
 		game.network.refreshServers()
+		game.network.leaveTracesOnLoad()
 		game.log(`*** Apertura nuova sessione per ${game.address}. [ ${game.formatDate()} ]`)
 		game.scripts.runAutoexec()
 		game.flush()

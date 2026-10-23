@@ -350,6 +350,26 @@ describe("partita", () => {
 			expect(game.state.servers[LOGIN].seizedUntil).toBeDefined()
 		})
 
+		it("partita salvata durante l'accesso forzato: il ricaricamento vale come disconnessione", () => {
+			const game = setup()
+			const ranking = crackLogin(game)
+			expect(game.state.events.some((e) => e.kind === "crime")).toBe(false)
+			const saved = JSON.parse(JSON.stringify(game.state))
+
+			const loaded = Game.load(diskPack(), saved, { random: () => 0.5 })
+			expect(loaded.network.connection).toBeNull()
+			expect(loaded.state.events.filter((e) => e.kind === "crime")).toHaveLength(1)
+			// Un secondo caricamento dello stesso stato non duplica la notifica in coda
+			loaded.network.leaveTracesOnLoad()
+			expect(loaded.state.events.filter((e) => e.kind === "crime")).toHaveLength(1)
+
+			loaded.advance(CRIME_NOTIFICATION_S * 1000 - 500)
+			expect(loaded.state.ranking).toBe(ranking)
+			loaded.advance(500)
+			expect(loaded.state.ranking).toBe(ranking - crimePenalty(ADMIN_RANKING, false).ranking)
+			expect(loaded.state.servers[LOGIN].seizedUntil).toBeDefined()
+		})
+
 		it("nuovo accesso forzato dopo il logout: vale la notifica della sessione più recente", () => {
 			const game = setup()
 			const ranking = crackLogin(game)

@@ -443,6 +443,20 @@ export class Network {
 	}
 
 	/**
+	 * Partita caricata: la sessione precedente (es. pagina ricaricata) vale come una disconnessione.
+	 * Programma la notifica del reato per ogni server con tracce ancora nei log e nessuna notifica in coda.
+	 */
+	leaveTracesOnLoad() {
+		const queued = this.game.state.events.filter((e) => e.kind === "crime")
+		for (const srv of Object.values(this.servers)) {
+			if (!srv.traces || srv.removed) continue
+			const at = srv.traces.at
+			if (queued.some((e) => e.payload.ip === srv.ip && e.payload.at === at)) continue
+			this.game.schedule(CRIME_NOTIFICATION_S, "crime", { ip: srv.ip, at })
+		}
+	}
+
+	/**
 	 * Intrapol notifica un reato: in diretta quando il backtrace si completa, altrimenti
 	 * CRIME_NOTIFICATION_S dopo la fine della sessione se le tracce sono ancora nei log del server.
 	 * tracesAt identifica le tracce per cui la notifica differita è stata programmata.

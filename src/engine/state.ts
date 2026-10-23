@@ -5,6 +5,11 @@ import type { ActiveMission, GameFile, HardwarePart, Mail, ScheduledEvent, Serve
 
 export const SAVE_VERSION = 1
 
+/**
+ * Impostazioni salvate con la partita. Solo `wallpaper` è per account (lo cambiano anche gli
+ * script, System.WallpaperIndex); le altre opzioni ora sono generali del browser, in
+ * src/store/settings.ts, e questi campi restano solo per compatibilità con i salvataggi.
+ */
 export interface GameSettings {
 	openNewMail: boolean
 	mailPreview: boolean

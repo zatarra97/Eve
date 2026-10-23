@@ -6,12 +6,15 @@ import { Game } from "@/engine/game"
 import { loadAccount, saveAccount } from "@/engine/save"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
+import { useSettings } from "@/store/settings"
+import type { Mail } from "@/engine/types"
 import { playSound, setMusic } from "@/audio"
 import AppsMenu from "@/Components/AppsMenu"
 import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
 import { BackMirror, FileForce, MomAmp, MomPad, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
+import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
 import Terminal from "@/Components/Terminal"
 import { Dialog } from "@/Components/ui"
@@ -34,6 +37,21 @@ const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => Rea
 interface OpenProgram {
 	id: string
 	name: string
+}
+
+/** Anteprima di una mail appena arrivata, sopra l'icona della posta */
+function MailToast({ mail, onOpen }: { mail: Mail; onOpen: () => void }) {
+	return (
+		<button
+			type="button"
+			onClick={onOpen}
+			className="absolute right-0.5 bottom-[38px] z-30 w-[250px] cursor-pointer border border-mo-line bg-[#06173a]/85 px-2 py-1.5 text-left text-[12px] leading-[15px] shadow-[0_0_14px_#3a8fe055] backdrop-blur-[3px] hover:bg-[#0b2f6e]/90"
+		>
+			<div className="font-title text-[9.5px] tracking-[0.1em] text-mo-line uppercase">Nuovo messaggio</div>
+			<div className="truncate font-bold text-white">{mail.from}</div>
+			<div className="truncate text-mo-accent">{mail.subject}</div>
+		</button>
+	)
 }
 
 /** Riga di stato in alto a sinistra: localhost, composizione dell'indirizzo, server connesso */
@@ -63,6 +81,16 @@ export default function Desktop() {
 	const [askTutorial, setAskTutorial] = useState(!game.state.tutorialDone)
 	// Programmi aperti; l'ultimo è in primo piano
 	const [programs, setPrograms] = useState<OpenProgram[]>([])
+	const [settingsOpen, setSettingsOpen] = useState(false)
+	const [toast, setToast] = useState<Mail | null>(null)
+	const music = useSettings((s) => s.music)
+
+	// L'anteprima della mail sparisce da sola dopo qualche secondo
+	useEffect(() => {
+		if (!toast) return
+		const id = setTimeout(() => setToast(null), 6000)
+		return () => clearTimeout(id)
+	}, [toast])
 
 	const openProgram = useCallback(
 		(name: string, id: string) => {
@@ -92,9 +120,14 @@ export default function Desktop() {
 				case "sound":
 					playSound(e.name)
 					break
-				case "mail":
-					if (game.state.settings.openNewMail) setRight({ kind: "mail", id: e.mail.id })
+				case "mail": {
+					const { openNewMail, mailPreview } = useSettings.getState()
+					if (openNewMail) {
+						game.markRead(e.mail.id)
+						setRight({ kind: "mail", id: e.mail.id })
+					} else if (mailPreview) setToast(e.mail)
 					break
+				}
 				case "message":
 					showDialog(e.text, e.title)
 					break
@@ -113,15 +146,15 @@ export default function Desktop() {
 		})
 	}, [game, setRight, showDialog, setConsole, setNetmap, openProgram])
 
-	// Musica di sottofondo secondo le impostazioni dell'account
+	// Musica di sottofondo secondo le impostazioni
 	useEffect(() => {
-		setMusic(game.state.settings.music)
+		setMusic(music)
 		return () => setMusic(false)
-	}, [game, game.state.settings.music])
+	}, [game, music])
 
 	// Salvataggio automatico ogni minuto e alla chiusura della pagina
 	useEffect(() => {
-		const save = () => game.state.settings.autosave && saveAccount(game.state)
+		const save = () => useSettings.getState().autosave && saveAccount(game.state)
 		const id = setInterval(save, 60_000)
 		window.addEventListener("beforeunload", save)
 		return () => {
@@ -144,6 +177,7 @@ export default function Desktop() {
 			} else if (e.key === "Escape") {
 				setNetmap(false)
 				setRight(null)
+				setSettingsOpen(false)
 				useApp.getState().setInbox(false)
 			}
 		}
@@ -153,7 +187,8 @@ export default function Desktop() {
 
 	function logout() {
 		game.network.disconnect()
-		saveAccount(game.state)
+		// Manuale §1.6: i progressi si salvano uscendo dal desktop, se il salvataggio automatico è attivo
+		if (useSettings.getState().autosave) saveAccount(game.state)
 		endGame()
 	}
 
@@ -182,8 +217,19 @@ export default function Desktop() {
 				const Program = PROGRAMS[p.id]
 				return <Program key={p.id} name={p.name} onClose={() => closeProgram(p.id)} />
 			})}
-			<AppsMenu onProgram={openProgram} onNetmap={openNetmap} onLogout={logout} />
+			<AppsMenu onProgram={openProgram} onNetmap={openNetmap} onSettings={() => setSettingsOpen(true)} onLogout={logout} />
 			<MailBar />
+			{toast && (
+				<MailToast
+					mail={toast}
+					onOpen={() => {
+						game.act(() => game.markRead(toast.id))
+						setRight({ kind: "mail", id: toast.id })
+						setToast(null)
+					}}
+				/>
+			)}
+			{settingsOpen && <Settings game={game} onClose={() => setSettingsOpen(false)} />}
 
 			{askTutorial && (
 				<Dialog

@@ -4,17 +4,26 @@ import { useRef, useState } from "react"
 import { Game } from "@/engine/game"
 import { deleteAccount, listAccounts, loadAccount, saveAccount } from "@/engine/save"
 import { useApp } from "@/store/app"
+import { useSettings } from "@/store/settings"
+import Settings from "@/Components/Settings"
 import { playSound } from "@/audio"
 import { Dialog, SpriteButton, TabButton } from "@/Components/ui"
 import { asset } from "@/assets"
 
-type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "delete"; user: string } | null
+type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "settings" } | { kind: "delete"; user: string } | null
+
+/** Credenziali da riproporre: l'ultimo account usato, con la password se "Ricorda Password" è attivo */
+function remembered() {
+	const { rememberPassword, lastUser } = useSettings.getState()
+	if (!rememberPassword || !lastUser) return { user: "", password: "" }
+	return { user: lastUser, password: loadAccount(lastUser)?.password ?? "" }
+}
 
 export default function Login() {
 	const pack = useApp((s) => s.pack)
 	const startGame = useApp((s) => s.startGame)
-	const [user, setUser] = useState("")
-	const [password, setPassword] = useState("")
+	const [user, setUser] = useState(() => remembered().user)
+	const [password, setPassword] = useState(() => remembered().password)
 	const [prompt, setPrompt] = useState<Prompt>(null)
 	// Incrementato per rileggere l'elenco account dopo un'eliminazione
 	const [, setRefresh] = useState(0)
@@ -39,6 +48,7 @@ export default function Login() {
 			setPrompt({ kind: "error", text: "Password errata." })
 			return
 		}
+		useSettings.getState().set({ lastUser: saved.user })
 		startGame(Game.load(pack, saved))
 	}
 
@@ -46,6 +56,7 @@ export default function Login() {
 		if (!pack) return
 		const game = Game.newGame(pack, user, password)
 		saveAccount(game.state)
+		useSettings.getState().set({ lastUser: game.state.user })
 		startGame(game)
 	}
 
@@ -132,7 +143,7 @@ export default function Login() {
 			)}
 
 			<SpriteButton name="credits_button" w={32} h={32} frames={2} className="absolute right-8 bottom-0" title="Informazioni" onClick={() => setPrompt({ kind: "info" })} />
-			<SpriteButton name="settings_button" w={32} h={32} frames={2} className="absolute right-0 bottom-0" title="Impostazioni" onClick={() => setPrompt({ kind: "info" })} />
+			<SpriteButton name="settings_button" w={32} h={32} frames={2} className="absolute right-0 bottom-0" title="Impostazioni" onClick={() => setPrompt({ kind: "settings" })} />
 
 			{prompt?.kind === "create" && (
 				<Dialog
@@ -153,6 +164,13 @@ export default function Login() {
 							label: "Elimina",
 							onClick: () => {
 								deleteAccount(prompt.user)
+								// L'account eliminato non va più riproposto al login
+								const settings = useSettings.getState()
+								if (settings.lastUser.toLowerCase() === prompt.user.toLowerCase()) settings.set({ lastUser: "" })
+								if (user.toLowerCase() === prompt.user.toLowerCase()) {
+									setUser("")
+									setPassword("")
+								}
 								setPrompt(null)
 								setRefresh((n) => n + 1)
 							},
@@ -160,6 +178,7 @@ export default function Login() {
 					]}
 				/>
 			)}
+			{prompt?.kind === "settings" && <Settings onClose={() => setPrompt(null)} />}
 			{prompt?.kind === "info" && (
 				<Dialog
 					text={`Eve v${__APP_VERSION__} — remake web di Mother 1.02.\n\nMother è stato ideato e realizzato da Massimo 'v4ldemar' Pinzaglia (Valdemar Indie Software). Contenuti originali rilasciati sotto licenza CC BY-NC-SA 3.0.`}

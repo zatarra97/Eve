@@ -1,9 +1,12 @@
 // Suoni dell'interfaccia e musica di sottofondo (file originali in public/game/sounds).
 
+import { useSettings } from "@/store/settings"
+
 const base = import.meta.env.BASE_URL + "game/sounds/"
 const cache = new Map<string, HTMLAudioElement>()
 
 export function playSound(name: string, volume = 0.6) {
+	if (!useSettings.getState().sounds) return
 	try {
 		let a = cache.get(name)
 		if (!a) {

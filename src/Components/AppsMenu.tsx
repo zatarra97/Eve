@@ -45,10 +45,12 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 export default function AppsMenu({
 	onProgram,
 	onNetmap,
+	onSettings,
 	onLogout,
 }: {
 	onProgram: (name: string, id: string) => void
 	onNetmap: () => void
+	onSettings: () => void
 	onLogout: () => void
 }) {
 	const game = useGame()
@@ -109,6 +111,7 @@ export default function AppsMenu({
 							<Section title="Sistema">
 								<Item label="Apri Network Map" onClick={run(onNetmap)} />
 								<Item label="Apri Console" onClick={run(() => setConsole(true))} />
+								<Item label="Impostazioni" onClick={run(onSettings)} />
 							</Section>
 							<Section title={connection ? "Connessione" : "Sessione"}>
 								{connection ? (

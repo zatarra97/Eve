@@ -8,7 +8,7 @@ import { playSound } from "@/audio"
 import { Dialog, SpriteButton, TabButton } from "@/Components/ui"
 import { asset } from "@/assets"
 
-type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "off" } | { kind: "delete"; user: string } | null
+type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "delete"; user: string } | null
 
 export default function Login() {
 	const pack = useApp((s) => s.pack)
@@ -131,7 +131,6 @@ export default function Login() {
 				</div>
 			)}
 
-			<SpriteButton name="shutdown_button" w={32} h={32} frames={2} className="absolute bottom-0 left-0" title="Spegni" onClick={() => setPrompt({ kind: "off" })} />
 			<SpriteButton name="credits_button" w={32} h={32} frames={2} className="absolute right-8 bottom-0" title="Informazioni" onClick={() => setPrompt({ kind: "info" })} />
 			<SpriteButton name="settings_button" w={32} h={32} frames={2} className="absolute right-0 bottom-0" title="Impostazioni" onClick={() => setPrompt({ kind: "info" })} />
 
@@ -166,9 +165,6 @@ export default function Login() {
 					text={`Eve v${__APP_VERSION__} — remake web di Mother 1.02.\n\nMother è stato ideato e realizzato da Massimo 'v4ldemar' Pinzaglia (Valdemar Indie Software). Contenuti originali rilasciati sotto licenza CC BY-NC-SA 3.0.`}
 					actions={[{ label: "Chiudi", onClick: () => setPrompt(null) }]}
 				/>
-			)}
-			{prompt?.kind === "off" && (
-				<Dialog text="Ora è possibile chiudere questa finestra del browser." actions={[{ label: "Ok", onClick: () => setPrompt(null) }]} />
 			)}
 		</div>
 	)

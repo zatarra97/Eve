@@ -43,7 +43,7 @@ destra con forma a "linguetta".
 ## Desktop
 
 - **Sysmon** in alto a destra (x≈772–1022): intestazione `Mother OS vers. 1.02` + data/ora
-  (`Giovedì, 22/10/2012 00:27:13` — anno di gioco **2012**, giorno/mese/ora reali).
+  (`Giovedì, 22/10/2012 00:27:13` — anno di gioco **2012**, giorno/mese/ora reali; Eve usa l'anno reale).
   - Compresso: tre barre `Utilizzo CPU 0%`, `Utilizzo Banda 0%`, `Spazio Occupato 12%` (la barra si
     riempie col colore della percentuale; verde quando la banda è alta) + pulsante ▼.
   - Espanso: ogni riquadro mostra anche modello e `Usati X/Y Mhz|MBps|Mb`, e compare

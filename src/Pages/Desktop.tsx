@@ -142,6 +142,7 @@ export default function Desktop() {
 			} else if (e.key === "Escape") {
 				setNetmap(false)
 				setRight(null)
+				useApp.getState().setInbox(false)
 			}
 		}
 		window.addEventListener("keydown", onKey)

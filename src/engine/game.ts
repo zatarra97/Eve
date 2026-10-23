@@ -360,12 +360,14 @@ export class Game {
 		this.emit({ type: "message", text, title })
 	}
 
-	/** Data nel formato del Sysmon: anno di gioco 2012, giorno e ora reali */
+	/**
+	 * Data nel formato del Sysmon ("Giovedì, 22/10/2026 00:27:13"). L'originale fissava l'anno a 2012;
+	 * qui si usa la data reale dell'orologio di gioco.
+	 */
 	formatDate(ms = this.now) {
 		const d = new Date(ms)
 		const days = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"]
 		const p = (n: number) => String(n).padStart(2, "0")
-		const g = new Date(2012, d.getMonth(), d.getDate())
-		return `${days[g.getDay()]}, ${p(d.getDate())}/${p(d.getMonth() + 1)}/2012 ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
+		return `${days[d.getDay()]}, ${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
 	}
 }

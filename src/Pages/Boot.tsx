@@ -6,6 +6,9 @@ import { START_HARDWARE } from "@/engine/balance"
 import { useApp } from "@/store/app"
 import { asset } from "@/assets"
 
+/** Anno corrente, per il copyright del BIOS */
+const YEAR = new Date().getFullYear()
+
 const LINES = [
 	"Advanced Megabios Plug and Play BIOS Extension v2.02a",
 	"Copyright (C) 2009, Advanced Megabios Corp.",
@@ -62,7 +65,7 @@ export default function Boot() {
 				<img src={asset("graphics/bios.png")} alt="" className="h-[63px] w-[77px]" />
 				<div className="pt-1">
 					<div>Advanced Megabios v7.21.348 - Enerspec Certified Solution</div>
-					<div>Copyright (C) 2009-2012 Advanced Megabios Corporation</div>
+					<div>Copyright (C) 2009-{YEAR} Advanced Megabios Corporation</div>
 				</div>
 			</div>
 			<div className="mt-1">WM13PACR6293 V9.1 220612</div>

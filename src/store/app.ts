@@ -20,6 +20,8 @@ interface AppState {
 	netmapOpen: boolean
 	consoleOpen: boolean
 	right: RightPanel
+	/** Casella di posta (elenco delle mail) aperta in basso a destra */
+	inboxOpen: boolean
 	/** Messaggio di sistema modale (dialog blu) */
 	dialog: { text: string; title?: string } | null
 
@@ -32,6 +34,7 @@ interface AppState {
 	setNetmap: (open: boolean) => void
 	setConsole: (open: boolean) => void
 	setRight: (r: RightPanel) => void
+	setInbox: (open: boolean) => void
 	showDialog: (text: string, title?: string) => void
 	closeDialog: () => void
 }
@@ -55,17 +58,19 @@ export const useApp = create<AppState>((set) => ({
 	netmapOpen: false,
 	consoleOpen: false,
 	right: null,
+	inboxOpen: false,
 	dialog: null,
 
 	setScreen: (screen) => set({ screen }),
 	setPack: (pack) => set({ pack }),
-	startGame: (game) => set((s) => ({ game, gameId: s.gameId + 1, screen: "desktop", menuOpen: false, netmapOpen: false, consoleOpen: false, right: null })),
-	endGame: () => set({ game: null, screen: "login", menuOpen: false, netmapOpen: false, consoleOpen: false, right: null, dialog: null }),
+	startGame: (game) => set((s) => ({ game, gameId: s.gameId + 1, screen: "desktop", menuOpen: false, netmapOpen: false, consoleOpen: false, right: null, inboxOpen: false })),
+	endGame: () => set({ game: null, screen: "login", menuOpen: false, netmapOpen: false, consoleOpen: false, right: null, inboxOpen: false, dialog: null }),
 	toggleMenu: (open) => set((s) => ({ menuOpen: open ?? !s.menuOpen })),
 	toggleSysmon: () => set((s) => ({ sysmonExpanded: !s.sysmonExpanded })),
 	setNetmap: (netmapOpen) => set({ netmapOpen, menuOpen: false }),
 	setConsole: (consoleOpen) => set({ consoleOpen, menuOpen: false }),
 	setRight: (right) => set({ right }),
+	setInbox: (inboxOpen) => set({ inboxOpen, menuOpen: false }),
 	showDialog: (text, title) => set({ dialog: { text, title } }),
 	closeDialog: () => set({ dialog: null }),
 }))

@@ -317,6 +317,40 @@ describe("partita", () => {
 			expect(game.state.servers[LOGIN].seizedUntil).toBeUndefined()
 		})
 
+		it("log.connections cancellato: al nuovo accesso forzato il server lo ricrea", () => {
+			const game = setup()
+			const ranking = crackLogin(game)
+			const srv = game.state.servers[LOGIN]
+			const original = srv.files.find((f) => f.name === "log.connections")!
+			const deleteLog = () => {
+				const log = game.network.visibleFiles().find((f) => f.name === "log.connections")!
+				expect(log).toBeDefined()
+				expect(game.network.deleteRemoteFile(log)).toBe(true)
+				expect(srv.traces).toBeUndefined()
+			}
+			deleteLog()
+			game.network.disconnect()
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.ranking).toBe(ranking)
+			expect(srv.files.some((f) => f.name === "log.connections")).toBe(false)
+
+			// Nuovo accesso forzato: l'indirizzo viene registrato in un log nuovo, come nel .svr
+			connect(game, LOGIN)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(srv.traces).toBeDefined()
+			const log = srv.files.find((f) => f.name === "log.connections")!
+			expect(log).toMatchObject({ dim: original.dim, contents: "%BIN%", owner: "Admin" })
+			expect(srv.files.filter((f) => f.name === "log.connections")).toHaveLength(1)
+
+			deleteLog()
+			game.network.disconnect()
+			expect(game.state.events.some((e) => e.kind === "crime")).toBe(false)
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.ranking).toBe(ranking)
+			expect(srv.seizedUntil).toBeUndefined()
+		})
+
 		it("backtrace completato prima del cracking: preso in diretta, nessun sequestro", () => {
 			const game = setup()
 			const traced: string[] = []

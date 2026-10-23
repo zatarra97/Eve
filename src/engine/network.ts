@@ -63,6 +63,8 @@ export const CLUSTER_EXE = "exe.clustercore"
 /** File di connessione in flashram, uno per nodo: log.clientconnN (i nomi che lo script di A19 cancella) */
 const CLUSTER_CONN = /^log\.clientconn(\d+)$/i
 const sameName = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
+/** Log delle connessioni: registra gli accessi forzati (cancellarlo elimina le tracce) */
+const CONNECTION_LOG = "log.connections"
 /** Terminali su cui fileforce può caricare file: quelli dei RefServerIP delle missioni FileUploading */
 const UPLOAD_TERMINALS: ServerState["terminal"][] = ["FileServer", "DatabaseServer"]
 
@@ -399,9 +401,22 @@ export class Network {
 			g.state.ranking += violationRanking(admin.ranking)
 		}
 		srv.traces = { at: g.now, ranking: admin.ranking }
+		this.restoreConnectionLog(srv, admin)
 		g.log(`Accesso forzato a ${srv.name} come ${admin.username}.`)
 		g.emit({ type: "sound", name: "access" })
 		g.missions.check()
+	}
+
+	/**
+	 * A ogni accesso l'indirizzo viene registrato nei log del server (Manuale §2.9): se il giocatore ha
+	 * cancellato log.connections in una sessione precedente, il server lo ricrea, così le nuove tracce
+	 * si possono cancellare di nuovo. Dimensione e proprietario come nel .svr, altrimenti 2 MB e l'account forzato.
+	 */
+	private restoreConnectionLog(srv: ServerState, admin: ServerUser) {
+		if (srv.files.some((f) => sameName(f.name, CONNECTION_LOG))) return
+		const source = this.game.content.servers.get(normPath(srv.source))
+		const original = source ? loadServer(source, srv.source).files.find((f) => sameName(f.name, CONNECTION_LOG)) : undefined
+		srv.files.push({ name: CONNECTION_LOG, dim: original?.dim ?? 2, img: -1, contents: "%BIN%", owner: original?.owner ?? admin.username })
 	}
 
 	/** Campioni vocali registrati in flashram */

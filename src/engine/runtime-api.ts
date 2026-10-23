@@ -239,7 +239,7 @@ export class Runtime {
 				return i < 0 ? -1 : i + 1
 			}
 			case "deletelocalfile":
-				g.deleteLocalFile(n(0) - 1)
+				g.deleteLocalFile(n(0) - 1, true)
 				return 0
 			case "findremotefile": {
 				const i = net.visibleFiles().findIndex((f) => f.name.toLowerCase() === s(0).toLowerCase())

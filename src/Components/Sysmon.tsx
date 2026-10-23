@@ -58,6 +58,22 @@ export default function Sysmon() {
 					<div>Crediti : {Math.round(credits * 100) / 100}</div>
 				</div>
 			)}
+			{/* Nei contenuti non c'è un server con terminale Cluster: lo stato dei nodi sta qui */}
+			{expanded && game.state.cluster.length > 0 && (
+				<div className="mt-[3px] border border-mo-line bg-mo-panel/80 px-1 pb-1 leading-[13px]">
+					<div className="text-mo-accent">== Cluster {"=".repeat(28)}</div>
+					<div>Nodi : {game.state.cluster.length}</div>
+					<div>Banda : {game.network.clusterBandwidth()} MBps</div>
+					{game.state.cluster.map((ip) => {
+						const srv = game.network.server(ip)
+						return (
+							<div key={ip} className="truncate text-mo-accent">
+								- {srv?.name ?? ip} [{srv?.net ?? 0} MBps]
+							</div>
+						)
+					})}
+				</div>
+			)}
 			{game.tasks.length > 0 && (
 				<div className="mt-[3px] border border-mo-line bg-mo-panel/80 px-1 leading-[13px]">
 					{game.tasks.map((t) => (

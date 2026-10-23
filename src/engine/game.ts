@@ -286,9 +286,10 @@ export class Game {
 		return true
 	}
 
-	deleteLocalFile(index: number): boolean {
+	/** Elimina un file dalla flashram; i file %SYSTEM% solo se forzato (script delle missioni) */
+	deleteLocalFile(index: number, force = false): boolean {
 		const f = this.state.files[index]
-		if (!f || f.contents === "%SYSTEM%") return false
+		if (!f || (f.contents === "%SYSTEM%" && !force)) return false
 		this.state.files.splice(index, 1)
 		this.changed()
 		return true

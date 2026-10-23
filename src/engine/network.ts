@@ -58,6 +58,11 @@ const DIAL_SECONDS = 2.5
 export const VOICE_SAMPLE = "%WAV%"
 /** Modello dei server sotto sequestro Intrapol */
 const SEIZED_MODEL = "hackedsys.fak"
+/** Backdoor del cluster (ClusterExeName di uground/A17.miss): installata su un Personal Server lo rende un nodo */
+export const CLUSTER_EXE = "exe.clustercore"
+/** File di connessione in flashram, uno per nodo: log.clientconnN (i nomi che lo script di A19 cancella) */
+const CLUSTER_CONN = /^log\.clientconn(\d+)$/i
+const sameName = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
 /** Terminali su cui fileforce può caricare file: quelli dei RefServerIP delle missioni FileUploading */
 const UPLOAD_TERMINALS: ServerState["terminal"][] = ["FileServer", "DatabaseServer"]
 
@@ -127,8 +132,10 @@ export class Network {
 		const source = this.game.content.servers.get(normPath(srv.source))
 		if (!source) return
 		const def = loadServer(source, srv.source)
-		const uploaded = srv.files.filter((f) => !def.files.some((d) => d.name === f.name))
+		// Il ripristino cancella la backdoor del cluster: il server esce dal cluster
+		const uploaded = srv.files.filter((f) => !def.files.some((d) => d.name === f.name) && !sameName(f.name, CLUSTER_EXE))
 		this.servers[ip] = { ...structuredClone(def), files: [...def.files, ...uploaded], everHacked: srv.everHacked, chatLog: srv.chatLog }
+		this.syncCluster()
 		this.game.changed()
 	}
 
@@ -185,6 +192,7 @@ export class Network {
 		srv.removed = true
 		if (this.connection?.target === srv.ip) this.disconnect("Il server remoto ha chiuso la connessione.")
 		this.game.state.known = this.game.state.known.filter((k) => k !== srv.ip)
+		this.syncCluster()
 		this.game.changed()
 	}
 
@@ -287,15 +295,18 @@ export class Network {
 		return true
 	}
 
-	/** Interfaccia a chiave cifrata: il file chiave deve essere in flashram */
+	/**
+	 * Interfaccia a chiave cifrata: il file chiave deve essere in flashram. Il giocatore ha solo dump
+	 * della memoria delle chiavi hardware (uground/A17.miss): l'accesso è forzato e il backtrace parte subito.
+	 */
 	loginWithKeyFile(): boolean {
 		const c = this.connection
 		const srv = this.host
 		if (!c || !srv) return false
 		const user = srv.users.find((u) => this.game.findLocalFile(u.password) >= 0)
 		if (!user) return false
-		c.logged = user.username
-		this.game.emit({ type: "sound", name: "access" })
+		this.startTrace(srv, user)
+		this.forceAccess(srv, user)
 		return true
 	}
 
@@ -517,6 +528,7 @@ export class Network {
 			cantBeDestroyed: true,
 			seizedUntil: this.game.now + SERVER_REFRESH_S * 1000,
 		} satisfies Partial<ServerState>)
+		this.syncCluster()
 		this.game.changed()
 	}
 
@@ -539,6 +551,7 @@ export class Network {
 		const i = srv.files.findIndex((f) => f.name === file.name && f.owner === file.owner)
 		if (i >= 0) srv.files[i] = { ...file }
 		else srv.files.push({ ...file })
+		this.syncCluster()
 		this.game.missions.check()
 		this.game.changed()
 	}
@@ -550,6 +563,7 @@ export class Network {
 		srv.files = srv.files.filter((f) => f !== file)
 		// Cancellare i log delle connessioni elimina le tracce dell'accesso forzato
 		if (srv.traces && file.name.toLowerCase().startsWith("log.")) srv.traces = undefined
+		this.syncCluster()
 		this.game.missions.check()
 		this.game.changed()
 		return true
@@ -645,6 +659,7 @@ export class Network {
 		g.state.known = g.state.known.filter((ip) => ip !== srv.ip)
 		g.log(reason)
 		if (this.connection?.target === srv.ip) this.disconnect(reason)
+		this.syncCluster()
 		g.missions.check()
 		g.changed()
 	}
@@ -716,6 +731,64 @@ export class Network {
 
 	// --- cluster ---
 
+	/** Il Personal Server fa da nodo: backdoor installata, server in linea e client in flashram */
+	private isClusterNode(srv: ServerState | undefined, core: boolean): boolean {
+		return (
+			core &&
+			!!srv &&
+			srv.type === "Personal Server" &&
+			!srv.destroyed &&
+			!srv.removed &&
+			!srv.seizedUntil &&
+			srv.files.some((f) => sameName(f.name, CLUSTER_EXE))
+		)
+	}
+
+	/** File di connessione in flashram del nodo (il contenuto riporta l'IP del server) */
+	private clusterFileIndex(ip: string): number {
+		return this.game.state.files.findIndex((f) => CLUSTER_CONN.test(f.name) && f.contents.includes(`[${ip}]`))
+	}
+
+	/**
+	 * Allinea state.cluster ai server: entra ogni Personal Server con exe.clustercore, esce chi perde la
+	 * backdoor (eliminata o tolta dal ripristino), va sotto sequestro, viene distrutto o rimosso. Senza
+	 * exe.clustercore in flashram (cancellato dallo script di A19) il cluster si scioglie.
+	 * Ogni nodo ha in flashram il suo file di connessione log.clientconnN.
+	 */
+	syncCluster() {
+		const g = this.game
+		const core = g.findLocalFile(CLUSTER_EXE) >= 0
+		for (const ip of g.state.cluster) {
+			const srv = this.servers[ip]
+			if (this.isClusterNode(srv, core)) continue
+			const i = this.clusterFileIndex(ip)
+			if (i >= 0) g.state.files.splice(i, 1)
+			g.log(`Cluster: ${srv?.name ?? ip} disconnesso.`)
+		}
+		g.state.cluster = g.state.cluster.filter((ip) => this.isClusterNode(this.servers[ip], core))
+		for (const srv of Object.values(this.servers)) {
+			if (!this.isClusterNode(srv, core)) continue
+			if (!g.state.cluster.includes(srv.ip)) {
+				g.state.cluster.push(srv.ip)
+				g.log(`Cluster: ${srv.name} connesso, ${srv.net} MBps a disposizione.`)
+			}
+			// Il file di connessione si ricrea anche se è stato cancellato a mano
+			if (this.clusterFileIndex(srv.ip) < 0) {
+				const used = new Set(g.state.files.map((f) => Number(CLUSTER_CONN.exec(f.name)?.[1] ?? 0)))
+				let n = 1
+				while (used.has(n)) n++
+				g.state.files.push({
+					name: `log.clientconn${n}`,
+					dim: 0,
+					img: -1,
+					contents: `Connessione cluster ${n}: ${srv.name} [${srv.ip}]\nBanda condivisa: ${srv.net} MBps`,
+					owner: g.state.user,
+				})
+				g.changed()
+			}
+		}
+	}
+
 	/** Banda messa a disposizione dai server del cluster */
 	clusterBandwidth(): number {
 		return this.game.state.cluster.reduce((sum, ip) => sum + (this.servers[ip]?.net ?? 0), 0)
@@ -724,6 +797,8 @@ export class Network {
 	// --- tempo ---
 
 	tick(dt: number) {
+		// Il cluster segue anche i cambiamenti fatti dagli script (es. i file cancellati da A19)
+		this.syncCluster()
 		const c = this.connection
 		if (c && c.status === "dialing") {
 			c.dial += dt / 1000 / DIAL_SECONDS

@@ -171,7 +171,8 @@ function UploadPicker({ onClose }: { onClose: () => void }) {
 	const game = useGame()
 	const run = useRun()
 	const [local, setLocal] = useState<GameFile | null>(null)
-	const flashram = game.state.files.filter((f) => f.contents !== "%SYSTEM%")
+	// Anche i file %SYSTEM% messi dalle missioni: exe.clustercore di A17 va caricato sui Personal Server
+	const flashram = game.state.files
 	const pick = local && flashram.includes(local) ? local : null
 	return (
 		<Frame

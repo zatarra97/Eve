@@ -42,7 +42,8 @@ Giocabili: avvio, login e account, desktop, Sysmon, posta con risposte delle mis
 e connessioni, console con i comandi di gioco, terminali dei server (file, news, mail, negozi,
 sottoscrizioni, database, chat), programmi MomPad, UAVsys, MomAMP, tut_hack, rootbreaker,
 wavehacker, backmirror, fileforce e nukelord, backtrace e sequestro dei server, distruzione dei server
-(riavvio senza file di sistema, nuke dei Web Server), salvataggi (F5/F9).
+(riavvio senza file di sistema, nuke dei Web Server), cluster di Personal Server (stato nel Sysmon),
+salvataggi (F5/F9).
 
 Da fare: terminali Netbanking e Cluster, missioni casuali (MissGen),
 tutorial guidato sullo schermo, caricamento delle mod dall'interfaccia, impostazioni.

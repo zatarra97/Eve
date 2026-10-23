@@ -836,4 +836,199 @@ describe("partita", () => {
 			expect(game.state.servers[NEOWASE].nukedUntil).toBeUndefined()
 		})
 	})
+
+	describe("cluster della campagna Underground", () => {
+		// Personal Server con 1000 MBps (pstagna.nonameservers ne ha 100, chang.ironkingdom non ha file di sistema)
+		const PERSONAL = ["111.158.354.111", "172.23.24.125", "199.112.112.172", "386.456.3.45", "489.456.486.351"]
+		const MASTER = "master.666wearegone.0.1" // master.underground: KeyFile, Net 1000000, Admin con ranking 4000
+		/** Secondi che il giocatore impiega a scrivere e lanciare un comando in console */
+		const COMMAND_S = 15
+
+		const setup = () => Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		const install = (game: Game, id: string, version: string) => game.addLocalFile({ name: `${id}-${version}`, dim: 2, img: -1, contents: id, owner: "eve" })
+		const connect = (game: Game, ip: string) => {
+			expect(game.network.connectDirect(ip)).toBeNull()
+			game.advance(3_000)
+			expect(game.network.host?.ip).toBe(ip)
+		}
+		const finish = (game: Game, kind: "crack" | "upload") => {
+			const task = game.tasks.find((t) => t.kind === kind)!
+			game.advance(Math.ceil((task.total - task.elapsed) * 1000) + 250)
+		}
+		const exec = (game: Game, line: string) => {
+			const before = game.state.console.length
+			game.shell.exec(line)
+			return game.state.console.slice(before + 1).join("\n")
+		}
+		const core = (game: Game) => game.state.files[game.findLocalFile("exe.clustercore")]
+		const connFiles = (game: Game) => game.state.files.filter((f) => f.name.startsWith("log.clientconn")).map((f) => f.name)
+		/** Login con la password dell'account Admin: nessuna traccia nei log */
+		const adminLogin = (game: Game, ip: string) => {
+			connect(game, ip)
+			const admin = game.state.servers[ip].users.find((u) => u.username === "Admin")!
+			expect(game.network.login(admin.username, admin.password)).toBe(true)
+		}
+		/** Forza il Personal Server, ci carica la backdoor e cancella log.connections per non lasciare tracce */
+		const plantBackdoor = (game: Game, ip: string) => {
+			connect(game, ip)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(game.network.upload(core(game))).toBeNull()
+			finish(game, "upload")
+			const log = game.network.visibleFiles().find((f) => f.name === "log.connections")!
+			expect(game.network.deleteRemoteFile(log)).toBe(true)
+			game.network.disconnect()
+		}
+		/** A17 fino all'arrivo della mail, con rootbreaker e fileforce in flashram */
+		const startA17 = (game: Game) => {
+			game.missions.load("uground/a17.miss")
+			game.advance(10_000)
+			const mail = game.state.mails.find((m) => m.subject === "Ci sono novità!")!
+			expect(mail).toBeDefined()
+			install(game, "rootbreaker", "1.1")
+			install(game, "fileforce", "3.0")
+			return mail
+		}
+
+		it("A17: exe.clustercore su 5 Personal Server, file di connessione e banda del cluster", () => {
+			const game = setup()
+			const mail = startA17(game)
+			expect(core(game)).toBeDefined()
+			expect(game.findLocalFile("KEY.FG2GB9GD1EF2")).toBeGreaterThanOrEqual(0)
+
+			for (const ip of PERSONAL.slice(0, 4)) plantBackdoor(game, ip)
+			expect(game.state.cluster).toEqual(PERSONAL.slice(0, 4))
+			// Quattro nodi non bastano
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === "uground/a17.miss")?.done).toBeFalsy()
+
+			plantBackdoor(game, PERSONAL[4])
+			expect(game.state.cluster).toEqual(PERSONAL)
+			expect(connFiles(game)).toEqual(["log.clientconn1", "log.clientconn2", "log.clientconn3", "log.clientconn4", "log.clientconn5"])
+			expect(game.state.files[game.findLocalFile("log.clientconn3")].contents).toContain(`[${PERSONAL[2]}]`)
+			expect(game.network.clusterBandwidth()).toBe(5000)
+			expect(game.netTotal).toBe(80 + 5000)
+			// Nessun sequestro: le tracce sono state cancellate con i log
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.cluster).toHaveLength(5)
+
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === "uground/a17.miss")?.done).toBe(true)
+			game.advance(30_000)
+			expect(game.state.completed).toContain("uground/a17.miss")
+			expect(game.state.missions.some((m) => m.def.path === "uground/a18.miss")).toBe(true)
+		})
+
+		it("un nodo esce dal cluster: backdoor eliminata, sequestro e ripristino, distruzione", () => {
+			const game = setup()
+			startA17(game)
+			const [A, B, C] = PERSONAL
+			for (const ip of [A, B, C]) plantBackdoor(game, ip)
+			expect(game.state.cluster).toEqual([A, B, C])
+
+			// Backdoor eliminata (dagli script: è un file %SYSTEM%, il giocatore non può cancellarla)
+			adminLogin(game, A)
+			const backdoor = game.network.visibleFiles().find((f) => f.name === "exe.clustercore")!
+			expect(game.network.deleteRemoteFile(backdoor)).toBe(false)
+			expect(game.network.deleteRemoteFile(backdoor, true)).toBe(true)
+			expect(game.state.cluster).toEqual([B, C])
+			expect(connFiles(game)).toEqual(["log.clientconn2", "log.clientconn3"])
+			// Ricaricata, riprende il primo numero di connessione libero
+			expect(game.network.upload(core(game))).toBeNull()
+			finish(game, "upload")
+			expect(game.state.cluster).toEqual([B, C, A])
+			expect(game.state.files[game.findLocalFile("log.clientconn1")].contents).toContain(`[${A}]`)
+			game.network.disconnect()
+
+			// Sequestro: forzato senza cancellare i log, Intrapol notifica il reato
+			connect(game, B)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			game.network.disconnect()
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.servers[B].seizedUntil).toBeDefined()
+			expect(game.state.cluster).toEqual([C, A])
+			expect(connFiles(game)).not.toContain("log.clientconn2")
+			// Il ripristino cancella la backdoor: il server non rientra
+			game.advance(SERVER_REFRESH_S * 1000 + 1_000)
+			expect(game.state.servers[B].seizedUntil).toBeUndefined()
+			expect(game.state.servers[B].files.some((f) => f.name === "exe.clustercore")).toBe(false)
+			expect(game.state.cluster).toEqual([C, A])
+
+			// Distruzione: file di sistema eliminati e riavvio
+			adminLogin(game, C)
+			for (const name of ["sys.kernel", "sys.system", "sys.network"]) exec(game, `rm ${name}`)
+			exec(game, "reboot")
+			expect(game.state.servers[C].destroyed).toBe(true)
+			expect(game.state.cluster).toEqual([A])
+			expect(connFiles(game)).toEqual(["log.clientconn1"])
+			expect(game.network.clusterBandwidth()).toBe(1000)
+		})
+
+		it("A18 con il cluster: il backtrace dà il tempo di distruggere master.underground, poi A19 scioglie il cluster", () => {
+			const game = setup()
+			const mail = startA17(game)
+			for (const ip of PERSONAL) plantBackdoor(game, ip)
+			game.reply(mail.id)
+			game.advance(30_000)
+			expect(game.state.missions.some((m) => m.def.path === "uground/a18.miss")).toBe(true)
+
+			connect(game, MASTER)
+			expect(game.network.connection!.trace).toBeUndefined()
+			expect(game.network.loginWithKeyFile()).toBe(true)
+			// Il dump della chiave fa partire subito il backtrace; i 5 nodi lo rallentano
+			const srv = game.state.servers[MASTER]
+			const trace = game.network.connection!.trace!
+			expect(trace.total).toBeCloseTo(traceSeconds(srv.net, 4000, 1, 5))
+			expect(trace.total).toBeGreaterThan(4 * COMMAND_S)
+			expect(game.network.connection!.forced).toBe(true)
+
+			for (const cmd of ["rm sys.kernel", "rm sys.system", "rm sys.network", "reboot"]) {
+				game.advance(COMMAND_S * 1000)
+				expect(game.network.connection).not.toBeNull()
+				exec(game, cmd)
+			}
+			expect(srv.destroyed).toBe(true)
+			expect(game.state.missions.find((m) => m.def.path === "uground/a18.miss")?.done).toBe(true)
+
+			// A19: lo script iniziale cancella file di connessione, exe.clustercore e chiave
+			game.advance(30_000)
+			expect(game.state.missions.some((m) => m.def.path === "uground/a19.miss")).toBe(true)
+			expect(connFiles(game)).toEqual([])
+			expect(game.findLocalFile("exe.clustercore")).toBe(-1)
+			expect(game.findLocalFile("KEY.FG2GB9GD1EF2")).toBe(-1)
+			expect(game.state.cluster).toEqual([])
+			expect(game.netTotal).toBe(80)
+		})
+
+		it("A18 senza cluster: il backtrace arriva prima del riavvio", () => {
+			const game = setup()
+			game.missions.load("uground/a18.miss")
+			game.advance(10_000)
+			game.addLocalFile({ name: "KEY.FG2GB9GD1EF2", dim: 1, img: -1, contents: "%SYSTEM%", owner: "eve" })
+			const traced: string[] = []
+			game.onEvent((e) => e.type === "traced" && traced.push(e.ip))
+			connect(game, MASTER)
+			expect(game.network.loginWithKeyFile()).toBe(true)
+			const srv = game.state.servers[MASTER]
+			const trace = game.network.connection!.trace!
+			expect(trace.total).toBeCloseTo(traceSeconds(srv.net, 4000, 1, 0))
+			expect(trace.total).toBeLessThan(4 * COMMAND_S)
+
+			const ranking = game.state.ranking
+			const done: string[] = []
+			for (const cmd of ["rm sys.kernel", "rm sys.system", "rm sys.network", "reboot"]) {
+				game.advance(COMMAND_S * 1000)
+				if (!game.network.connection) break
+				exec(game, cmd)
+				done.push(cmd)
+			}
+			expect(done).not.toContain("reboot")
+			expect(traced).toEqual([MASTER])
+			expect(game.network.connection).toBeNull()
+			expect(srv.destroyed).toBeFalsy()
+			expect(game.state.ranking).toBe(ranking - crimePenalty(4000, true).ranking)
+			expect(game.state.missions.find((m) => m.def.path === "uground/a18.miss")?.done).toBeFalsy()
+		})
+	})
 })

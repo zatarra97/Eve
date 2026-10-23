@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest"
 import {
 	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
+	NETBANKING_KARMA_PENALTY,
 	NUKE_DURATION_S,
 	SERVER_REFRESH_S,
 	crackSeconds,
@@ -1063,6 +1064,96 @@ describe("partita", () => {
 			expect(srv.destroyed).toBeFalsy()
 			expect(game.state.ranking).toBe(ranking - crimePenalty(4000, true).ranking)
 			expect(game.state.missions.find((m) => m.def.path === "uground/a18.miss")?.done).toBeFalsy()
+		})
+	})
+
+	describe("Netbanking", () => {
+		const BANK = "721.564.892.743" // eurodigibank.eurogroup: Login, 7 utenti, 4 conti, Net 50000
+		const setup = () => Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		/** Connessione e login con le credenziali di un correntista */
+		const login = (game: Game, user: string, password: string) => {
+			expect(game.network.connectDirect(BANK)).toBeNull()
+			game.advance(3_000)
+			expect(game.network.host?.ip).toBe(BANK)
+			expect(game.network.login(user, password)).toBe(true)
+		}
+
+		it("trasferimento entro il limite: saldo scalato, crediti accreditati, nessun backtrace", () => {
+			const game = setup()
+			login(game, "marcaz", "sunshine")
+			// Utente senza conto
+			expect(game.network.bankAccount()).toBeUndefined()
+			expect(game.network.transfer(10)).toContain("Nessun conto")
+
+			login(game, "Kelly", "LOVE")
+			const account = game.network.bankAccount()!
+			expect(account).toMatchObject({ name: "Kelly Lord", dim: 1713, img: 15, owner: "Kelly" })
+			// Ogni utente vede solo il proprio conto
+			expect(game.network.visibleFiles()).toEqual([account])
+			expect(game.network.transferLimit(account)).toBe(15)
+			expect(game.network.transfer(0)).toContain("non valido")
+			expect(game.network.transfer(2.5)).toContain("non valido")
+			expect(game.network.transfer(2000)).toContain("Saldo insufficiente")
+
+			expect(game.network.transfer(15)).toBeNull()
+			expect(account.dim).toBe(1698)
+			expect(game.state.servers[BANK].files.find((f) => f.owner === "Kelly")!.dim).toBe(1698)
+			expect(game.state.credits).toBe(60 + 15)
+			expect(game.network.connection!.trace).toBeUndefined()
+			game.advance(120_000)
+			expect(game.network.connection?.logged).toBe("Kelly")
+			expect(game.state.credits).toBe(75)
+		})
+
+		it("trasferimento oltre il limite: il backtrace parte subito e, se si resta connessi, si viene presi", () => {
+			const game = setup()
+			const traced: string[] = []
+			game.onEvent((e) => e.type === "traced" && traced.push(e.ip))
+			login(game, "JJkarl", "icntrst")
+			const account = game.network.bankAccount()!
+			expect(game.network.transferLimit(account)).toBe(45)
+			expect(game.network.transfer(1000)).toBeNull()
+			expect(account.dim).toBe(357400 - 1000)
+			expect(game.state.credits).toBe(60 + 1000)
+			const srv = game.state.servers[BANK]
+			const trace = game.network.connection!.trace!
+			expect(trace.total).toBeCloseTo(traceSeconds(srv.net, 100, 1, 0))
+
+			game.advance(Math.ceil(trace.total * 1000) + 250)
+			expect(traced).toEqual([BANK])
+			expect(game.network.connection).toBeNull()
+			const penalty = crimePenalty(100, true)
+			expect(game.state.credits).toBe(60 + 1000 - penalty.credits)
+			// Nessuna violazione del sistema: niente sequestro
+			expect(srv.seizedUntil).toBeUndefined()
+
+			// Disconnettendosi in tempo si sfugge al backtrace
+			login(game, "JJkarl", "icntrst")
+			expect(game.network.transfer(500)).toBeNull()
+			expect(game.network.connection!.trace).toBeDefined()
+			game.network.disconnect()
+			const credits = game.state.credits
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.credits).toBe(credits)
+		})
+
+		it("ogni trasferimento abbassa il karma: Cracker e poi Master Cracker", () => {
+			const game = setup()
+			login(game, "pstagna", "ale42y7e")
+			expect(game.userClass).toBe("Lamer")
+			expect(game.network.transfer(10)).toBeNull()
+			expect(game.state.karma).toBe(-NETBANKING_KARMA_PENALTY)
+			const toCracker = Math.ceil(50 / NETBANKING_KARMA_PENALTY)
+			for (let i = 1; i < toCracker; i++) expect(game.network.transfer(10)).toBeNull()
+			expect(game.state.karma).toBe(-toCracker * NETBANKING_KARMA_PENALTY)
+			expect(game.userClass).toBe("Cracker")
+			const toMaster = Math.ceil(150 / NETBANKING_KARMA_PENALTY)
+			for (let i = toCracker; i < toMaster; i++) expect(game.network.transfer(10)).toBeNull()
+			expect(game.userClass).toBe("Master Cracker")
+			// I trasferimenti rifiutati non toccano il karma
+			const karma = game.state.karma
+			expect(game.network.transfer(999_999)).toContain("Saldo insufficiente")
+			expect(game.state.karma).toBe(karma)
 		})
 	})
 })

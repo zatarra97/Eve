@@ -90,3 +90,6 @@ export const MAIL_DELAY_S: [number, number] = [4, 15]
 
 /** Prelievo massimo "sicuro" da un Netbanking: oltre scatta il tracciamento immediato */
 export const NETBANKING_SAFE_RATIO = 1
+
+/** Karma perso a ogni trasferimento da un Netbanking: rubare crediti è da cracker (Manuale §2.6) */
+export const NETBANKING_KARMA_PENALTY = 10

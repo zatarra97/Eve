@@ -40,13 +40,13 @@ npm run import -- <cartella Mother 1.0> [<cartella upgrade 1.02>]
 
 Giocabili: avvio, login e account, desktop, Sysmon, posta con risposte delle missioni, Network Map
 e connessioni, console con i comandi di gioco, terminali dei server (file, news, mail, negozi,
-sottoscrizioni, database, chat), programmi MomPad, UAVsys, MomAMP, tut_hack, rootbreaker,
+sottoscrizioni, database, chat, netbanking), programmi MomPad, UAVsys, MomAMP, tut_hack, rootbreaker,
 wavehacker, backmirror, fileforce e nukelord, backtrace e sequestro dei server, distruzione dei server
 (riavvio senza file di sistema, nuke dei Web Server), cluster di Personal Server (stato nel Sysmon),
 salvataggi (F5/F9).
 
-Da fare: terminali Netbanking e Cluster, missioni casuali (MissGen),
-tutorial guidato sullo schermo, caricamento delle mod dall'interfaccia, impostazioni.
+Da fare: missioni casuali (MissGen), programma netpatch6231, tutorial guidato sullo schermo,
+caricamento delle mod dall'interfaccia, impostazioni, icone vettoriali della schermata di login.
 
 ## Licenza
 

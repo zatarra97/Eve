@@ -9,6 +9,8 @@
 import {
 	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
+	NETBANKING_KARMA_PENALTY,
+	NETBANKING_SAFE_RATIO,
 	NUKE_DURATION_S,
 	SERVER_REFRESH_S,
 	connectionBandwidth,
@@ -726,6 +728,48 @@ export class Network {
 		if (!n) return
 		this.nuke = null
 		this.game.cancelTask(n.taskId)
+	}
+
+	// --- Netbanking ---
+
+	/**
+	 * Conto dell'utente autenticato sul Netbanking connesso. Per il Modding HOW-TO §2.4 FileName è
+	 * l'intestatario, FileDim il saldo, FileImg la cifra massima per un singolo trasferimento, FileOwner il titolare.
+	 */
+	bankAccount(): GameFile | undefined {
+		const srv = this.host
+		if (srv?.terminal !== "NetbankingServer" || this.needsAuth()) return undefined
+		return this.visibleFiles()[0]
+	}
+
+	/** Limite "sicuro" di un singolo trasferimento dal conto */
+	transferLimit(account: GameFile): number {
+		return Math.max(0, Number(account.img) || 0) * NETBANKING_SAFE_RATIO
+	}
+
+	/**
+	 * Trasferisce crediti dal conto dell'utente autenticato a quello del giocatore. Ogni trasferimento
+	 * costa karma (Manuale §2.6); oltre il limite del conto il backtrace parte subito (Manuale, NetBanking Server).
+	 */
+	transfer(amount: number): string | null {
+		const g = this.game
+		const srv = this.host
+		const account = this.bankAccount()
+		if (!srv || !account) return "Nessun conto associato a questo utente."
+		if (!Number.isInteger(amount) || amount <= 0) return "Importo non valido."
+		if (amount > account.dim) return "Saldo insufficiente."
+		account.dim -= amount
+		g.state.credits += amount
+		g.state.karma -= NETBANKING_KARMA_PENALTY
+		g.log(`Netbanking: trasferiti ${amount} crediti dal conto di ${account.name} (${srv.name}).`)
+		if (amount > this.transferLimit(account)) {
+			const user = srv.users.find((u) => sameName(u.username, String(account.owner)))
+			if (user) this.startTrace(srv, user)
+			g.log(`Netbanking: trasferimento oltre il limite, ${srv.name} ha avviato il backtrace.`)
+			g.emit({ type: "sound", name: "alert" })
+		}
+		g.changed()
+		return null
 	}
 
 	// --- chat e news ---

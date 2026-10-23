@@ -392,6 +392,67 @@ function DatabaseView() {
 	)
 }
 
+/** Netbanking Server: conto dell'utente autenticato (name = intestatario, dim = saldo, img = limite per trasferimento) */
+function NetbankingView() {
+	const game = useGame()
+	const run = useRun()
+	const [amount, setAmount] = useState("")
+	const account = game.network.bankAccount()
+
+	if (!account)
+		return (
+			<Frame>
+				<Empty>Nessun conto associato a questo utente.</Empty>
+			</Frame>
+		)
+
+	const value = Number(amount)
+	const limit = game.network.transferLimit(account)
+	const valid = Number.isInteger(value) && value > 0 && value <= account.dim
+	function submit() {
+		if (!valid) return
+		run((g) => g.network.transfer(value), `Trasferimento completato: ${value} crediti accreditati sul tuo conto.`)
+		setAmount("")
+	}
+
+	return (
+		<Frame
+			actions={
+				<TabButton disabled={!valid} onClick={submit}>
+					Trasferisci...
+				</TabButton>
+			}
+		>
+			<div className="mb-2 text-mo-accent">== Conto corrente ==</div>
+			<div>Intestatario : {account.name}</div>
+			<div>Titolare : {String(account.owner)}</div>
+			<div>Saldo : {account.dim} Crediti</div>
+			<div>Limite per trasferimento : {limit} Crediti</div>
+			<form
+				className="mt-3 flex items-center gap-2"
+				onSubmit={(e) => {
+					e.preventDefault()
+					submit()
+				}}
+			>
+				<label htmlFor="mo-bank-amount" className="text-mo-accent">
+					Importo da trasferire:
+				</label>
+				<input
+					id="mo-bank-amount"
+					inputMode="numeric"
+					value={amount}
+					onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
+					className="w-[120px] border border-mo-line bg-transparent px-1 text-white caret-white outline-none"
+					autoComplete="off"
+				/>
+				<span className="text-mo-accent">Crediti</span>
+			</form>
+			{valid && value > limit && <div className="mt-2 text-mo-alert">Attenzione: l'importo supera il limite del conto, il server avvierà il backtrace.</div>}
+		</Frame>
+	)
+}
+
 /** Chat Server: log pubblici (texts/chats.text) più le righe aggiunte dalle missioni */
 function ChatView({ host }: { host: ServerState }) {
 	const game = useGame()
@@ -427,6 +488,8 @@ function TerminalView({ host }: { host: ServerState }) {
 			return <DatabaseView />
 		case "ChatServer":
 			return <ChatView host={host} />
+		case "NetbankingServer":
+			return <NetbankingView />
 		case "Phone":
 			return <Panel className="mt-2 w-[360px] p-2 text-mo-accent">Linea telefonica aperta con {host.ip}.</Panel>
 		default:

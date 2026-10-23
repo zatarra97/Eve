@@ -151,6 +151,50 @@ function LoginView({ host }: { host: ServerState }) {
 	)
 }
 
+// --- caricamento con fileforce (File Server e Database Server) ---
+
+/** Scelta del file da caricare aperta? Si chiude da sola se fileforce sparisce dalla flashram */
+function useUploadPicker(): [boolean, (open: boolean) => void] {
+	const game = useGame()
+	const [picking, setPicking] = useState(false)
+	return [picking && !!game.hasProgram("fileforce"), setPicking]
+}
+
+/** "Carica...": solo con fileforce in flashram */
+function UploadButton({ onClick }: { onClick: () => void }) {
+	const game = useGame()
+	return game.hasProgram("fileforce") ? <TabButton onClick={onClick}>Carica...</TabButton> : null
+}
+
+/** Elenco della flashram da cui scegliere il file da caricare sul server connesso */
+function UploadPicker({ onClose }: { onClose: () => void }) {
+	const game = useGame()
+	const run = useRun()
+	const [local, setLocal] = useState<GameFile | null>(null)
+	const flashram = game.state.files.filter((f) => f.contents !== "%SYSTEM%")
+	const pick = local && flashram.includes(local) ? local : null
+	return (
+		<Frame
+			actions={
+				<>
+					<TabButton onClick={onClose}>Annulla</TabButton>
+					<TabButton disabled={!pick} onClick={() => pick && (onClose(), run((g) => g.network.upload(pick)))}>
+						Carica
+					</TabButton>
+				</>
+			}
+		>
+			<div className="mb-2 text-mo-accent">== Flashram: scegli il file da caricare ==</div>
+			{flashram.length === 0 && <Empty>Nessun file in Flashram.</Empty>}
+			{flashram.map((f, i) => (
+				<Item key={`${f.name}-${i}`} selected={f === pick} onClick={() => setLocal(f)}>
+					{f.name} [{f.dim} Mb]
+				</Item>
+			))}
+		</Frame>
+	)
+}
+
 // --- terminali ---
 
 function FileServerView() {
@@ -158,15 +202,19 @@ function FileServerView() {
 	const run = useRun()
 	const showDialog = useApp((s) => s.showDialog)
 	const { selected, setSelected, open, setOpen } = useSelection()
+	const [picking, setPicking] = useUploadPicker()
 	const files = game.network.visibleFiles()
 	const sel = selected && files.includes(selected) ? selected : null
 
 	if (open) return <Reader title={open.name} onBack={() => setOpen(null)}><div className="whitespace-pre-wrap">{open.contents}</div></Reader>
 
+	if (picking) return <UploadPicker onClose={() => setPicking(false)} />
+
 	return (
 		<Frame
 			actions={
 				<>
+					<UploadButton onClick={() => setPicking(true)} />
 					<TabButton disabled={!sel} onClick={() => sel && (sel.contents === "%SYSTEM%" ? showDialog("File di sistema: impossibile visualizzarlo.") : setOpen(sel))}>
 						Visualizza...
 					</TabButton>
@@ -313,7 +361,10 @@ function portraitOf(img: GameFile["img"]): string | null {
 function DatabaseView() {
 	const game = useGame()
 	const { open, setOpen } = useSelection()
+	const [picking, setPicking] = useUploadPicker()
 	const files = game.network.visibleFiles()
+
+	if (picking) return <UploadPicker onClose={() => setPicking(false)} />
 
 	if (open) {
 		const portrait = portraitOf(open.img)
@@ -328,7 +379,7 @@ function DatabaseView() {
 	}
 
 	return (
-		<Frame>
+		<Frame actions={<UploadButton onClick={() => setPicking(true)} />}>
 			{files.length === 0 && <Empty>Nessun fascicolo presente.</Empty>}
 			{files.map((f, i) => (
 				<Item key={`${f.name}-${i}`} onClick={() => setOpen(f)}>

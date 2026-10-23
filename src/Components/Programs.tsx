@@ -1,7 +1,7 @@
 // Programmi in flashram aperti dal menu applicazioni o dal comando run della console.
 // L'identificativo del programma è il FileContents del file (mompad, uavsys, momamp, tut_hack…).
 //
-// rootbreaker, wavehacker e backmirror sono "tool" di finzione del gioco originale: agiscono solo
+// rootbreaker, wavehacker, backmirror e fileforce sono "tool" di finzione del gioco originale: agiscono solo
 // sui server simulati in memoria dal motore (vedi engine/network.ts).
 
 import { useEffect, useState, type ReactNode } from "react"
@@ -232,7 +232,7 @@ export function TutHack({ name, onClose }: { name: string; onClose: () => void }
 	)
 }
 
-// --- rootbreaker, wavehacker, backmirror ---
+// --- rootbreaker, wavehacker, backmirror, fileforce ---
 
 /** Avanzamento (0..1) della prima operazione a tempo che corrisponde, o null se non ce n'è */
 function taskProgress(tasks: Task[], match: (t: Task) => boolean): number | null {
@@ -345,6 +345,42 @@ export function WaveHacker({ name, onClose }: { name: string; onClose: () => voi
 						Registra Voce
 					</TabButton>
 				)}
+				<TabButton onClick={onClose}>Chiudi</TabButton>
+			</div>
+		</div>
+	)
+}
+
+/** Fileforce: stato del server connesso e caricamenti in corso (si avviano con "Carica..." dal terminale) */
+export function FileForce({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const net = game.network
+	const host = net.host
+	const uploads = game.tasks.filter((t) => t.kind === "upload")
+
+	let status: string
+	if (!host) status = "Nessuna connessione attiva."
+	else if (net.uploadTarget()) status = `${host.type ? `${host.type} ` : ""}${host.name} pronto: usa 'Carica...' dal terminale.`
+	else if (net.needsAuth()) status = `${host.name}: autenticazione richiesta.`
+	else status = `${host.name}: nessun File Server o Database Server rilevato.`
+
+	return (
+		<div className="absolute top-[150px] left-[calc(50%-148px)] z-40 flex h-[270px] w-[296px] flex-col px-2.5 pt-0.5 pb-1.5">
+			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/fileforce.png")}")` }} />
+			<div className="relative font-title text-[11px] text-mo-accent">{name} - Remote Upload</div>
+			<div className="relative mt-2 text-[12px] leading-[14px]">{status}</div>
+			<div className="mo-scroll relative mt-2 min-h-0 flex-1 overflow-y-auto text-[12px] leading-[14px]">
+				{uploads.length === 0 && <div className="text-mo-accent">Nessun caricamento in corso.</div>}
+				{uploads.map((t) => (
+					<div key={t.id} className="mb-1.5">
+						<div className="truncate">
+							{t.label}... {Math.round(Math.min(1, t.elapsed / t.total) * 100)}%
+						</div>
+						<ProgressBar value={Math.min(1, t.elapsed / t.total)} />
+					</div>
+				))}
+			</div>
+			<div className="relative flex justify-end gap-2">
 				<TabButton onClick={onClose}>Chiudi</TabButton>
 			</div>
 		</div>

@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 import { describe, expect, it } from "vitest"
-import { BACKMIRROR_TRACE_SPEED, CRIME_NOTIFICATION_S, SERVER_REFRESH_S, crackSeconds, crimePenalty, traceSeconds, violationRanking } from "./balance"
+import { BACKMIRROR_TRACE_SPEED, CRIME_NOTIFICATION_S, SERVER_REFRESH_S, crackSeconds, crimePenalty, traceSeconds, transferSeconds, violationRanking } from "./balance"
 import { addToPack, emptyPack, type ContentPack } from "./content"
 import { Game } from "./game"
 
@@ -87,6 +87,18 @@ describe("partita", () => {
 		expect(game.scripts.start("hello.script")).toBeNull()
 		expect(game.scripts.list()).toEqual(["wallchanger.script"])
 		expect(game.scripts.kill("wallchanger")).toBe(true)
+	})
+
+	it('ServerIPToRemove="RefServerIP" non rimuove nulla, come nell\'originale', () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		// A04 punta a crimediv.intrapol, che serve ancora ad A19 e nmcha-05
+		const def = game.missions.load("uground/A04.miss")!
+		expect(def.serverIPToRemove).toBe("RefServerIP")
+		const ref = game.network.server(def.refServerIP)!
+		game.network.addKnown(ref.ip)
+		game.missions.complete(game.missions.active.find((m) => m.def === def)!)
+		expect(ref.removed).toBeFalsy()
+		expect(game.state.known).toContain(ref.ip)
 	})
 
 	describe("console", () => {
@@ -195,7 +207,7 @@ describe("partita", () => {
 			expect(game.network.host?.ip).toBe(ip)
 		}
 		// Completa l'operazione a tempo in corso del tipo dato
-		const finish = (game: Game, kind: "crack" | "call") => {
+		const finish = (game: Game, kind: "crack" | "call" | "upload") => {
 			const task = game.tasks.find((t) => t.kind === kind)!
 			game.advance(Math.ceil((task.total - task.elapsed) * 1000) + 250)
 		}
@@ -370,6 +382,135 @@ describe("partita", () => {
 			expect(loaded.state.servers[LOGIN].seizedUntil).toBeDefined()
 		})
 
+		it("fileforce: caricamento su un File Server e missione FileUploading completata", () => {
+			const PURESUN = "115.898.14.892" // subcorp.puresun: File Server, Login, Admin con ranking 450
+			const MISSION = "uground/a-135-80-01.miss" // (percorso normalizzato) caricare exe.database su subcorp.puresun
+			const game = setup()
+			game.missions.load(MISSION, { subscription: true })
+			game.advance(10_000)
+			const mail = game.state.mails.find((m) => m.subject === "Sottoscrizione No. A-135-80-01")!
+			expect(mail).toBeDefined()
+			const file = game.state.files[game.findLocalFile("exe.database")]
+			expect(file.dim).toBe(12)
+
+			install(game, "rootbreaker", "1.1")
+			connect(game, PURESUN)
+			expect(game.network.upload(file)).toContain("fileforce non presente")
+			install(game, "fileforce", "3.0")
+			expect(game.network.upload(file)).toContain("Nessun File Server")
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(game.network.connection?.logged).toBe("Admin")
+
+			const netUsed = game.netUsed
+			const free = game.netFree
+			expect(game.network.upload(file)).toBeNull()
+			const task = game.tasks.find((t) => t.kind === "upload")!
+			expect(task.total).toBeCloseTo(transferSeconds(12, free))
+			expect(game.netUsed).toBe(netUsed + task.net)
+			expect(game.netFree).toBe(0)
+			const srv = game.state.servers[PURESUN]
+			expect(srv.files.some((f) => f.name === "exe.database")).toBe(false)
+
+			game.advance(Math.ceil(task.total * 1000) + 250)
+			expect(game.tasks.some((t) => t.kind === "upload")).toBe(false)
+			expect(srv.files.find((f) => f.name === "exe.database")?.owner).toBe("Admin")
+			expect(game.network.visibleFiles().map((f) => f.name)).toContain("exe.database")
+
+			const credits = game.state.credits
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+			expect(game.state.credits).toBe(credits + 80)
+			game.advance(30_000)
+			expect(game.state.completed).toContain(MISSION)
+		})
+
+		it("CantBeHacked: crimediv.intrapol si forza (A01), reato notificato ma nessun sequestro", () => {
+			const CRIMEDIV = "911.intrapol.1.132" // crimediv.intrapol: Database Server, Login, Secure con ranking 300
+			const MISSION = "uground/a01.miss" // eliminare data.unsecure-8541569 da crimediv.intrapol
+			const game = setup()
+			const messages: string[] = []
+			game.onEvent((e) => e.type === "message" && messages.push(e.text))
+			game.missions.load(MISSION)
+			game.advance(10_000)
+			const mail = game.state.mails.find((m) => m.subject === "AIUTOOOOOO!!")!
+			expect(mail).toBeDefined()
+			expect(game.state.known).toContain(CRIMEDIV)
+
+			install(game, "rootbreaker", "1.1")
+			connect(game, CRIMEDIV)
+			const srv = game.state.servers[CRIMEDIV]
+			expect(srv.cantBeHacked).toBe(true)
+			const before = game.state.ranking
+			expect(game.network.startCrack()).toBeNull()
+			// Il backtrace parte comunque
+			const trace = game.network.connection!.trace!
+			expect(trace.total).toBeCloseTo(traceSeconds(srv.net, 300, 1, 0))
+			finish(game, "crack")
+			expect(game.network.connection?.logged).toBe("Secure")
+			expect(game.state.ranking).toBe(before + violationRanking(300))
+			expect(srv.traces?.ranking).toBe(300)
+
+			const report = game.network.visibleFiles().find((f) => f.name === "data.unsecure-8541569")!
+			expect(game.network.deleteRemoteFile(report)).toBe(true)
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+
+			// Le tracce restano nei log: reato notificato e penalità, ma il server non va sotto sequestro
+			const ranking = game.state.ranking
+			game.network.disconnect()
+			game.advance(CRIME_NOTIFICATION_S * 1000 + 1_000)
+			expect(game.state.completed).toContain(MISSION)
+			expect(game.state.ranking).toBe(ranking - crimePenalty(300, false).ranking)
+			expect(srv.traces).toBeUndefined()
+			expect(srv.seizedUntil).toBeUndefined()
+			expect(srv.protection).toBe("Login")
+			expect(srv.terminal).toBe("DatabaseServer")
+			const notice = messages.find((m) => m.includes("crimediv.intrapol"))
+			expect(notice).toBeDefined()
+			expect(notice).not.toContain("sequestro")
+			// Nessun ripristino da programmare: il server è rimasto com'era
+			game.advance(SERVER_REFRESH_S * 1000 + 1_000)
+			expect(game.state.servers[CRIMEDIV].files.some((f) => f.name === "data.unsecure-8541569")).toBe(false)
+		})
+
+		it("fileforce su un Database Server: le prove di A04 caricate su crimediv.intrapol", () => {
+			const CRIMEDIV = "911.intrapol.1.132" // crimediv.intrapol: Database Server, Login, CantBeHacked
+			const WELLMARK = "122.13.59.874" // file.wellmark: contiene dat.sell-20111213
+			const MISSION = "uground/a04.miss"
+			const game = setup()
+			game.missions.load(MISSION)
+			game.advance(10_000)
+			const mail = game.state.mails.find((m) => m.subject === "Dobbiamo fare qualcosa!")!
+			expect(mail).toBeDefined()
+			// Il file recuperato da file.wellmark (la violazione è già coperta dagli altri test)
+			const evidence = game.state.servers[WELLMARK].files.find((f) => f.name === "dat.sell-20111213")!
+			game.addLocalFile({ ...evidence, owner: "eve" })
+			install(game, "fileforce", "3.0")
+			install(game, "rootbreaker", "1.1")
+
+			const srv = game.state.servers[CRIMEDIV]
+			expect(srv.terminal).toBe("DatabaseServer")
+			connect(game, CRIMEDIV)
+			const file = game.state.files[game.findLocalFile("dat.sell-20111213")]
+			expect(game.network.upload(file)).toContain("Nessun File Server o Database Server")
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(game.network.connection?.forced).toBe(true)
+			expect(game.network.uploadTarget()).toBe(srv)
+
+			expect(game.network.upload(file)).toBeNull()
+			finish(game, "upload")
+			expect(srv.files.find((f) => f.name === "dat.sell-20111213")?.owner).toBe("Secure")
+			// Compare nell'elenco del terminale insieme ai fascicoli di Intrapol
+			expect(game.network.visibleFiles().map((f) => f.name)).toContain("dat.sell-20111213")
+
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+			game.advance(30_000)
+			expect(game.state.completed).toContain(MISSION)
+		})
+
 		it("nuovo accesso forzato dopo il logout: vale la notifica della sessione più recente", () => {
 			const game = setup()
 			const ranking = crackLogin(game)
@@ -422,11 +563,9 @@ describe("partita", () => {
 			expect(game.tasks.some((t) => t.kind === "crack")).toBe(false)
 		})
 
-		it("rootbreaker rifiutato su server non violabili o senza login", () => {
+		it("rootbreaker rifiutato su server senza login", () => {
 			const game = setup()
 			install(game, "rootbreaker", "1.1")
-			connect(game, "432.561.9.132") // hall.ensatcorp: CantBeHacked
-			expect(game.network.startCrack()).toContain("respinto")
 			connect(game, "547.2.8.791") // Commerce Server senza protezione
 			expect(game.network.startCrack()).toContain("Nessuna interfaccia")
 			expect(game.network.connection?.trace).toBeUndefined()

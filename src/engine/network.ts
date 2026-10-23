@@ -56,6 +56,8 @@ const DIAL_SECONDS = 2.5
 export const VOICE_SAMPLE = "%WAV%"
 /** Modello dei server sotto sequestro Intrapol */
 const SEIZED_MODEL = "hackedsys.fak"
+/** Terminali su cui fileforce può caricare file: quelli dei RefServerIP delle missioni FileUploading */
+const UPLOAD_TERMINALS: ServerState["terminal"][] = ["FileServer", "DatabaseServer"]
 
 export class Network {
 	private game: Game
@@ -310,7 +312,6 @@ export class Network {
 		const srv = this.host
 		if (!srv || !this.needsAuth() || srv.protection !== protection) return "Nessuna interfaccia compatibile rilevata sul server remoto."
 		if (this.breach) return "Operazione già in corso."
-		if (srv.cantBeHacked) return "Il sistema di protezione remoto ha respinto il tentativo."
 		const admin = this.adminOf(srv)
 		if (!admin) return "Nessun account presente sul server remoto."
 		return { srv, admin }
@@ -472,8 +473,10 @@ export class Network {
 		g.state.ranking = Math.max(0, g.state.ranking - penalty.ranking)
 		g.state.credits = Math.max(0, g.state.credits - penalty.credits)
 		srv.traces = undefined
-		// Il sequestro scatta solo se il sistema è stato effettivamente violato
-		if (traces) this.seize(srv)
+		// Il sequestro scatta solo se il sistema è stato effettivamente violato, e mai sui server
+		// CantBeHacked: per il Modding HOW-TO §2.7 non vengono bloccati temporaneamente dopo un hacking
+		const seized = !!traces && !srv.cantBeHacked
+		if (seized) this.seize(srv)
 		if (this.connection?.target === srv.ip) this.disconnect()
 		const loss = `Ranking -${penalty.ranking}${penalty.credits ? `, Crediti -${penalty.credits}` : ""}.`
 		const text = caughtLive
@@ -482,7 +485,7 @@ export class Network {
 		g.log(text)
 		g.emit({ type: "sound", name: "alert" })
 		g.emit({ type: "traced", ip: srv.ip })
-		g.message(traces ? `${text}\nIl server è stato posto sotto sequestro.` : text, "Intrapol")
+		g.message(seized ? `${text}\nIl server è stato posto sotto sequestro.` : text, "Intrapol")
 	}
 
 	/** Sequestro Intrapol: il server mostra il modello hackedsys.fak finché restoreServer non lo ripristina */
@@ -558,6 +561,39 @@ export class Network {
 				g.addLocalFile({ ...file, owner: g.state.user })
 				g.log(`File '${file.name}' scaricato.`)
 				g.missions.check()
+			},
+		})
+		return null
+	}
+
+	/** Server connesso su cui fileforce può caricare file adesso (File Server o Database Server, autenticati) */
+	uploadTarget(): ServerState | undefined {
+		const srv = this.host
+		return srv && UPLOAD_TERMINALS.includes(srv.terminal) && !srv.seizedUntil && !this.needsAuth() ? srv : undefined
+	}
+
+	/** fileforce: carica un file della flashram sul server connesso, con proprietario l'utente autenticato */
+	upload(file: GameFile): string | null {
+		const g = this.game
+		if (!g.hasProgram("fileforce")) return "fileforce non presente in Flashram."
+		const srv = this.uploadTarget()
+		const user = this.connection?.logged
+		if (!srv) return "Nessun File Server o Database Server disponibile per il caricamento."
+		const free = Math.max(1, g.netFree)
+		g.startTask({
+			kind: "upload",
+			label: `Upload ${file.name}`,
+			total: transferSeconds(file.dim, free),
+			net: Math.min(free, g.netFree),
+			cpu: 0,
+			onDone: () => {
+				// Il trasferimento si perde se nel frattempo la sessione sul server è cambiata
+				if (this.host !== srv || this.connection?.logged !== user) {
+					g.log(`Upload di '${file.name}' interrotto: connessione con ${srv.name} persa.`)
+					return
+				}
+				this.putFile(srv, { ...file, owner: user ?? "" })
+				g.log(`File '${file.name}' caricato su ${srv.name}.`)
 			},
 		})
 		return null

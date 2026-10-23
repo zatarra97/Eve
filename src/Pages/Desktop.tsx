@@ -11,7 +11,7 @@ import AppsMenu from "@/Components/AppsMenu"
 import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
-import { BackMirror, MomAmp, MomPad, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
+import { BackMirror, FileForce, MomAmp, MomPad, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Sysmon from "@/Components/Sysmon"
 import Terminal from "@/Components/Terminal"
 import { Dialog } from "@/Components/ui"
@@ -27,6 +27,7 @@ const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => Rea
 	rootbreaker: RootBreaker,
 	wavehacker: WaveHacker,
 	backmirror: BackMirror,
+	fileforce: FileForce,
 }
 
 interface OpenProgram {

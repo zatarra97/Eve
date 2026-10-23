@@ -146,6 +146,10 @@ export class Missions {
 		if (d.credits || d.extraRanking) g.log(`Missione '${d.name}' completata: +${d.credits} crediti, +${d.extraRanking} ranking.`)
 
 		for (const news of d.endNews) g.network.addNews(news.server, news.title, news.body)
+		// Alcuni file originali (A04, A-135-80-01, A-135-150-01) hanno ServerIPToRemove="RefServerIP"
+		// tra virgolette: è una stringa letterale che non corrisponde a nessun IP, quindi nel gioco
+		// originale non rimuoveva nulla. Va lasciata così: A04 rimuoverebbe crimediv.intrapol, che
+		// serve ancora ad A19 e nmcha-05.
 		if (d.serverIPToRemove) g.network.removeServer(d.serverIPToRemove)
 
 		let delay = 0

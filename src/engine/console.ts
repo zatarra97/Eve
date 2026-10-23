@@ -31,7 +31,9 @@ export class Shell {
 			help: { help: "elenco dei comandi", run: () => this.help() },
 			clear: { help: "pulisce la console", run: () => this.clear() },
 			exit: { help: "chiude la console", run: () => game.emit({ type: "ui", action: "console", arg: 0 }) },
-			ls: { help: "elenco dei file in flashram", run: () => this.ls() },
+			ls: { help: "elenco dei file in flashram (del server remoto se autenticati)", run: () => this.ls() },
+			rm: { help: "<file> elimina un file dal server remoto", run: (a) => this.rm(a.join(" ")) },
+			reboot: { help: "riavvia il server remoto (solo Admin)", run: () => this.reboot() },
 			view: { help: "<file> mostra il contenuto di un file", run: (a) => this.view(a.join(" ")) },
 			run: { help: "<programma> esegue un programma", run: (a) => this.runProgram(a.join(" ")) },
 			connect: { help: "<ip> connessione diretta a un server", run: (a) => this.connect(a[0]) },
@@ -89,6 +91,7 @@ export class Shell {
 	// --- file locali ---
 
 	private ls() {
+		if (this.remote()) return this.lsRemote()
 		const files = this.game.state.files
 		if (!files.length) this.out("nessun file in flashram.")
 		for (const f of files) this.out(`${f.name.padEnd(32)}${f.dim} Mb`)
@@ -109,6 +112,37 @@ export class Shell {
 		if (!f || !f.contents || f.contents.startsWith("%")) return this.out("programma inesistente!")
 		this.out(`esecuzione di ${f.name}...`)
 		this.game.emit({ type: "program", id: f.contents, name: f.name })
+	}
+
+	// --- file remoti ---
+
+	/** Connessi e autenticati su un server: ls, rm e reboot operano su di lui */
+	private remote(): boolean {
+		const net = this.game.network
+		return !!net.host && net.connection?.logged !== undefined
+	}
+
+	private lsRemote() {
+		const net = this.game.network
+		const files = net.visibleFiles()
+		this.out(`== ${net.host!.name} ==`)
+		if (!files.length) this.out("nessun file presente.")
+		for (const f of files) this.out(`${f.name.padEnd(32)}${f.dim} Mb`)
+	}
+
+	private rm(name: string) {
+		if (!this.need(name, "rm <file>")) return
+		if (!this.remote()) return this.out("nessun server remoto autenticato.")
+		const net = this.game.network
+		const f = net.visibleFiles().find((x) => x.name.toLowerCase() === name.toLowerCase())
+		if (!f) return this.out("file inesistente!")
+		this.out(net.deleteRemoteFile(f) ? `${f.name} eliminato.` : "impossibile eliminare un file di sistema.")
+	}
+
+	private reboot() {
+		if (!this.remote()) return this.out("nessun server remoto autenticato.")
+		const err = this.game.network.reboot()
+		if (err) this.out(err)
 	}
 
 	// --- rete ---

@@ -9,11 +9,13 @@
 import {
 	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
+	NUKE_DURATION_S,
 	SERVER_REFRESH_S,
 	connectionBandwidth,
 	crackSeconds,
 	crackerSpeed,
 	crimePenalty,
+	nukeSeconds,
 	traceSeconds,
 	transferSeconds,
 	violationRanking,
@@ -63,6 +65,8 @@ export class Network {
 	private game: Game
 	connection: Connection | null = null
 	breach: Breach | null = null
+	/** Attacco di nukelord in corso al Web Server connesso */
+	nuke: { ip: string; taskId: number } | null = null
 	/** Nodi impostati sulla Network Map prima di connettersi */
 	pendingNodes: string[] = []
 	/** backmirror aperto: rallenta il backtrace in corso */
@@ -236,6 +240,7 @@ export class Network {
 	disconnect(reason?: string) {
 		if (!this.connection) return
 		this.abortBreach()
+		this.abortNuke()
 		this.leaveTraces()
 		this.connection = null
 		this.pendingNodes = []
@@ -296,8 +301,13 @@ export class Network {
 
 	// --- accesso forzato (rootbreaker, wavehacker) ---
 
-	/** Account con il ranking più alto: è quello che i programmi forzano */
+	/**
+	 * Account amministratore, quello che i programmi forzano: l'utente "Admin" (Modding HOW-TO §2.3),
+	 * altrimenti quello con il ranking più alto
+	 */
 	adminOf(srv: ServerState): ServerUser | undefined {
+		const admin = srv.users.find((u) => u.username.toLowerCase() === "admin")
+		if (admin) return admin
 		return srv.users.reduce<ServerUser | undefined>((best, u) => (!best || u.ranking > best.ranking ? u : best), undefined)
 	}
 
@@ -475,7 +485,8 @@ export class Network {
 		srv.traces = undefined
 		// Il sequestro scatta solo se il sistema è stato effettivamente violato, e mai sui server
 		// CantBeHacked: per il Modding HOW-TO §2.7 non vengono bloccati temporaneamente dopo un hacking
-		const seized = !!traces && !srv.cantBeHacked
+		// (un server distrutto non c'è più da sequestrare, né da ripristinare)
+		const seized = !!traces && !srv.cantBeHacked && !srv.destroyed
 		if (seized) this.seize(srv)
 		if (this.connection?.target === srv.ip) this.disconnect()
 		const loss = `Ranking -${penalty.ranking}${penalty.credits ? `, Crediti -${penalty.credits}` : ""}.`
@@ -597,6 +608,94 @@ export class Network {
 			},
 		})
 		return null
+	}
+
+	// --- distruzione dei server (riavvio senza file di sistema, nukelord) ---
+
+	/** Autenticati sul server connesso con l'account amministratore (adminOf)? */
+	isAdmin(): boolean {
+		const srv = this.host
+		const user = this.connection?.logged
+		return !!srv && !!user && user.toLowerCase() === this.adminOf(srv)?.username.toLowerCase()
+	}
+
+	/**
+	 * Riavvio del server connesso, solo da Admin. Se sono stati eliminati tutti i file sys.* il sistema
+	 * non riparte e il server viene distrutto (Modding HOW-TO §2.5), salvo CantBeDestroyed.
+	 */
+	reboot(): string | null {
+		const srv = this.host
+		if (!srv || srv.seizedUntil) return "Nessun server remoto connesso."
+		if (!this.isAdmin()) return "Riavvio consentito solo all'amministratore del sistema."
+		const g = this.game
+		const system = srv.files.some((f) => f.name.toLowerCase().startsWith("sys."))
+		if (!system && !srv.cantBeDestroyed) {
+			this.destroy(srv, `${srv.name}: file di sistema mancanti, impossibile completare il riavvio. Il server è fuori uso.`)
+			return null
+		}
+		g.log(`Riavvio di ${srv.name} in corso...`)
+		this.disconnect("Il server remoto si sta riavviando: connessione chiusa.")
+		return null
+	}
+
+	/** Server fuori uso in modo irreversibile: sparisce dalla mappa e chiude la connessione */
+	private destroy(srv: ServerState, reason: string) {
+		const g = this.game
+		srv.destroyed = true
+		g.state.known = g.state.known.filter((ip) => ip !== srv.ip)
+		g.log(reason)
+		if (this.connection?.target === srv.ip) this.disconnect(reason)
+		g.missions.check()
+		g.changed()
+	}
+
+	/** Web Server connesso, bersaglio di nukelord */
+	nukeTarget(): ServerState | undefined {
+		const srv = this.host
+		return srv?.type === "Web Server" && !srv.seizedUntil ? srv : undefined
+	}
+
+	/**
+	 * nukelord: satura il Web Server connesso con tutta la banda libera. Se basta a coprire quella del
+	 * server (Net) lo mette fuori uso per sempre, altrimenti resta fuori linea per NUKE_DURATION_S.
+	 * I server CantBeNuked non possono essere nukati affatto (Modding HOW-TO §2.7).
+	 */
+	startNuke(): string | null {
+		const g = this.game
+		if (!this.program("nukelord")) return "nukelord non presente in Flashram."
+		const srv = this.nukeTarget()
+		if (!srv) return "Nessun Web Server connesso."
+		if (this.nuke) return "Operazione già in corso."
+		if (srv.cantBeNuked) return "Il server remoto ha respinto l'attacco: impossibile nukarlo."
+		const free = g.netFree
+		if (free <= 0) return "Banda insufficiente per avviare l'attacco."
+		const destroys = free >= srv.net
+		const task = g.startTask({
+			kind: "nuke",
+			label: `Nuke ${srv.name}`,
+			total: nukeSeconds(srv.net, free),
+			net: free,
+			cpu: Math.round(g.state.hardware.cpu.value * 0.3),
+			onDone: () => {
+				this.nuke = null
+				if (destroys) return this.destroy(srv, `nukelord: ${srv.name} è stato disconnesso dal Network in modo irreversibile.`)
+				srv.nukedUntil = g.now + NUKE_DURATION_S * 1000
+				const reason = `nukelord: ${srv.name} è fuori linea, ma la banda impiegata non basta a disconnetterlo per sempre.`
+				g.log(reason)
+				this.disconnect(reason)
+			},
+		})
+		this.nuke = { ip: srv.ip, taskId: task.id }
+		g.log(`nukelord: attacco a ${srv.name} avviato (${Math.round(free)} MBps contro ${srv.net} MBps).`)
+		return null
+	}
+
+	/** Interrompe l'attacco di nukelord in corso */
+	abortNuke() {
+		const n = this.nuke
+		if (!n) return
+		this.nuke = null
+		this.game.cancelTask(n.taskId)
 	}
 
 	// --- chat e news ---

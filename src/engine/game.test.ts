@@ -1,7 +1,18 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 import { describe, expect, it } from "vitest"
-import { BACKMIRROR_TRACE_SPEED, CRIME_NOTIFICATION_S, SERVER_REFRESH_S, crackSeconds, crimePenalty, traceSeconds, transferSeconds, violationRanking } from "./balance"
+import {
+	BACKMIRROR_TRACE_SPEED,
+	CRIME_NOTIFICATION_S,
+	NUKE_DURATION_S,
+	SERVER_REFRESH_S,
+	crackSeconds,
+	crimePenalty,
+	nukeSeconds,
+	traceSeconds,
+	transferSeconds,
+	violationRanking,
+} from "./balance"
 import { addToPack, emptyPack, type ContentPack } from "./content"
 import { Game } from "./game"
 
@@ -598,6 +609,231 @@ describe("partita", () => {
 			expect(game.network.connection?.logged).toBe("Admin")
 			expect(game.network.connection?.forced).toBe(true)
 			expect(game.state.servers[VRLS].traces).toBeDefined()
+		})
+	})
+
+	describe("distruzione dei server", () => {
+		const setup = () => Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		const install = (game: Game, id: string, version: string) => game.addLocalFile({ name: `${id}-${version}`, dim: 2, img: -1, contents: id, owner: "eve" })
+		const connect = (game: Game, ip: string) => {
+			expect(game.network.connectDirect(ip)).toBeNull()
+			game.advance(3_000)
+			expect(game.network.host?.ip).toBe(ip)
+		}
+		const finish = (game: Game, kind: "crack" | "nuke") => {
+			const task = game.tasks.find((t) => t.kind === kind)!
+			game.advance(Math.ceil((task.total - task.elapsed) * 1000) + 250)
+		}
+		const exec = (game: Game, line: string) => {
+			const before = game.state.console.length
+			game.shell.exec(line)
+			return game.state.console.slice(before + 1).join("\n")
+		}
+		/** Avvia la missione e restituisce la mail di inizio */
+		const startMission = (game: Game, path: string, subject: string) => {
+			game.missions.load(path)
+			game.advance(10_000)
+			const mail = game.state.mails.find((m) => m.subject === subject)
+			expect(mail).toBeDefined()
+			return mail!
+		}
+
+		it("nmcha-03: file sys.* eliminati e riavvio da Admin distruggono n3v3rmind.xfreeze", () => {
+			const XFREEZE = "515.42.xfreeze.74" // n3v3rmind.xfreeze: File Server, Login, Admin con ranking 1120
+			const MISSION = "xmiss/nmcha-03.miss"
+			const game = setup()
+			const mail = startMission(game, MISSION, "Avvertimento...")
+			install(game, "rootbreaker", "1.1")
+			connect(game, XFREEZE)
+			expect(game.network.reboot()).toContain("solo all'amministratore")
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(game.network.isAdmin()).toBe(true)
+
+			// Con i file di sistema al loro posto il server si riavvia e basta
+			expect(game.network.reboot()).toBeNull()
+			const srv = game.state.servers[XFREEZE]
+			expect(game.network.connection).toBeNull()
+			expect(srv.destroyed).toBeFalsy()
+
+			game.network.addKnown(XFREEZE)
+			connect(game, XFREEZE)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			for (const f of game.network.visibleFiles().filter((f) => f.name.startsWith("sys."))) expect(game.network.deleteRemoteFile(f)).toBe(true)
+			expect(srv.files.some((f) => f.name.startsWith("sys."))).toBe(false)
+			expect(game.network.reboot()).toBeNull()
+			expect(srv.destroyed).toBe(true)
+			expect(game.network.connection).toBeNull()
+			expect(game.state.known).not.toContain(XFREEZE)
+			expect(game.network.connectDirect(XFREEZE)).toContain("Impossibile raggiungere")
+
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+		})
+
+		it("A18 dalla console: ls, rm e reboot su master.underground", () => {
+			const MASTER = "master.666wearegone.0.1" // master.underground: KeyFile, nessun terminale
+			const MISSION = "uground/a18.miss"
+			const game = setup()
+			startMission(game, MISSION, "Ci siamo!")
+			game.addLocalFile({ name: "KEY.FG2GB9GD1EF2", dim: 1, img: -1, contents: "%KEY%", owner: "eve" })
+			connect(game, MASTER)
+			// Non ancora autenticati: ls mostra la flashram, rm e reboot non hanno un server su cui agire
+			expect(exec(game, "ls")).toContain("KEY.FG2GB9GD1EF2")
+			expect(exec(game, "rm sys.kernel")).toContain("nessun server remoto autenticato")
+			expect(game.network.loginWithKeyFile()).toBe(true)
+
+			const ls = exec(game, "ls")
+			expect(ls).toContain("== master.underground ==")
+			expect(ls).toContain("sys.kernel")
+			expect(ls).not.toContain("KEY.FG2GB9GD1EF2")
+			expect(exec(game, "rm")).toContain("sintassi: rm <file>")
+			expect(exec(game, "rm inesistente")).toContain("file inesistente!")
+			for (const name of ["sys.kernel", "sys.system", "sys.network"]) expect(exec(game, `rm ${name}`)).toContain(`${name} eliminato.`)
+			expect(exec(game, "ls")).not.toContain("sys.")
+
+			exec(game, "reboot")
+			const srv = game.state.servers[MASTER]
+			expect(srv.destroyed).toBe(true)
+			expect(game.network.connection).toBeNull()
+			// ClusterDestruction senza mail: la missione si chiude da sola
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+		})
+
+		it("CantBeDestroyed: il riavvio senza file di sistema non distrugge il server", () => {
+			const XFREEZE = "515.42.xfreeze.74"
+			const game = setup()
+			const srv = game.state.servers[XFREEZE]
+			srv.cantBeDestroyed = true
+			connect(game, XFREEZE)
+			expect(game.network.login("Admin", srv.users[0].password)).toBe(true)
+			for (const f of game.network.visibleFiles().filter((f) => f.name.startsWith("sys."))) game.network.deleteRemoteFile(f)
+			expect(game.network.reboot()).toBeNull()
+			expect(srv.destroyed).toBeFalsy()
+			expect(game.network.connection).toBeNull()
+		})
+
+		it("A06: nukelord manda fuori linea web4.telemark, con banda sufficiente lo distrugge", () => {
+			const WEB4 = "10.258.26.13" // web4.telemark: Web Server, Net 200, firewall che accetta solo 10.258.1.119
+			const RELAY = "10.258.1.119"
+			const MISSION = "uground/a06.miss"
+			const game = setup()
+			const mail = startMission(game, MISSION, "Richiesta aiuto...")
+			expect(game.state.known).toContain(WEB4)
+			const via = () => {
+				game.network.addNode(RELAY)
+				connect(game, WEB4)
+			}
+
+			via()
+			expect(game.network.startNuke()).toContain("nukelord non presente")
+			install(game, "nukelord", "8")
+			const srv = game.state.servers[WEB4]
+			// 80 MBps meno i 40 della connessione a due nodi: non bastano contro i 200 del server
+			const free = game.netFree
+			expect(free).toBeLessThan(srv.net)
+			expect(game.network.startNuke()).toBeNull()
+			expect(game.network.startNuke()).toContain("già in corso")
+			const task = game.tasks.find((t) => t.kind === "nuke")!
+			expect(task.total).toBeCloseTo(nukeSeconds(srv.net, free))
+			expect(game.netFree).toBe(0)
+			finish(game, "nuke")
+			expect(game.network.connection).toBeNull()
+			expect(srv.destroyed).toBeFalsy()
+			expect(srv.nukedUntil).toBeGreaterThan(game.now + (NUKE_DURATION_S - 1) * 1000)
+			game.network.addNode(RELAY)
+			expect(game.network.connectDirect(WEB4)).toContain("Impossibile raggiungere")
+			game.network.pendingNodes = []
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBeFalsy()
+
+			// Tornato in linea, con una scheda di rete più veloce l'attacco lo disconnette per sempre
+			game.advance(NUKE_DURATION_S * 1000)
+			game.state.hardware.net.value = 1000
+			via()
+			expect(game.network.startNuke()).toBeNull()
+			finish(game, "nuke")
+			expect(srv.destroyed).toBe(true)
+			expect(game.network.connection).toBeNull()
+			expect(game.state.known).not.toContain(WEB4)
+
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+		})
+
+		it("A-110-40-02: con la scheda iniziale la banda libera eguaglia quella di web.neowase, che viene distrutto", () => {
+			const NEOWASE = "92.147.43.912" // web.neowase: Web Server, Net 60, nessun firewall
+			const MISSION = "uground/a-110-40-02.miss"
+			const game = setup()
+			const mail = startMission(game, MISSION, "Sottoscrizione No. A-110-40-02")
+			install(game, "nukelord", "8")
+			connect(game, NEOWASE)
+			const srv = game.state.servers[NEOWASE]
+			// 80 MBps meno i 20 della connessione diretta
+			expect(game.netFree).toBe(60)
+			expect(srv.net).toBe(60)
+			expect(game.network.startNuke()).toBeNull()
+			finish(game, "nuke")
+			expect(srv.destroyed).toBe(true)
+			expect(srv.nukedUntil).toBeUndefined()
+			expect(game.network.connection).toBeNull()
+			expect(game.state.known).not.toContain(NEOWASE)
+
+			game.reply(mail.id)
+			expect(game.state.missions.find((m) => m.def.path === MISSION)?.done).toBe(true)
+		})
+
+		it("CantBeNuked: l'attacco viene respinto, il server resta in linea", () => {
+			const NEOWASE = "92.147.43.912"
+			const game = setup()
+			const srv = game.state.servers[NEOWASE]
+			srv.cantBeNuked = true
+			install(game, "nukelord", "8")
+			connect(game, NEOWASE)
+			expect(game.network.startNuke()).toContain("respinto")
+			expect(game.network.nuke).toBeNull()
+			expect(game.tasks.some((t) => t.kind === "nuke")).toBe(false)
+			game.advance(60_000)
+			expect(srv.destroyed).toBeFalsy()
+			expect(srv.nukedUntil).toBeUndefined()
+			expect(game.network.host?.ip).toBe(NEOWASE)
+		})
+
+		it("l'account forzato e l'amministratore sono l'utente Admin, anche se un altro ha ranking più alto", () => {
+			const XFREEZE = "515.42.xfreeze.74"
+			const game = setup()
+			const srv = game.state.servers[XFREEZE]
+			srv.users.push({ ...srv.users[0], username: "Root", password: "root", ranking: 5000 })
+			expect(game.network.adminOf(srv)?.username).toBe("Admin")
+			install(game, "rootbreaker", "1.1")
+			connect(game, XFREEZE)
+			expect(game.network.startCrack()).toBeNull()
+			finish(game, "crack")
+			expect(game.network.connection?.logged).toBe("Admin")
+			expect(game.network.isAdmin()).toBe(true)
+
+			// Senza un utente Admin si ripiega sul ranking più alto
+			game.network.logout()
+			expect(game.network.login("Root", "root")).toBe(true)
+			expect(game.network.isAdmin()).toBe(false)
+			srv.users = srv.users.filter((u) => u.username !== "Admin")
+			expect(game.network.adminOf(srv)?.username).toBe("Root")
+			expect(game.network.isAdmin()).toBe(true)
+		})
+
+		it("nukelord: disconnettersi interrompe l'attacco e libera la banda", () => {
+			const NEOWASE = "92.147.43.912" // web.neowase: Web Server, Net 60
+			const game = setup()
+			install(game, "nukelord", "8")
+			connect(game, NEOWASE)
+			expect(game.network.startNuke()).toBeNull()
+			game.network.disconnect()
+			expect(game.network.nuke).toBeNull()
+			expect(game.tasks.some((t) => t.kind === "nuke")).toBe(false)
+			game.advance(60_000)
+			expect(game.state.servers[NEOWASE].destroyed).toBeFalsy()
+			expect(game.state.servers[NEOWASE].nukedUntil).toBeUndefined()
 		})
 	})
 })

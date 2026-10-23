@@ -214,6 +214,7 @@ function FileServerView() {
 		<Frame
 			actions={
 				<>
+					{game.network.isAdmin() && <TabButton onClick={() => run((g) => g.network.reboot())}>Riavvia Sistema</TabButton>}
 					<UploadButton onClick={() => setPicking(true)} />
 					<TabButton disabled={!sel} onClick={() => sel && (sel.contents === "%SYSTEM%" ? showDialog("File di sistema: impossibile visualizzarlo.") : setOpen(sel))}>
 						Visualizza...

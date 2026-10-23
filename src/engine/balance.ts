@@ -80,6 +80,11 @@ export const CRIME_NOTIFICATION_S = 2000 / 30
 export const SERVER_REFRESH_S = 6000 / 30
 export const NUKE_DURATION_S = 180
 
+/** Secondi dell'attacco di nukelord: più è larga la banda del server rispetto a quella impiegata, più dura */
+export function nukeSeconds(serverNet: number, freeMBps: number): number {
+	return 8 + (20 * Math.max(1, serverNet)) / Math.max(1, freeMBps)
+}
+
 /** Ritardo casuale di consegna delle mail (secondi) */
 export const MAIL_DELAY_S: [number, number] = [4, 15]
 

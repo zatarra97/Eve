@@ -1,7 +1,7 @@
 // Programmi in flashram aperti dal menu applicazioni o dal comando run della console.
 // L'identificativo del programma è il FileContents del file (mompad, uavsys, momamp, tut_hack…).
 //
-// rootbreaker, wavehacker, backmirror e fileforce sono "tool" di finzione del gioco originale: agiscono solo
+// rootbreaker, wavehacker, backmirror, fileforce e nukelord sono "tool" di finzione del gioco originale: agiscono solo
 // sui server simulati in memoria dal motore (vedi engine/network.ts).
 
 import { useEffect, useState, type ReactNode } from "react"
@@ -232,7 +232,7 @@ export function TutHack({ name, onClose }: { name: string; onClose: () => void }
 	)
 }
 
-// --- rootbreaker, wavehacker, backmirror, fileforce ---
+// --- rootbreaker, wavehacker, backmirror, fileforce, nukelord ---
 
 /** Avanzamento (0..1) della prima operazione a tempo che corrisponde, o null se non ce n'è */
 function taskProgress(tasks: Task[], match: (t: Task) => boolean): number | null {
@@ -381,6 +381,45 @@ export function FileForce({ name, onClose }: { name: string; onClose: () => void
 				))}
 			</div>
 			<div className="relative flex justify-end gap-2">
+				<TabButton onClick={onClose}>Chiudi</TabButton>
+			</div>
+		</div>
+	)
+}
+
+/** Nukelord: satura la banda del Web Server connesso (nukelord.png: titolo in alto, due righe chiare per stato e avanzamento) */
+export function NukeLord({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const run = useAction()
+	const net = game.network
+	const target = net.nukeTarget()
+	const nuke = net.nuke
+	const progress = nuke ? taskProgress(game.tasks, (t) => t.id === nuke.taskId) : null
+
+	let status: string
+	if (progress !== null) status = `Attacco in corso... ${Math.round(progress * 100)}%`
+	else if (target) status = `${target.name}: ${target.net} MBps, liberi ${Math.round(game.netFree)} MBps`
+	else if (net.host) status = "Il server connesso non è un Web Server."
+	else status = "Nessuna connessione attiva."
+
+	return (
+		<div className="absolute top-[220px] left-[calc(50%-110px)] z-40 h-[145px] w-[220px]">
+			<div className="pointer-events-none absolute inset-x-0 top-0 h-[119px]" style={{ background: `url("${asset("graphics/nukelord.png")}")` }} />
+			<div className="absolute top-1 left-2.5 font-title text-[11px] text-mo-accent">{name}</div>
+			<div className="absolute top-[57px] right-2 left-[24px] truncate text-[11px] leading-[19px] text-[#0b2a5e]" title={status}>
+				{status}
+			</div>
+			<div className="absolute top-[90px] right-2 left-[24px] h-[19px] p-[5px]">
+				<div className="h-full bg-mo-alert" style={{ width: `${(progress ?? 0) * 100}%` }} />
+			</div>
+			<div className="absolute right-0 bottom-0 flex gap-2">
+				{nuke ? (
+					<TabButton onClick={() => game.act(() => net.abortNuke())}>Interrompi</TabButton>
+				) : (
+					<TabButton disabled={!target} onClick={() => run(() => net.startNuke())}>
+						Avvia Nuke
+					</TabButton>
+				)}
 				<TabButton onClick={onClose}>Chiudi</TabButton>
 			</div>
 		</div>

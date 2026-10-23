@@ -39,8 +39,12 @@ npm run import -- <cartella Mother 1.0> [<cartella upgrade 1.02>]
 ## Stato
 
 Giocabili: avvio, login e account, desktop, Sysmon, posta con risposte delle missioni, Network Map
-e connessioni, console di base, salvataggi (F5/F9). Da fare: terminali dei server, programmi,
-comandi di gioco della console, tutorial guidato.
+e connessioni, console con i comandi di gioco, terminali dei server (file, news, mail, negozi,
+sottoscrizioni, database, chat), programmi MomPad, UAVsys, MomAMP, tut_hack, rootbreaker,
+wavehacker e backmirror, backtrace e sequestro dei server, salvataggi (F5/F9).
+
+Da fare: nukelord e fileforce, terminali Netbanking e Cluster, missioni casuali (MissGen),
+tutorial guidato sullo schermo, caricamento delle mod dall'interfaccia, impostazioni.
 
 ## Licenza
 

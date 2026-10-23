@@ -85,9 +85,10 @@ function LoginView({ host }: { host: ServerState }) {
 
 	if (host.protection === "VRLS")
 		return (
-			<Panel className="mt-2 w-[360px] p-2 text-mo-accent">
-				Interfaccia di riconoscimento vocale (VRLS): non ancora disponibile in Eve.
-			</Panel>
+			<div className="mt-2 w-[360px] border border-mo-line bg-[#071533]/90 p-2.5">
+				<div className="font-title text-[11px] tracking-wide text-[#cfd8e6]">RICONOSCIMENTO VOCALE RICHIESTO</div>
+				<div className="mt-3 text-mo-accent">L'accesso a questo server è protetto da un'interfaccia VRLS: è richiesta la voce di un utente autorizzato.</div>
+			</div>
 		)
 
 	if (host.protection === "KeyFile")
@@ -373,6 +374,8 @@ function TerminalView({ host }: { host: ServerState }) {
 			return <DatabaseView />
 		case "ChatServer":
 			return <ChatView host={host} />
+		case "Phone":
+			return <Panel className="mt-2 w-[360px] p-2 text-mo-accent">Linea telefonica aperta con {host.ip}.</Panel>
 		default:
 			return <Panel className="mt-2 p-2 text-mo-accent">{host.type || "Server"} — terminale non ancora disponibile in Eve.</Panel>
 	}
@@ -387,7 +390,12 @@ export default function Terminal() {
 		<div className="absolute top-4 left-2 z-10 w-[752px]">
 			<div className="pl-0.5 font-title text-[15px] leading-[21px] whitespace-pre-wrap text-[#cfd8e6]">{host.welcome}</div>
 			{/* Selezioni e file aperti ripartono da zero cambiando server o utente */}
-			{game.network.needsAuth() ? <LoginView key={host.ip} host={host} /> : <TerminalView key={`${host.ip}/${logged}`} host={host} />}
+			{/* Server sotto sequestro (modello hackedsys.fak): solo il comunicato Intrapol */}
+			{host.seizedUntil ? null : game.network.needsAuth() ? (
+				<LoginView key={host.ip} host={host} />
+			) : (
+				<TerminalView key={`${host.ip}/${logged}`} host={host} />
+			)}
 		</div>
 	)
 }

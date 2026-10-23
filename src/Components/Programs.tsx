@@ -1,12 +1,17 @@
 // Programmi in flashram aperti dal menu applicazioni o dal comando run della console.
 // L'identificativo del programma è il FileContents del file (mompad, uavsys, momamp, tut_hack…).
+//
+// rootbreaker, wavehacker e backmirror sono "tool" di finzione del gioco originale: agiscono solo
+// sui server simulati in memoria dal motore (vedi engine/network.ts).
 
 import { useEffect, useState, type ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 import { asset } from "@/assets"
 import { playTrack, stopTrack, trackTime } from "@/audio"
+import type { Task } from "@/engine/game"
 import { useGame } from "@/hooks/useGame"
-import { Panel, SpriteButton, TabButton } from "./ui"
+import { useApp } from "@/store/app"
+import { Panel, Sprite, SpriteButton, TabButton } from "./ui"
 
 /** Finestra di un programma: titolo in alto, contenuto, pulsanti sotto a destra */
 function Window({ title, className, actions, children }: { title: string; className?: string; actions: ReactNode; children: ReactNode }) {
@@ -224,5 +229,148 @@ export function TutHack({ name, onClose }: { name: string; onClose: () => void }
 		>
 			<div className="mo-scroll min-h-0 flex-1 overflow-y-auto text-[12.5px] leading-[16px] whitespace-pre-wrap">{TUT_HACK_PAGES[page]}</div>
 		</Window>
+	)
+}
+
+// --- rootbreaker, wavehacker, backmirror ---
+
+/** Avanzamento (0..1) della prima operazione a tempo che corrisponde, o null se non ce n'è */
+function taskProgress(tasks: Task[], match: (t: Task) => boolean): number | null {
+	const t = tasks.find(match)
+	return t ? Math.min(1, t.elapsed / t.total) : null
+}
+
+function ProgressBar({ value }: { value: number }) {
+	return (
+		<div className="mt-1 h-[6px] border border-mo-line">
+			<div className="h-full bg-mo-ok" style={{ width: `${value * 100}%` }} />
+		</div>
+	)
+}
+
+/** Esegue un'azione del motore e mostra l'eventuale errore */
+function useAction() {
+	const game = useGame()
+	const showDialog = useApp((s) => s.showDialog)
+	return (fn: () => string | null) => {
+		const err = game.act(fn)
+		if (err) showDialog(err)
+	}
+}
+
+/** Rootbreaker: cracking dell'interfaccia di login del server connesso */
+export function RootBreaker({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const run = useAction()
+	const net = game.network
+	const host = net.host
+	const breach = net.breach?.program === "rootbreaker" ? net.breach : null
+	const progress = breach ? taskProgress(game.tasks, (t) => t.id === breach.taskId) : null
+	const ready = !!host && net.needsAuth() && host.protection === "Login"
+
+	let status: ReactNode
+	if (!host) status = "Nessuna connessione attiva."
+	else if (progress !== null)
+		status = (
+			<>
+				<div>
+					Cracking dell'account {net.adminOf(host)?.username}... {Math.round(progress * 100)}%
+				</div>
+				<ProgressBar value={progress} />
+			</>
+		)
+	else if (net.connection?.forced) status = <span className="text-mo-ok">Accesso ottenuto come {net.connection.logged}.</span>
+	else if (ready) status = `Interfaccia di login rilevata su ${host.name}.`
+	else status = "Nessuna interfaccia di login rilevata."
+
+	return (
+		<div className="absolute top-[200px] left-[calc(50%-148px)] z-40 flex h-[83px] w-[296px] flex-col px-2.5 pt-0.5 pb-1.5">
+			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/root_breaker.png")}")` }} />
+			<div className="relative font-title text-[11px] text-mo-accent">{name}</div>
+			<div className="relative mt-2 min-h-0 flex-1 text-[12px] leading-[14px]">{status}</div>
+			<div className="relative flex justify-end gap-2">
+				{breach ? (
+					<TabButton onClick={() => game.act(() => net.abortBreach())}>Interrompi</TabButton>
+				) : (
+					<TabButton disabled={!ready} onClick={() => run(() => net.startCrack(name))}>
+						Avvia Cracking
+					</TabButton>
+				)}
+				<TabButton onClick={onClose}>Chiudi</TabButton>
+			</div>
+		</div>
+	)
+}
+
+/** Wavehacker: registra la voce su una linea telefonica e la riproduce sulle interfacce VRLS */
+export function WaveHacker({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const run = useAction()
+	const net = game.network
+	const host = net.host
+	const phone = !!net.phoneSample()
+	const vrls = !!host && net.needsAuth() && host.protection === "VRLS"
+	const breach = net.breach?.program === "wavehacker" ? net.breach : null
+	const recording = taskProgress(game.tasks, (t) => t.kind === "call")
+	const forging = breach ? taskProgress(game.tasks, (t) => t.id === breach.taskId) : null
+	const samples = net.voiceSamples()
+
+	let status: string
+	if (recording !== null) status = `Registrazione della voce in corso... ${Math.round(recording * 100)}%`
+	else if (forging !== null) status = `Riproduzione del campione vocale... ${Math.round(forging * 100)}%`
+	else if (host && phone) status = `Linea telefonica attiva con ${host.name}: pronto a registrare.`
+	else if (host && vrls) status = `Interfaccia di riconoscimento vocale (VRLS) rilevata su ${host.name}.`
+	else if (net.connection?.forced) status = `Accesso ottenuto come ${net.connection.logged}.`
+	else status = "Nessuna linea telefonica o interfaccia VRLS rilevata."
+
+	return (
+		<div className="absolute top-[180px] left-[calc(50%-204px)] z-40 h-[167px] w-[409px]">
+			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/wavehacker_gui.png")}")` }} />
+			<div className="absolute top-1 left-3 font-title text-[11px] text-mo-accent">{name}</div>
+			<div className="absolute top-[22px] right-3 left-6 text-[12px] leading-[14px]">
+				<div>{status}</div>
+				<div className="truncate text-mo-accent">Campioni in Flashram: {samples.length ? samples.map((f) => f.name).join(", ") : "nessuno"}</div>
+			</div>
+			{/* Forma d'onda che si rivela con l'avanzamento */}
+			<div className="absolute top-[69px] left-[20px] h-[68px] overflow-hidden" style={{ width: `${(recording ?? forging ?? 0) * 388}px` }}>
+				<img src={asset("graphics/wavehacker_wav.png")} alt="" className="max-w-none" />
+			</div>
+			<div className="absolute right-2 bottom-1.5 flex gap-2">
+				{vrls ? (
+					<TabButton disabled={!!breach} onClick={() => run(() => net.startVoiceForge())}>
+						Invia Campione
+					</TabButton>
+				) : (
+					<TabButton disabled={!phone || recording !== null} onClick={() => run(() => net.recordVoice())}>
+						Registra Voce
+					</TabButton>
+				)}
+				<TabButton onClick={onClose}>Chiudi</TabButton>
+			</div>
+		</div>
+	)
+}
+
+/** backmirror_led.png: 10 fotogrammi da 194 px, 0-5 spento, 6-9 rosso sempre più acceso */
+const LED_FRAMES = 10
+
+/** Backmirror: mostra l'avanzamento del backtrace sulla sessione in corso */
+export function BackMirror({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const trace = game.network.connection?.trace
+	const progress = trace ? Math.min(1, trace.elapsed / trace.total) : 0
+	const frame = trace ? 6 + Math.min(3, Math.floor(progress * 4)) : 0
+	const label = trace ? `Backtrace ${Math.round(progress * 100)}% - ${Math.ceil(trace.total - trace.elapsed)} s` : "Nessun backtrace rilevato"
+
+	return (
+		<div className="absolute top-[60px] left-[calc(50%-110px)] z-40 h-[39px] w-[220px]">
+			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/backmirror.png")}")` }} />
+			<div className="absolute top-[2px] left-2 font-title text-[10px] text-mo-accent">{name}</div>
+			<button type="button" title="Chiudi" onClick={onClose} className="absolute top-0 right-3 cursor-pointer text-[11px] text-mo-accent hover:text-white">
+				x
+			</button>
+			<Sprite name="backmirror_led" w={194} h={16} frames={LED_FRAMES} frame={frame} className="absolute top-[20px] left-[22px]" />
+			<div className="absolute top-[21px] left-[22px] w-[194px] text-center text-[11px] leading-[14px] text-white">{label}</div>
+		</div>
 	)
 }

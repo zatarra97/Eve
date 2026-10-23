@@ -5,15 +5,35 @@
 // a un backtrace sono finzione di gioco: dati letti dai file .svr/.miss del gioco originale e
 // simulati in memoria nel browser. Questo codice non apre connessioni di rete, non legge né
 // modifica nulla fuori dallo stato della partita e non ha alcuna utilità al di fuori del gioco.
-//
-// TODO: accesso forzato alle interfacce di sicurezza (tool dei server), backtrace durante la
-// sessione e notifica dei reati non sono ancora implementati: i metodi relativi sono segnaposto.
 
-import { SERVER_REFRESH_S, connectionBandwidth } from "./balance"
+import {
+	CRIME_NOTIFICATION_S,
+	SERVER_REFRESH_S,
+	connectionBandwidth,
+	crackSeconds,
+	crackerSpeed,
+	crimePenalty,
+	traceSeconds,
+	transferSeconds,
+	violationRanking,
+} from "./balance"
 import { normPath } from "./content"
 import type { Game } from "./game"
 import { loadServer } from "./loaders"
-import type { GameFile, ServerState } from "./types"
+import type { GameFile, ServerState, ServerUser } from "./types"
+
+/** Backtrace del server durante un accesso forzato (secondi di gioco) */
+export interface Trace {
+	elapsed: number
+	total: number
+}
+
+/** Attacco in corso all'interfaccia di sicurezza del server connesso */
+export interface Breach {
+	ip: string
+	program: "rootbreaker" | "wavehacker"
+	taskId: number
+}
 
 export interface Connection {
 	/** IP dei nodi in ordine; l'ultimo è il server di destinazione */
@@ -26,13 +46,20 @@ export interface Connection {
 	logged?: string
 	/** Accesso ottenuto senza credenziali valide */
 	forced: boolean
+	/** Backtrace avviato dal server quando si è attaccata l'interfaccia di sicurezza */
+	trace?: Trace
 }
 
 const DIAL_SECONDS = 2.5
+/** Contenuto dei campioni vocali registrati da wavehacker (FileImg = campione, es. "snd_phone_admin:3") */
+export const VOICE_SAMPLE = "%WAV%"
+/** Modello dei server sotto sequestro Intrapol */
+const SEIZED_MODEL = "hackedsys.fak"
 
 export class Network {
 	private game: Game
 	connection: Connection | null = null
+	breach: Breach | null = null
 	/** Nodi impostati sulla Network Map prima di connettersi */
 	pendingNodes: string[] = []
 	readonly localIP = "127.0.0.1"
@@ -198,6 +225,7 @@ export class Network {
 
 	disconnect(reason?: string) {
 		if (!this.connection) return
+		this.abortBreach()
 		this.connection = null
 		this.pendingNodes = []
 		this.game.log("Disconnesso dal Network.")
@@ -208,6 +236,7 @@ export class Network {
 	/** Logout dal server: si torna all'interfaccia di autenticazione */
 	logout() {
 		if (!this.connection) return
+		this.abortBreach()
 		this.connection.logged = undefined
 		this.connection.forced = false
 		this.game.changed()
@@ -253,15 +282,201 @@ export class Network {
 		return true
 	}
 
-	// TODO: accesso forzato alle interfacce di sicurezza e backtrace della sessione.
-	/** Segnaposto: notifica di un reato da parte di Intrapol */
-	notifyCrime(_ip: string, _caughtLive: boolean) {}
+	// --- accesso forzato (rootbreaker, wavehacker) ---
+
+	/** Account con il ranking più alto: è quello che i programmi forzano */
+	adminOf(srv: ServerState): ServerUser | undefined {
+		return srv.users.reduce<ServerUser | undefined>((best, u) => (!best || u.ranking > best.ranking ? u : best), undefined)
+	}
+
+	/** Programma in flashram con questo identificativo: quello indicato per nome, altrimenti la versione migliore */
+	private program(id: string, name?: string): GameFile | undefined {
+		const files = this.game.state.files.filter((f) => f.contents.toLowerCase() === id)
+		return files.find((f) => f.name === name) ?? files.sort((a, b) => crackerSpeed(versionOf(b)) - crackerSpeed(versionOf(a)))[0]
+	}
+
+	/** Controlli comuni prima di attaccare l'interfaccia di sicurezza del server connesso */
+	private breachTarget(protection: ServerState["protection"]): { srv: ServerState; admin: ServerUser } | string {
+		const srv = this.host
+		if (!srv || !this.needsAuth() || srv.protection !== protection) return "Nessuna interfaccia compatibile rilevata sul server remoto."
+		if (this.breach) return "Operazione già in corso."
+		if (srv.cantBeHacked) return "Il sistema di protezione remoto ha respinto il tentativo."
+		const admin = this.adminOf(srv)
+		if (!admin) return "Nessun account presente sul server remoto."
+		return { srv, admin }
+	}
+
+	/** rootbreaker: cracking dell'interfaccia Login. Il server avvia subito il backtrace. */
+	startCrack(programName?: string): string | null {
+		const prog = this.program("rootbreaker", programName)
+		if (!prog) return "rootbreaker non presente in Flashram."
+		const t = this.breachTarget("Login")
+		if (typeof t === "string") return t
+		const seconds = crackSeconds(t.admin.ranking, t.srv.cpu, this.game.state.hardware.cpu.value, crackerSpeed(versionOf(prog)))
+		this.startBreach("rootbreaker", t.srv, t.admin, `Cracking ${t.srv.name}`, seconds)
+		return null
+	}
+
+	/** wavehacker sul VRLS: invia il campione vocale dell'admin registrato in flashram */
+	startVoiceForge(): string | null {
+		if (!this.program("wavehacker")) return "wavehacker non presente in Flashram."
+		const t = this.breachTarget("VRLS")
+		if (typeof t === "string") return t
+		const sample = this.voiceSamples().find((f) => String(f.img) === t.admin.password)
+		if (!sample) return "Nessun campione vocale compatibile in Flashram."
+		// Non c'è niente da decifrare: il tempo è quello dell'invio del campione al server
+		const free = Math.max(1, this.game.netFree)
+		this.startBreach("wavehacker", t.srv, t.admin, `Sintesi vocale ${t.srv.name}`, transferSeconds(sample.dim, free), Math.min(free, this.game.netFree))
+		return null
+	}
+
+	private startBreach(program: Breach["program"], srv: ServerState, admin: ServerUser, label: string, seconds: number, net = 0) {
+		const g = this.game
+		const task = g.startTask({
+			kind: "crack",
+			label,
+			total: seconds,
+			net,
+			cpu: Math.round(g.state.hardware.cpu.value * 0.5),
+			onDone: () => {
+				this.breach = null
+				if (this.host === srv) this.forceAccess(srv, admin)
+			},
+		})
+		this.breach = { ip: srv.ip, program, taskId: task.id }
+		this.startTrace(srv, admin)
+		g.log(`${program}: attacco all'interfaccia di ${srv.name} avviato.`)
+	}
+
+	/** Interrompe l'attacco in corso (il backtrace già avviato continua) */
+	abortBreach() {
+		const b = this.breach
+		if (!b) return
+		this.breach = null
+		this.game.cancelTask(b.taskId)
+	}
+
+	/** Accesso ottenuto come admin: ranking alla prima violazione, tracce nei log e reato notificato più tardi */
+	private forceAccess(srv: ServerState, admin: ServerUser) {
+		const c = this.connection!
+		const g = this.game
+		c.logged = admin.username
+		c.forced = true
+		if (!srv.everHacked) {
+			srv.everHacked = true
+			g.state.ranking += violationRanking(admin.ranking)
+		}
+		srv.traces = { at: g.now, ranking: admin.ranking }
+		g.schedule(CRIME_NOTIFICATION_S, "crime", { ip: srv.ip })
+		g.log(`Accesso forzato a ${srv.name} come ${admin.username}.`)
+		g.emit({ type: "sound", name: "access" })
+		g.missions.check()
+	}
+
+	/** Campioni vocali registrati in flashram */
+	voiceSamples(): GameFile[] {
+		return this.game.state.files.filter((f) => f.contents === VOICE_SAMPLE)
+	}
+
+	/** Campione della voce sulla linea telefonica connessa (file rec.audio dei server Phone) */
+	phoneSample(): GameFile | undefined {
+		const srv = this.host
+		return srv?.terminal === "Phone" ? srv.files.find((f) => String(f.img).startsWith("snd_phone_admin")) : undefined
+	}
+
+	/** wavehacker su una linea telefonica: registra la voce in un campione in flashram */
+	recordVoice(): string | null {
+		const g = this.game
+		if (!this.program("wavehacker")) return "wavehacker non presente in Flashram."
+		const srv = this.host
+		const sample = this.phoneSample()
+		if (!srv || !sample) return "Nessuna linea telefonica attiva."
+		if (this.breach || g.tasks.some((t) => t.kind === "call")) return "Operazione già in corso."
+		if (sample.dim > g.flashramFree) return "Spazio insufficiente sulla Flashram."
+		const free = Math.max(1, g.netFree)
+		// "snd_phone_admin:3" → sounds/phone_admin_3.wav
+		g.emit({ type: "sound", name: String(sample.img).replace(/^snd_/, "").replace(":", "_") })
+		g.startTask({
+			kind: "call",
+			label: `Registrazione ${srv.name}`,
+			total: transferSeconds(sample.dim, free),
+			net: Math.min(free, g.netFree),
+			cpu: 0,
+			onDone: () => {
+				const name = `voce-${srv.name}.wav`
+				g.addLocalFile({ name, dim: sample.dim, img: sample.img, contents: VOICE_SAMPLE, owner: g.state.user })
+				g.log(`wavehacker: campione vocale salvato in '${name}'.`)
+			},
+		})
+		return null
+	}
+
+	// --- backtrace e reati ---
+
+	/** Il server attaccato inizia a rintracciare la connessione (una volta per sessione) */
+	private startTrace(srv: ServerState, admin: ServerUser) {
+		const c = this.connection
+		if (!c || c.trace) return
+		// I Proxy Server tra i nodi contano doppio
+		const hops = c.nodes.reduce((n, ip) => n + (this.servers[ip]?.type === "Proxy Server" ? 2 : 1), 0)
+		c.trace = { elapsed: 0, total: traceSeconds(srv.net, admin.ranking, hops, this.game.state.cluster.length) }
+	}
+
+	/**
+	 * Intrapol notifica un reato: in diretta quando il backtrace si completa, altrimenti
+	 * CRIME_NOTIFICATION_S dopo l'accesso forzato se le tracce sono ancora nei log del server.
+	 */
+	notifyCrime(ip: string, caughtLive: boolean) {
+		const g = this.game
+		const srv = this.server(ip)
+		if (!srv) return
+		const traces = srv.traces
+		// Notifiche programmate per accessi precedenti a un nuovo accesso forzato: si aspetta quella più recente
+		if (!caughtLive && (!traces || g.now - traces.at < CRIME_NOTIFICATION_S * 1000 - 1)) return
+		const penalty = crimePenalty(traces?.ranking ?? this.adminOf(srv)?.ranking ?? 0, caughtLive)
+		g.state.ranking = Math.max(0, g.state.ranking - penalty.ranking)
+		g.state.credits = Math.max(0, g.state.credits - penalty.credits)
+		srv.traces = undefined
+		// Il sequestro scatta solo se il sistema è stato effettivamente violato
+		if (traces) this.seize(srv)
+		if (this.connection?.target === srv.ip) this.disconnect()
+		const loss = `Ranking -${penalty.ranking}${penalty.credits ? `, Crediti -${penalty.credits}` : ""}.`
+		const text = caughtLive
+			? `Backtrace completato: Intrapol ha rintracciato il tuo indirizzo durante l'accesso a ${srv.name}. ${loss}`
+			: `Intrapol ti ha notificato un reato: violazione del sistema ${srv.name}. ${loss}`
+		g.log(text)
+		g.emit({ type: "sound", name: "alert" })
+		g.emit({ type: "traced", ip: srv.ip })
+		g.message(traces ? `${text}\nIl server è stato posto sotto sequestro.` : text, "Intrapol")
+	}
+
+	/** Sequestro Intrapol: il server mostra il modello hackedsys.fak finché restoreServer non lo ripristina */
+	private seize(srv: ServerState) {
+		const source = this.game.content.servers.get(SEIZED_MODEL)
+		const model = source ? loadServer(source, SEIZED_MODEL) : undefined
+		// Nome, IP, posizione e file restano quelli del server (restoreServer conserva i file caricati)
+		Object.assign(srv, {
+			welcome: model?.welcome ?? "Server sotto sequestro.",
+			background: model?.background ?? -1,
+			terminal: null,
+			protection: null,
+			firewall: false,
+			firewallMask: "*.*.*.*",
+			users: [],
+			cantBeHacked: true,
+			cantBeNuked: true,
+			cantBeDestroyed: true,
+			seizedUntil: this.game.now + SERVER_REFRESH_S * 1000,
+		} satisfies Partial<ServerState>)
+		this.game.changed()
+	}
 
 	// --- file remoti ---
 
 	/** File del server visibili all'utente autenticato (pubblici se il server non è protetto) */
 	visibleFilesOf(srv: ServerState): GameFile[] {
 		const user = this.connection?.target === srv.ip ? this.connection.logged : undefined
+		if (srv.seizedUntil) return []
 		if (!srv.protection) return srv.files
 		return srv.files.filter((f) => String(f.owner).toLowerCase() === (user ?? "").toLowerCase())
 	}
@@ -284,6 +499,8 @@ export class Network {
 		if (!srv) return false
 		if (file.contents === "%SYSTEM%" && !force) return false
 		srv.files = srv.files.filter((f) => f !== file)
+		// Cancellare i log delle connessioni elimina le tracce dell'accesso forzato
+		if (srv.traces && file.name.toLowerCase().startsWith("log.")) srv.traces = undefined
 		this.game.missions.check()
 		this.game.changed()
 		return true
@@ -349,6 +566,11 @@ export class Network {
 				this.game.missions.check()
 			}
 		}
+		// Backtrace: se si completa con la connessione ancora aperta si viene presi in diretta
+		if (c?.trace && c.status === "connected") {
+			c.trace.elapsed += dt / 1000
+			if (c.trace.elapsed >= c.trace.total) this.notifyCrime(c.target, true)
+		}
 		// Server sotto sequestro che tornano online
 		for (const srv of Object.values(this.servers)) {
 			if (srv.seizedUntil && srv.seizedUntil <= this.game.now) {
@@ -357,6 +579,11 @@ export class Network {
 			}
 		}
 	}
+}
+
+/** Versione di un programma dal nome del file ("rootbreaker-2.2" → "2.2") */
+function versionOf(file: GameFile): string {
+	return file.name.split("-").pop() ?? ""
 }
 
 export { SERVER_REFRESH_S }

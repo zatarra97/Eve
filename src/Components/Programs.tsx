@@ -9,6 +9,7 @@ import { twMerge } from "tailwind-merge"
 import { asset } from "@/assets"
 import { playTrack, stopTrack, trackTime } from "@/audio"
 import type { Task } from "@/engine/game"
+import { NETPATCH_KERNEL, netPatchInstalled, netPatchTask, startNetPatch } from "@/engine/netpatch"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
 import { Panel, Sprite, SpriteButton, TabButton } from "./ui"
@@ -453,5 +454,42 @@ export function BackMirror({ name, onClose }: { name: string; onClose: () => voi
 			<Sprite name="backmirror_led" w={194} h={16} frames={LED_FRAMES} frame={frame} className="absolute top-[20px] left-[22px]" />
 			<div className="absolute top-[21px] left-[22px] w-[194px] text-center text-[11px] leading-[14px] text-white">{label}</div>
 		</div>
+	)
+}
+
+/** netpatch6231: aggiornamento del kernel di NetComm (missione A11 "La Cura") */
+export function NetPatch({ name, onClose }: { name: string; onClose: () => void }) {
+	const game = useGame()
+	const task = netPatchTask(game)
+	const installed = netPatchInstalled(game)
+	const [error, setError] = useState<string | null>(null)
+	const progress = task ? Math.min(1, task.elapsed / task.total) : installed ? 1 : 0
+
+	let status: string
+	if (task) status = `Aggiornamento del sottosistema di rete in corso... ${Math.round(progress * 100)}%`
+	else if (installed) status = `Aggiornamento completato: installato il nuovo kernel di NetComm '${NETPATCH_KERNEL}'.`
+	else status = "Pronto ad aggiornare il kernel di NetComm alla versione 6231. Non chiudere la connessione durante la procedura."
+
+	return (
+		<Window
+			title={`${name} - NetComm Kernel Update`}
+			className="top-[160px] left-[calc(50%-170px)] w-[340px]"
+			actions={
+				<>
+					{!installed && (
+						<TabButton disabled={!!task} onClick={() => setError(game.act(() => startNetPatch(game)))}>
+							Aggiorna...
+						</TabButton>
+					)}
+					<TabButton onClick={onClose}>Chiudi</TabButton>
+				</>
+			}
+		>
+			<div className={`text-[12px] leading-[15px] ${installed ? "text-mo-ok" : ""}`}>{status}</div>
+			<div className="mt-2">
+				<ProgressBar value={progress} />
+			</div>
+			{error && <div className="mt-1.5 text-[12px] text-mo-alert">{error}</div>}
+		</Window>
 	)
 }

@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 import { describe, expect, it } from "vitest"
+import { NETPATCH_KERNEL, NETPATCH_SECONDS, startNetPatch } from "./netpatch"
 import {
 	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
@@ -111,6 +112,38 @@ describe("partita", () => {
 		game.missions.complete(game.missions.active.find((m) => m.def === def)!)
 		expect(ref.removed).toBeFalsy()
 		expect(game.state.known).toContain(ref.ip)
+	})
+
+	it("netpatch6231: A11 si completa dopo l'aggiornamento del kernel di NetComm", () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		// Senza il programma non si parte
+		expect(startNetPatch(game)).toContain("non è presente")
+
+		game.missions.load("uground/A11.miss")
+		expect(game.hasProgram("netpatch6231")).toBeDefined()
+		game.advance(30_000)
+		const mail = game.state.mails.find((m) => m.subject === "Arriva la medicina!")!
+		expect(mail).toBeDefined()
+
+		// Rispondere prima dell'aggiornamento non basta
+		game.reply(mail.id)
+		game.advance(5_000)
+		expect(game.missions.active.find((m) => m.def.path === "uground/a11.miss")?.done).toBeFalsy()
+
+		expect(startNetPatch(game)).toBeNull()
+		expect(startNetPatch(game)).toContain("già in corso")
+		expect(game.cpuUsed).toBeGreaterThan(0)
+		game.advance((NETPATCH_SECONDS - 1) * 1000)
+		expect(game.findLocalFile(NETPATCH_KERNEL)).toBe(-1)
+		game.advance(2_000)
+		expect(game.findLocalFile(NETPATCH_KERNEL)).toBeGreaterThanOrEqual(0)
+		expect(game.cpuUsed).toBe(0)
+		expect(startNetPatch(game)).toContain("già aggiornato")
+
+		game.reply(mail.id)
+		game.advance(60_000)
+		expect(game.state.completed).toContain("uground/a11.miss")
+		expect(game.missions.active.some((m) => m.def.path === "uground/a12.miss")).toBe(true)
 	})
 
 	describe("console", () => {

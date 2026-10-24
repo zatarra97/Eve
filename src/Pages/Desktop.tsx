@@ -13,7 +13,7 @@ import AppsMenu from "@/Components/AppsMenu"
 import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
-import { BackMirror, FileForce, MomAmp, MomPad, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
+import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
 import Terminal from "@/Components/Terminal"
@@ -32,6 +32,7 @@ const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => Rea
 	backmirror: BackMirror,
 	fileforce: FileForce,
 	nukelord: NukeLord,
+	netpatch6231: NetPatch,
 }
 
 interface OpenProgram {

@@ -98,15 +98,19 @@ export function TabButton({
 	onClick,
 	className,
 	disabled,
+	tut,
 }: {
 	children: ReactNode
 	onClick?: () => void
 	className?: string
 	disabled?: boolean
+	/** Marcatore per il tutorial guidato (data-tut) */
+	tut?: string
 }) {
 	return (
 		<button
 			type="button"
+			data-tut={tut}
 			disabled={disabled}
 			onClick={onClick}
 			className={twMerge(

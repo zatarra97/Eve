@@ -30,7 +30,7 @@ export default function Sysmon() {
 	const { hardware, ranking, credits } = game.state
 
 	return (
-		<div className="absolute top-0 right-0.5 w-[252px] text-[12px]">
+		<div data-tut="sysmon" className="absolute top-0 right-0.5 w-[252px] text-[12px]">
 			<div className="pl-0.5 leading-[13px] text-mo-accent">
 				<div>Mother OS vers. 1.02</div>
 				<div>{game.formatDate()}</div>
@@ -83,7 +83,7 @@ export default function Sysmon() {
 					))}
 				</div>
 			)}
-			<button type="button" className="mt-[3px] block cursor-pointer" onClick={toggle} title={expanded ? "Comprimi" : "Espandi"}>
+			<button type="button" data-tut="sysmon-expand" className="mt-[3px] block cursor-pointer" onClick={toggle} title={expanded ? "Comprimi" : "Espandi"}>
 				<Sprite name={expanded ? "expand_up" : "expand_down"} w={252} h={14} frames={2} />
 			</button>
 		</div>

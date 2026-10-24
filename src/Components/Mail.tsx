@@ -47,7 +47,7 @@ function Inbox() {
 	const openId = right?.kind === "mail" ? right.id : right?.kind === "compose" ? right.replyTo : null
 
 	return (
-		<div className="absolute right-0.5 bottom-[36px] z-20 flex h-[270px] w-[300px] flex-col border-2 border-mo-line bg-[#0b2f6e]/95 p-1 text-[12px] leading-[15px]">
+		<div data-tut="inbox" className="absolute right-0.5 bottom-[36px] z-20 flex h-[270px] w-[300px] flex-col border-2 border-mo-line bg-[#0b2f6e]/95 p-1 text-[12px] leading-[15px]">
 			<div className="mb-1 flex items-baseline justify-between text-mo-accent">
 				<span className="font-title text-[11px]">Posta in arrivo</span>
 				<span>{inbox.length ? `${inbox.length} messaggi, ${unread} da leggere` : "nessun messaggio"}</span>
@@ -96,7 +96,7 @@ export function MailPanel() {
 		const mail = game.state.mails.find((m) => m.id === right.id)
 		if (!mail) return null
 		return (
-			<div className={frame}>
+			<div data-tut="mailpanel" className={frame}>
 				<div className="text-mo-accent">Da: {mail.from}</div>
 				<div className="mb-2 text-mo-accent">Oggetto: {mail.subject}</div>
 				{mail.attachment && <div className="mb-1 text-mo-accent">Allegato: {mail.attachment.name}</div>}
@@ -123,7 +123,7 @@ function Compose({ replyTo }: { replyTo: number }) {
 	const files = game.state.files.filter((f) => f.contents !== "%SYSTEM%")
 
 	return (
-		<div className={frame}>
+		<div data-tut="mailpanel" className={frame}>
 			<div className="text-mo-accent">Per: {mail.from}</div>
 			<div className="text-mo-accent">RE: {mail.subject}</div>
 			<div className="mt-2 mb-2 text-mo-accent">Allegato: {attachment}</div>

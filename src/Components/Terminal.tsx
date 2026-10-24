@@ -557,7 +557,7 @@ export default function Terminal() {
 	if (!host) return null
 	const logged = game.network.connection?.logged ?? ""
 	return (
-		<div className="absolute top-4 left-2 z-10 w-[752px]">
+		<div data-tut="terminal" className="absolute top-4 left-2 z-10 w-[752px]">
 			<div className="pl-0.5 font-title text-[15px] leading-[21px] whitespace-pre-wrap text-[#cfd8e6]">{host.welcome}</div>
 			{/* Selezioni e file aperti ripartono da zero cambiando server o utente */}
 			{/* Server sotto sequestro (modello hackedsys.fak): solo il comunicato Intrapol */}

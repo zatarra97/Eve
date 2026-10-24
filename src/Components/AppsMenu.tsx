@@ -83,6 +83,7 @@ export default function AppsMenu({
 					{/* Click fuori dal pannello: chiude il menu */}
 					<div className="absolute inset-0 z-20" onClick={() => toggle(false)} />
 					<div
+						data-tut="appsmenu"
 						className="absolute bottom-[52px] left-0.5 z-30 w-[232px] border border-mo-line bg-[#06173a]/70 shadow-[0_0_18px_#3a8fe040] backdrop-blur-[3px]"
 						style={{ clipPath: "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)" }}
 					>

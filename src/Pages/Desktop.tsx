@@ -17,6 +17,7 @@ import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker,
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
 import Terminal from "@/Components/Terminal"
+import Tutorial from "@/Components/Tutorial"
 import { Dialog } from "@/Components/ui"
 
 const TICK_MS = 250
@@ -80,6 +81,7 @@ export default function Desktop() {
 	const showDialog = useApp((s) => s.showDialog)
 	const closeDialog = useApp((s) => s.closeDialog)
 	const [askTutorial, setAskTutorial] = useState(!game.state.tutorialDone)
+	const [tutorial, setTutorial] = useState(false)
 	// Programmi aperti; l'ultimo è in primo piano
 	const [programs, setPrograms] = useState<OpenProgram[]>([])
 	const [settingsOpen, setSettingsOpen] = useState(false)
@@ -193,12 +195,14 @@ export default function Desktop() {
 		endGame()
 	}
 
-	function startTutorial() {
+	/** Prima partita: parte comunque la missione di 1ronCh4ng; il tutorial guidato solo se richiesto */
+	function startTutorial(guided: boolean) {
 		game.act(() => {
 			game.state.tutorialDone = true
 			game.missions.load("def/tut0.miss")
 		})
 		setAskTutorial(false)
+		setTutorial(guided)
 	}
 
 	function openNetmap() {
@@ -236,11 +240,12 @@ export default function Desktop() {
 				<Dialog
 					text="Giocare a Mother per la prima volta potrebbe risultare piuttosto difficile, soprattutto se non hai la minima idea di come funzioni l'ambiente operativo. Vuoi che venga eseguito il tutorial introduttivo sull'interfaccia utente di Mother?"
 					actions={[
-						{ label: "Esegui Tutorial", onClick: startTutorial },
-						{ label: "Salta Tutorial", onClick: startTutorial },
+						{ label: "Esegui Tutorial", onClick: () => startTutorial(true) },
+						{ label: "Salta Tutorial", onClick: () => startTutorial(false) },
 					]}
 				/>
 			)}
+			{tutorial && <Tutorial onClose={() => setTutorial(false)} />}
 			{dialog && !askTutorial && <Dialog text={dialog.text} actions={[{ label: "Ok", onClick: closeDialog }]} />}
 		</div>
 	)

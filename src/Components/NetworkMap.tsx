@@ -45,7 +45,7 @@ export default function NetworkMap() {
 
 	return (
 		<>
-			<div className="absolute left-0 z-20 border-y border-mo-line" style={{ top: MAP_TOP, height: MAP_H, width }}>
+			<div data-tut="netmap" className="absolute left-0 z-20 border-y border-mo-line" style={{ top: MAP_TOP, height: MAP_H, width }}>
 				<img src={asset("graphics/earth_map.jpg")} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
 				<svg className="pointer-events-none absolute inset-0" width={width} height={MAP_H}>
 					{points.slice(1).map((p, i) => (
@@ -89,7 +89,7 @@ export default function NetworkMap() {
 			<TabButton className="absolute top-[438px] right-[118px] z-20" onClick={() => game.act(() => net.removeLastNode())} disabled={nodes.length === 0}>
 				Annulla Nodo
 			</TabButton>
-			<TabButton className="absolute top-[438px] right-0.5 z-20" onClick={connect} disabled={nodes.length === 0}>
+			<TabButton tut="netmap-connect" className="absolute top-[438px] right-0.5 z-20" onClick={connect} disabled={nodes.length === 0}>
 				Connetti
 			</TabButton>
 		</>

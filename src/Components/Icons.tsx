@@ -45,6 +45,7 @@ export function AppsIcon({ active, onClick, className }: { active?: boolean; onC
 			onClick={onClick}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
+			data-tut="apps"
 			className={twMerge("cursor-pointer", className)}
 		>
 			<Frame size={48} cut={12} hover={hover} active={active}>
@@ -76,6 +77,7 @@ export function MailIcon({ unread, active, onClick, className }: { unread: numbe
 			onClick={onClick}
 			onMouseEnter={() => setHover(true)}
 			onMouseLeave={() => setHover(false)}
+			data-tut="mail"
 			className={twMerge("relative cursor-pointer", className)}
 		>
 			<Frame size={32} cut={8} hover={hover} active={active}>

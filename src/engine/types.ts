@@ -146,6 +146,8 @@ export interface ActiveMission {
 	/** Sottoscrizione accettata da un Subscription Server */
 	subscription?: boolean
 	startedAt: number
+	/** Missione casuale (MissGen): ritirata a questo timestamp se non è stata completata */
+	expiresAt?: number
 }
 
 /** Stato a runtime di un server, sovrapposto alla definizione */

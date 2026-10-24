@@ -49,7 +49,16 @@ export class Missions {
 			return null
 		}
 		g.debug(`Missione caricata: ${def.id} (${def.name})`)
-		this.active.push({ def, subscription: opts.subscription, startedAt: g.now })
+		this.start(def, opts)
+		return def
+	}
+
+	/** Avvia una MissionDef già pronta (da un file .miss o generata da MissGen): missione attiva e mail di inizio in arrivo */
+	start(def: MissionDef, opts: { subscription?: boolean; expiresAt?: number } = {}): ActiveMission {
+		const g = this.game
+		const m: ActiveMission = { def, subscription: opts.subscription, startedAt: g.now }
+		if (opts.expiresAt !== undefined) m.expiresAt = opts.expiresAt
+		this.active.push(m)
 
 		// Le mail di inizio arrivano dopo qualche secondo, una dopo l'altra
 		let delay = 0
@@ -58,7 +67,7 @@ export class Missions {
 			g.sendMailLater(mail, delay)
 		}
 		g.changed()
-		return def
+		return m
 	}
 
 	/** Testo compilato automaticamente rispondendo a una mail */

@@ -3,7 +3,8 @@
 // I Subscription Server con MissGenFaction generano nel tempo nuove offerte che puntano ai server
 // con AllowRandomMission=true. Ogni offerta è una MissionDef costruita in memoria (nessun file .miss)
 // di un tipo già verificato da Missions.objectiveMet; se nessuno la accetta sparisce alla scadenza.
-// Questo è il primo passo: generazione e scadenza delle offerte, senza accettazione né interfaccia.
+// Un'offerta accettata diventa una missione attiva con la stessa scadenza: se non viene completata
+// in tempo è ritirata. Manca ancora l'interfaccia.
 
 import {
 	MISSGEN_CREDITS_PER_RANKING,
@@ -107,6 +108,7 @@ export class MissGen {
 		const before = st.offers.length
 		st.offers = st.offers.filter((o) => o.expiresAt > g.now)
 		if (st.offers.length !== before) g.changed()
+		this.withdrawExpired()
 
 		for (const srv of this.generators()) {
 			const next = st.nextAt[srv.ip]
@@ -129,14 +131,14 @@ export class MissGen {
 		return list[Math.min(list.length - 1, Math.floor(this.game.random() * list.length))]
 	}
 
-	/** Genera un'offerta sul Subscription Server dato; null se non ci sono bersagli */
-	generate(srv: ServerState): MissGenOffer | null {
+	/** Genera un'offerta sul Subscription Server dato (tipo casuale se non indicato); null se non ci sono bersagli */
+	generate(srv: ServerState, forcedType?: MissGenType): MissGenOffer | null {
 		const g = this.game
 		const targets = this.targets()
 		if (!targets.length) return null
 		const faction = srv.missGenFaction.toLowerCase()
 		const target = this.pick(targets)
-		const type = this.pick(TYPES)
+		const type = forcedType ?? this.pick(TYPES)
 		const adminRanking = g.network.adminOf(target)!.ranking
 		const variation = 1 + (g.random() * 2 - 1) * MISSGEN_VARIATION
 		const credits = Math.round(adminRanking * MISSGEN_CREDITS_PER_RANKING * variation)
@@ -199,5 +201,44 @@ export class MissGen {
 		g.debug(`MissGen: ${srv.name} offre ${id} (${type} su ${target.name}).`)
 		g.changed()
 		return offer
+	}
+
+	/**
+	 * Accetta un'offerta: la toglie da quelle in offerta, posiziona il suo file (sul bersaglio per
+	 * FileDeleting, in flashram per FileUploading) e avvia la missione con la stessa scadenza.
+	 */
+	accept(id: string): string | null {
+		const g = this.game
+		const offer = this.offers.find((o) => o.id === id)
+		if (!offer) return "Sottoscrizione non disponibile."
+		if (offer.expiresAt <= g.now) return "Sottoscrizione scaduta."
+		if (g.state.ranking < offer.minRanking) return `Ranking insufficiente: servono almeno ${offer.minRanking} punti.`
+		const target = g.network.server(offer.target)
+		if (!target || !g.network.isOnline(target)) return "Il server della sottoscrizione non è raggiungibile."
+		if (offer.def.type === "FileUploading") {
+			if (!g.addLocalFile({ ...offer.file, owner: g.state.user })) return "Spazio insufficiente sulla Flashram."
+		} else g.network.putFile(target, { ...offer.file })
+		this.state.offers = this.offers.filter((o) => o !== offer)
+		g.missions.start(offer.def, { subscription: true, expiresAt: offer.expiresAt })
+		g.log(`Sottoscrizione ${offer.id} accettata.`)
+		return null
+	}
+
+	/** Missioni casuali accettate e non completate entro la scadenza: ritirate con una mail del committente */
+	private withdrawExpired() {
+		const g = this.game
+		const expired = g.state.missions.filter((m) => !m.done && m.expiresAt !== undefined && m.expiresAt <= g.now)
+		if (!expired.length) return
+		g.state.missions = g.state.missions.filter((m) => !expired.includes(m))
+		for (const m of expired) {
+			// Gli eventuali file già in flashram restano al giocatore
+			g.receiveMail({
+				from: m.def.targetMailFrom,
+				subject: "Sottoscrizione scaduta",
+				body: `La ${m.def.name} è scaduta senza essere stata completata ed è stata ritirata.`,
+			})
+			g.log(`${m.def.name} scaduta e ritirata.`)
+		}
+		g.changed()
 	}
 }

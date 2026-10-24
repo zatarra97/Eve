@@ -1285,5 +1285,161 @@ describe("partita", () => {
 			advance(legacy, INTERVAL_MS + 1_000)
 			expect(legacy.missgen.offersOf(KARMA)).toHaveLength(1)
 		})
+
+		// --- accettazione e completamento ---
+
+		/** Offerta del tipo dato su karma.underground, con il ranking che basta ad accettarla */
+		const offerOf = (game: Game, type: "FileDeleting" | "FileUploading") => {
+			const offer = game.missgen.generate(game.state.servers[KARMA], type)!
+			expect(offer.def.type).toBe(type)
+			game.state.ranking = offer.minRanking
+			return offer
+		}
+		const activeOf = (game: Game, path: string) => game.state.missions.find((m) => m.def.path === path)
+		/** Mail di inizio della missione accettata (arriva dopo qualche secondo) */
+		const beginMail = (game: Game, subject: string) => {
+			advance(game, 10_000)
+			const mail = game.state.mails.find((m) => m.subject === subject && !m.sent)
+			expect(mail).toBeDefined()
+			return mail!
+		}
+		/** Login sul bersaglio con la password dell'Admin (nessuna traccia nei log) */
+		const loginTarget = (game: Game, ip: string) => {
+			expect(game.network.connectDirect(ip)).toBeNull()
+			advance(game, 3_000)
+			expect(game.network.host?.ip).toBe(ip)
+			const admin = game.state.servers[ip].users.find((u) => u.username === "Admin")!
+			expect(game.network.login(admin.username, admin.password)).toBe(true)
+		}
+
+		it("accettazione rifiutata: ranking insufficiente, offerta inesistente o scaduta", () => {
+			const game = setup()
+			const offer = game.missgen.generate(game.state.servers[KARMA], "FileDeleting")!
+			expect(game.state.ranking).toBeLessThan(offer.minRanking)
+			expect(game.missgen.accept(offer.id)).toContain("Ranking insufficiente")
+			expect(game.missgen.accept("R-9999")).toContain("non disponibile")
+			game.state.ranking = offer.minRanking
+			offer.expiresAt = game.now
+			expect(game.missgen.accept(offer.id)).toContain("scaduta")
+			// Nessun effetto: l'offerta non è stata accettata
+			expect(activeOf(game, offer.def.path)).toBeUndefined()
+			expect(game.state.servers[offer.target].files.some((f) => f.name === offer.file.name)).toBe(false)
+		})
+
+		it("accettazione riuscita: missione avviata e file posizionato", () => {
+			const game = setup()
+			const del = offerOf(game, "FileDeleting")
+			expect(game.missgen.accept(del.id)).toBeNull()
+			expect(game.missgen.offers).not.toContain(del)
+			const m = activeOf(game, del.def.path)!
+			expect(m).toMatchObject({ subscription: true, expiresAt: del.expiresAt })
+			// FileDeleting: il file da eliminare compare sul bersaglio, dell'Admin
+			expect(game.state.servers[del.target].files.find((f) => f.name === del.file.name)?.owner).toBe("Admin")
+			expect(game.findLocalFile(del.file.name)).toBe(-1)
+			expect(game.missgen.accept(del.id)).toContain("non disponibile")
+
+			// FileUploading: il file da caricare finisce in flashram
+			const up = offerOf(game, "FileUploading")
+			expect(game.missgen.accept(up.id)).toBeNull()
+			expect(game.state.files[game.findLocalFile(up.file.name)].owner).toBe("eve")
+			expect(game.state.servers[up.target].files.some((f) => f.name === up.file.name)).toBe(false)
+			beginMail(game, del.def.begin[0].subject)
+			beginMail(game, up.def.begin[0].subject)
+		})
+
+		it("completamento di una FileDeleting rispondendo alla mail", () => {
+			const game = setup()
+			const offer = offerOf(game, "FileDeleting")
+			expect(game.missgen.accept(offer.id)).toBeNull()
+			const mail = beginMail(game, offer.def.begin[0].subject)
+			// Rispondere prima di aver eliminato il file non basta
+			game.reply(mail.id)
+			expect(activeOf(game, offer.def.path)?.done).toBeFalsy()
+
+			loginTarget(game, offer.target)
+			const file = game.network.visibleFiles().find((f) => f.name === offer.file.name)!
+			expect(game.network.deleteRemoteFile(file)).toBe(true)
+			const { credits, ranking } = game.state
+			game.reply(mail.id)
+			expect(activeOf(game, offer.def.path)?.done).toBe(true)
+			expect(game.state.credits).toBe(credits + offer.def.credits)
+			expect(game.state.ranking).toBe(ranking + offer.def.extraRanking)
+			advance(game, 30_000)
+			expect(game.state.completed).toContain(offer.def.path)
+			expect(activeOf(game, offer.def.path)).toBeUndefined()
+			expect(game.state.mails.some((m) => m.subject === "Sottoscrizione completata!" && m.from === offer.def.targetMailFrom)).toBe(true)
+		})
+
+		it("completamento di una FileUploading rispondendo alla mail", () => {
+			const game = setup()
+			const offer = offerOf(game, "FileUploading")
+			expect(game.missgen.accept(offer.id)).toBeNull()
+			const mail = beginMail(game, offer.def.begin[0].subject)
+			game.addLocalFile({ name: "fileforce-3.0", dim: 2, img: -1, contents: "fileforce", owner: "eve" })
+			loginTarget(game, offer.target)
+			expect(game.network.upload(game.state.files[game.findLocalFile(offer.file.name)])).toBeNull()
+			const task = game.tasks.find((t) => t.kind === "upload")!
+			advance(game, Math.ceil(task.total * 1000) + 1_000)
+			expect(game.state.servers[offer.target].files.some((f) => f.name === offer.file.name)).toBe(true)
+
+			const { credits, ranking } = game.state
+			game.reply(mail.id)
+			expect(game.state.credits).toBe(credits + offer.def.credits)
+			expect(game.state.ranking).toBe(ranking + offer.def.extraRanking)
+			advance(game, 30_000)
+			expect(game.state.completed).toContain(offer.def.path)
+		})
+
+		it("missione accettata e non completata: ritirata alla scadenza con una mail, il file in flashram resta", () => {
+			const game = setup()
+			const offer = offerOf(game, "FileUploading")
+			expect(game.missgen.accept(offer.id)).toBeNull()
+			const mail = beginMail(game, offer.def.begin[0].subject)
+			advance(game, offer.expiresAt - game.now - 2_000)
+			expect(activeOf(game, offer.def.path)).toBeDefined()
+			advance(game, 3_000)
+			expect(activeOf(game, offer.def.path)).toBeUndefined()
+			expect(game.state.completed).not.toContain(offer.def.path)
+			const notice = game.state.mails.find((m) => m.subject === "Sottoscrizione scaduta")!
+			expect(notice.from).toBe(offer.def.targetMailFrom)
+			expect(notice.body).toContain(offer.id)
+			expect(game.findLocalFile(offer.file.name)).toBeGreaterThanOrEqual(0)
+			// Rispondere ora non dà più nulla
+			const credits = game.state.credits
+			game.reply(mail.id)
+			expect(game.state.credits).toBe(credits)
+		})
+
+		it("salvataggio e caricamento con una missione casuale in corso", () => {
+			const game = setup()
+			const offer = offerOf(game, "FileDeleting")
+			expect(game.missgen.accept(offer.id)).toBeNull()
+			const mail = beginMail(game, offer.def.begin[0].subject)
+
+			const loaded = Game.load(diskPack(), JSON.parse(JSON.stringify(game.state)), { random: () => 0.5 })
+			const m = activeOf(loaded, offer.def.path)!
+			expect(m.def).toEqual(offer.def)
+			expect(m.expiresAt).toBe(offer.expiresAt)
+			expect(m.subscription).toBe(true)
+			expect(loaded.state.servers[offer.target].files.some((f) => f.name === offer.file.name)).toBe(true)
+
+			// La missione si completa anche dopo il caricamento
+			loginTarget(loaded, offer.target)
+			const file = loaded.network.visibleFiles().find((f) => f.name === offer.file.name)!
+			expect(loaded.network.deleteRemoteFile(file)).toBe(true)
+			const credits = loaded.state.credits
+			loaded.reply(mail.id)
+			expect(loaded.state.credits).toBe(credits + offer.def.credits)
+			advance(loaded, 30_000)
+			expect(loaded.state.completed).toContain(offer.def.path)
+
+			// E la scadenza vale anche dopo il caricamento
+			const other = offerOf(game, "FileUploading")
+			expect(game.missgen.accept(other.id)).toBeNull()
+			const reloaded = Game.load(diskPack(), JSON.parse(JSON.stringify(game.state)), { random: () => 0.5 })
+			advance(reloaded, other.expiresAt - reloaded.now + 1_000)
+			expect(activeOf(reloaded, other.def.path)).toBeUndefined()
+			expect(reloaded.state.mails.some((x) => x.subject === "Sottoscrizione scaduta" && x.from === other.def.targetMailFrom)).toBe(true)
+		})
 	})
 })

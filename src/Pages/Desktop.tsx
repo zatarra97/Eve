@@ -13,6 +13,7 @@ import AppsMenu from "@/Components/AppsMenu"
 import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
+import { Draggable, type Offset } from "@/Components/Draggable"
 import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
@@ -104,6 +105,11 @@ export default function Desktop() {
 		[showDialog],
 	)
 	const closeProgram = (id: string) => setPrograms((list) => list.filter((p) => p.id !== id))
+	// Posizioni dei programmi spostati, ricordate fino al logout anche se il programma viene chiuso
+	const [positions] = useState(() => new Map<string, Offset>())
+	// Il programma cliccato passa in primo piano
+	const focusProgram = (id: string) =>
+		setPrograms((list) => (list.at(-1)?.id === id ? list : [...list.filter((p) => p.id !== id), ...list.filter((p) => p.id === id)]))
 
 	// Ciclo di gioco con il tempo reale trascorso (il desktop si rimonta a ogni partita)
 	useEffect(() => {
@@ -224,7 +230,16 @@ export default function Desktop() {
 			{consoleOpen && <ConsolePanel />}
 			{programs.map((p) => {
 				const Program = PROGRAMS[p.id]
-				return <Program key={p.id} name={p.name} onClose={() => closeProgram(p.id)} />
+				return (
+					<Draggable
+						key={p.id}
+						initial={positions.get(p.id)}
+						onMove={(offset) => positions.set(p.id, offset)}
+						onFocus={() => focusProgram(p.id)}
+					>
+						<Program name={p.name} onClose={() => closeProgram(p.id)} />
+					</Draggable>
+				)
 			})}
 			<AppsMenu onProgram={openProgram} onNetmap={openNetmap} onSettings={() => setSettingsOpen(true)} onLogout={logout} />
 			<MailBar />

@@ -29,7 +29,7 @@ export default function ConsolePanel() {
 						const cmd = line
 						setLine("")
 						setHistIndex(null)
-						game.act(() => game.shell.exec(cmd))
+						game.act(() => game.shell.exec(cmd, { interactive: true }))
 					}}
 				>
 					<span>{game.shell.prompt}</span>

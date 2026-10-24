@@ -211,6 +211,36 @@ describe("partita", () => {
 			expect(exec(game, "refreshservers")).toContain("nessun server nuovo.")
 		})
 
+		it("connect digitato dal giocatore chiede nella console se aggiungere in mappa i server visibili non ancora noti", () => {
+			const game = setup()
+			const servers = Object.values(game.state.servers).filter((s) => !game.state.known.includes(s.ip) && game.network.isOnline(s))
+			const [visible, other] = servers.filter((s) => s.type && !s.firewall)
+			const hidden = servers.find((s) => !s.type && !s.firewall)!
+			const known = game.network.knownServers().find((s) => !s.firewall)!
+			const type = (line: string) => {
+				const before = game.state.console.length
+				game.shell.exec(line, { interactive: true })
+				return game.state.console.slice(before).join("\n")
+			}
+
+			// Da autoexec o script non si chiede nulla
+			game.shell.exec(`connect ${visible.ip}`)
+			expect(game.shell.prompt).not.toBe("(s/N): ")
+			for (const srv of [hidden, known]) expect(type(`connect ${srv.ip}`)).not.toContain("Network Map?")
+
+			expect(type(`connect ${visible.ip}`)).toContain(`aggiungere ${visible.name} alla Network Map?`)
+			expect(game.shell.prompt).toBe("(s/N): ")
+			expect(type("forse")).toContain("rispondi s oppure n.")
+			expect(type("s")).toContain(`${visible.name} aggiunto alla Network Map.`)
+			expect(game.state.known).toContain(visible.ip)
+			expect(game.shell.prompt).not.toBe("(s/N): ")
+
+			// Invio senza risposta vale "no"
+			type(`connect ${other.ip}`)
+			type("")
+			expect(game.state.known).not.toContain(other.ip)
+		})
+
 		it("addmission e missions", () => {
 			const game = setup()
 			expect(exec(game, "addmission def/tut0.miss")).toContain("missione caricata")

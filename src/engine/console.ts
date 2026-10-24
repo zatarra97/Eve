@@ -19,12 +19,18 @@ interface Command {
 export interface ExecOptions {
 	/** Non scrivere la riga del prompt nel log (comandi lanciati da script) */
 	silent?: boolean
+	/** Comando digitato dal giocatore (non da autoexec o script): può rispondere a una domanda della console */
+	interactive?: boolean
 }
 
 export class Shell {
 	private game: Game
 	private commands: Record<string, Command>
 	history: string[] = []
+	/** Opzioni del comando in esecuzione */
+	private options: ExecOptions = {}
+	/** Domanda sì/no in attesa di risposta: la prossima riga digitata è la risposta */
+	private question: ((yes: boolean) => void) | null = null
 
 	constructor(game: Game) {
 		this.game = game
@@ -52,11 +58,13 @@ export class Shell {
 	}
 
 	get prompt() {
-		return `[${this.game.address}]/>`
+		return this.question ? "(s/N): " : `[${this.game.address}]/>`
 	}
 
 	exec(line: string, opts: ExecOptions = {}) {
+		this.options = opts
 		const text = line.trim()
+		if (this.question && opts.interactive) return this.answer(text)
 		if (!opts.silent) this.game.log(`${this.prompt}${text}`)
 		if (!text) return
 		this.history.push(text)
@@ -67,6 +75,28 @@ export class Shell {
 			return
 		}
 		cmd.run(args)
+		this.game.changed()
+	}
+
+	/** Pone una domanda sì/no nella console; la risposta arriva con la prossima riga digitata */
+	private ask(text: string, onAnswer: (yes: boolean) => void) {
+		this.out(text)
+		this.question = onAnswer
+	}
+
+	private answer(text: string) {
+		const reply = text.toLowerCase()
+		const yes = ["s", "si", "sì", "y", "yes"].includes(reply)
+		// Invio senza risposta vale "no", come suggerisce la N maiuscola
+		if (!yes && !["", "n", "no"].includes(reply)) {
+			this.game.log(`${this.prompt}${text}`)
+			this.out("rispondi s oppure n.")
+			return
+		}
+		this.game.log(`${this.prompt}${yes ? "s" : "n"}`)
+		const onAnswer = this.question!
+		this.question = null
+		onAnswer(yes)
 		this.game.changed()
 	}
 
@@ -150,8 +180,17 @@ export class Shell {
 
 	private connect(ip: string | undefined) {
 		if (!this.need(ip, "connect <ip>")) return
-		const err = this.game.network.connectDirect(ip)
+		const net = this.game.network
+		const err = net.connectDirect(ip)
 		this.out(err ?? `chiamata remota a ${ip}...`)
+		// Server non ancora in mappa e senza Server Hiding: si chiede se aggiungerlo
+		const srv = net.server(ip)
+		if (!err && this.options.interactive && srv?.type && !this.game.state.known.includes(srv.ip))
+			this.ask(`aggiungere ${srv.name} alla Network Map?`, (yes) => {
+				if (!yes) return
+				net.addKnown(srv.ip)
+				this.out(`${srv.name} aggiunto alla Network Map.`)
+			})
 	}
 
 	private disconnect() {

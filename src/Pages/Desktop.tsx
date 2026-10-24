@@ -128,7 +128,11 @@ export default function Desktop() {
 					if (openNewMail) {
 						game.markRead(e.mail.id)
 						setRight({ kind: "mail", id: e.mail.id })
-					} else if (mailPreview) setToast(e.mail)
+					} else if (mailPreview) {
+						// Con la posta già aperta (casella, lettura o risposta) la nuova mail si vede lì
+						const { inboxOpen, right } = useApp.getState()
+						if (!inboxOpen && !right) setToast(e.mail)
+					}
 					break
 				}
 				case "message":

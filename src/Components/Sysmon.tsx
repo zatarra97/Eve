@@ -82,12 +82,22 @@ export default function Sysmon() {
 				</div>
 			)}
 			{game.tasks.length > 0 && (
-				<div className="mt-[3px] border border-mo-line bg-mo-panel/80 px-1 leading-[13px]">
-					{game.tasks.map((t) => (
-						<div key={t.id}>
-							{t.label} {Math.min(100, Math.round((t.elapsed / t.total) * 100))}%
-						</div>
-					))}
+				<div className="mt-[3px] flex flex-col gap-[3px]">
+					{game.tasks.map((t) => {
+						const pct = Math.min(100, (t.elapsed / t.total) * 100)
+						return (
+							<div key={t.id} className="relative overflow-hidden border border-mo-line bg-mo-panel/80 px-1 leading-[15px]">
+								{/* Barra di avanzamento semitrasparente dietro al testo, con riflesso che scorre */}
+								<div className="absolute inset-y-0 left-0 bg-gradient-to-r from-[#1b5fb0]/50 to-[#3a8fe0]/70 transition-[width] duration-300 ease-linear" style={{ width: `${pct}%` }}>
+									<div className="mo-shimmer absolute inset-0" />
+								</div>
+								<div className="relative flex justify-between gap-2">
+									<span className="truncate">{t.label}</span>
+									<span className="shrink-0">{Math.round(pct)}%</span>
+								</div>
+							</div>
+						)
+					})}
 				</div>
 			)}
 			<button type="button" data-tut="sysmon-expand" className="mt-[3px] block cursor-pointer" onClick={toggle} title={expanded ? "Comprimi" : "Espandi"}>

@@ -55,3 +55,17 @@ body {
 	content: "_";
 	animation: mo-blink 1s steps(1) infinite;
 }
+
+/* Riflesso che scorre sulle barre di avanzamento (download, aggiornamenti…) */
+@keyframes mo-shimmer {
+	from {
+		transform: translateX(-100%);
+	}
+	to {
+		transform: translateX(100%);
+	}
+}
+.mo-shimmer {
+	background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.22), transparent);
+	animation: mo-shimmer 1.4s linear infinite;
+}

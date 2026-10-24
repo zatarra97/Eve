@@ -93,3 +93,18 @@ export const NETBANKING_SAFE_RATIO = 1
 
 /** Karma perso a ogni trasferimento da un Netbanking: rubare crediti è da cracker (Manuale §2.6) */
 export const NETBANKING_KARMA_PENALTY = 10
+
+// --- missioni casuali (MissGen, Manuale §2.8) ---
+
+/** Intervallo medio (secondi di gioco) tra due offerte dello stesso Subscription Server */
+export const MISSGEN_INTERVAL_S = 600
+/** Offerte casuali al massimo su ogni Subscription Server */
+export const MISSGEN_MAX_OFFERS = 3
+/** Durata di un'offerta: alla scadenza sparisce se nessuno l'ha accettata */
+export const MISSGEN_LIFETIME_S = 3600
+/** Ricompensa, ranking extra e ranking minimo in proporzione al ranking dell'Admin del bersaglio */
+export const MISSGEN_CREDITS_PER_RANKING = 0.25
+export const MISSGEN_RANKING_PER_RANKING = 0.04
+export const MISSGEN_MIN_RANKING_RATIO = 0.5
+/** Variazione casuale (±) di ricompensa e ranking extra */
+export const MISSGEN_VARIATION = 0.2

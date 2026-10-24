@@ -4,6 +4,7 @@
 import { MAIL_DELAY_S, SYSTEM_FLASHRAM_MB, connectionBandwidth, userClass } from "./balance"
 import type { ContentPack } from "./content"
 import { Network } from "./network"
+import { MissGen } from "./missgen"
 import { Missions } from "./missions"
 import { Runtime } from "./runtime-api"
 import { Scripts } from "./scripts"
@@ -56,6 +57,7 @@ export class Game {
 	readonly viruses: Viruses
 	readonly shell: Shell
 	readonly chat: Chat
+	readonly missgen: MissGen
 	tasks: Task[] = []
 	private nextTaskId = 1
 	private listeners = new Set<() => void>()
@@ -74,6 +76,7 @@ export class Game {
 		this.viruses = new Viruses(this)
 		this.shell = new Shell(this)
 		this.chat = new Chat(this)
+		this.missgen = new MissGen(this)
 	}
 
 	/** Nuova partita: carica il Network e le missioni iniziali di def.miss */
@@ -156,6 +159,7 @@ export class Game {
 		this.updateTasks(step)
 		this.network.tick(step)
 		this.missions.tick()
+		this.missgen.tick()
 		this.scripts.tick(step)
 		this.viruses.tick(step)
 		this.changed()

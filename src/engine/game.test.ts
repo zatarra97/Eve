@@ -5,6 +5,9 @@ import { NETPATCH_KERNEL, NETPATCH_SECONDS, startNetPatch } from "./netpatch"
 import {
 	BACKMIRROR_TRACE_SPEED,
 	CRIME_NOTIFICATION_S,
+	MISSGEN_INTERVAL_S,
+	MISSGEN_LIFETIME_S,
+	MISSGEN_MAX_OFFERS,
 	NETBANKING_KARMA_PENALTY,
 	NUKE_DURATION_S,
 	SERVER_REFRESH_S,
@@ -1187,6 +1190,100 @@ describe("partita", () => {
 			const karma = game.state.karma
 			expect(game.network.transfer(999_999)).toContain("Saldo insufficiente")
 			expect(game.state.karma).toBe(karma)
+		})
+	})
+
+	describe("missioni casuali (MissGen)", () => {
+		const KARMA = "666.underground.0.3" // karma.underground: MissGenFaction underground
+		const ALTPROJECT = "911.intrapol.1.1" // altproject.intrapolru: MissGenFaction intrapol
+		// File Server con AllowRandomMission=true, Login e Admin con ranking 450
+		const TARGETS = ["10.258.291.13", "115.898.2.115", "432.561.9.132", "799.15.232.232", "837.762.1.252"]
+		const setup = () => Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		// Con random() = 0.5 l'intervallo tra due offerte è esattamente MISSGEN_INTERVAL_S
+		const INTERVAL_MS = MISSGEN_INTERVAL_S * 1000
+		const advance = (game: Game, ms: number) => game.advance(ms, 1000)
+
+		it("generazione nel tempo: un'offerta per Subscription Server con fazione", () => {
+			const game = setup()
+			expect(game.missgen.generators().map((s) => s.ip).sort()).toEqual([KARMA, ALTPROJECT].sort())
+			expect(game.missgen.targets().map((s) => s.ip).sort()).toEqual([...TARGETS].sort())
+			advance(game, INTERVAL_MS - 2_000)
+			expect(game.missgen.offers).toEqual([])
+			advance(game, 3_000)
+			expect(game.missgen.offersOf(KARMA)).toHaveLength(1)
+			expect(game.missgen.offersOf(ALTPROJECT)).toHaveLength(1)
+
+			const offer = game.missgen.offersOf(KARMA)[0]
+			const d = offer.def
+			expect(offer.faction).toBe("underground")
+			expect(TARGETS).toContain(offer.target)
+			expect(d.refServerIP).toBe(offer.target)
+			expect(["FileDeleting", "FileUploading"]).toContain(d.type)
+			expect(d.type === "FileDeleting" ? d.refRemoteFileToDelete : d.refRemoteFileUploaded).toBe(offer.file.name)
+			// Proporzionati al ranking 450 dell'Admin del bersaglio (variazione nulla con random() = 0.5)
+			expect(d.credits).toBe(Math.round(450 * 0.25))
+			expect(d.extraRanking).toBe(Math.round(450 * 0.04))
+			expect(offer.minRanking).toBe(225)
+			// Generata negli ultimi 3 secondi: scade MISSGEN_LIFETIME_S dopo
+			expect(offer.expiresAt - game.now).toBeGreaterThan(MISSGEN_LIFETIME_S * 1000 - 3_000)
+			expect(offer.expiresAt - game.now).toBeLessThanOrEqual(MISSGEN_LIFETIME_S * 1000)
+			expect(d.begin).toHaveLength(1)
+			expect(d.begin[0].from).toBe(`${offer.id}@underground`)
+			expect(d.begin[0].body).toContain(offer.file.name)
+			expect(d.targetMailFrom).toBe(d.begin[0].from)
+			expect(d.targetMailSubject).toBe(d.begin[0].subject)
+			expect(d.end).toHaveLength(1)
+			expect(game.missgen.offersOf(ALTPROJECT)[0].def.begin[0].from).toMatch(/@intrapol$/)
+			// Nessun file .miss: la missione non è nei contenuti
+			expect(game.content.missions.has(d.path)).toBe(false)
+			// Solo offerte: nessuna missione avviata, nessuna mail
+			expect(game.state.missions.some((m) => m.def.path.startsWith("missgen/"))).toBe(false)
+			expect(game.state.mails.some((m) => m.subject === d.begin[0].subject)).toBe(false)
+		})
+
+		it("al massimo MISSGEN_MAX_OFFERS offerte per server", () => {
+			const game = setup()
+			advance(game, INTERVAL_MS * MISSGEN_MAX_OFFERS + 1_000)
+			expect(game.missgen.offersOf(KARMA)).toHaveLength(MISSGEN_MAX_OFFERS)
+			advance(game, INTERVAL_MS * 2)
+			expect(game.missgen.offersOf(KARMA)).toHaveLength(MISSGEN_MAX_OFFERS)
+			expect(game.missgen.offersOf(ALTPROJECT)).toHaveLength(MISSGEN_MAX_OFFERS)
+			const ids = game.missgen.offers.map((o) => o.id)
+			expect(new Set(ids).size).toBe(ids.length)
+		})
+
+		it("le offerte non accettate spariscono alla scadenza", () => {
+			const game = setup()
+			advance(game, INTERVAL_MS + 1_000)
+			const first = game.missgen.offersOf(KARMA)[0]
+			advance(game, first.expiresAt - game.now - 2_000)
+			expect(game.missgen.offers.map((o) => o.id)).toContain(first.id)
+			advance(game, 3_000)
+			expect(game.missgen.offers.map((o) => o.id)).not.toContain(first.id)
+			// Il posto liberato viene occupato dalla generazione successiva
+			advance(game, INTERVAL_MS)
+			expect(game.missgen.offersOf(KARMA)).toHaveLength(MISSGEN_MAX_OFFERS)
+		})
+
+		it("salvataggio e caricamento: offerte e prossima generazione restano", () => {
+			const game = setup()
+			advance(game, INTERVAL_MS + 1_000)
+			const saved = JSON.parse(JSON.stringify(game.state))
+			const loaded = Game.load(diskPack(), saved, { random: () => 0.5 })
+			expect(loaded.missgen.offers).toEqual(game.missgen.offers)
+			expect(loaded.missgen.state.nextAt).toEqual(game.missgen.state.nextAt)
+			// La generazione riprende da dove era rimasta, con la numerazione che continua
+			advance(loaded, INTERVAL_MS)
+			expect(loaded.missgen.offersOf(KARMA)).toHaveLength(2)
+			expect(loaded.missgen.offers.map((o) => o.id)).toEqual(["R-0001", "R-0002", "R-0003", "R-0004"])
+
+			// Partita salvata prima di MissGen: lo stato riparte vuoto
+			const old = JSON.parse(JSON.stringify(game.state))
+			delete old.missgen
+			const legacy = Game.load(diskPack(), old, { random: () => 0.5 })
+			expect(legacy.missgen.offers).toEqual([])
+			advance(legacy, INTERVAL_MS + 1_000)
+			expect(legacy.missgen.offersOf(KARMA)).toHaveLength(1)
 		})
 	})
 })

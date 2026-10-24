@@ -2,6 +2,7 @@
 
 import { START_CREDITS, START_HARDWARE, START_RANKING } from "./balance"
 import type { ActiveMission, GameFile, HardwarePart, Mail, ScheduledEvent, ServerState } from "./types"
+import { emptyMissGen, type MissGenState } from "./missgen"
 
 export const SAVE_VERSION = 1
 
@@ -53,6 +54,8 @@ export interface GameState {
 	visitedChats: string[]
 	/** Nodi del cluster (IP dei Personal Server con la backdoor) */
 	cluster: string[]
+	/** Sottoscrizioni casuali in offerta sui Subscription Server (MissGen) */
+	missgen: MissGenState
 	debug: boolean
 	/** File "sul disco" per le funzioni file_text_* degli script (cartella users/<nome>) */
 	vfs: Record<string, string>
@@ -84,6 +87,7 @@ export function createState(user: string, password: string, now: number): GameSt
 		tutorialDone: false,
 		visitedChats: [],
 		cluster: [],
+		missgen: emptyMissGen(),
 		debug: false,
 		vfs: {},
 	}

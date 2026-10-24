@@ -41,9 +41,16 @@ function Empty({ children }: { children: ReactNode }) {
 }
 
 /** Testo di un file con il pulsante per tornare alla lista */
-function Reader({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) {
+function Reader({ title, onBack, onDelete, children }: { title: string; onBack: () => void; onDelete?: () => void; children: ReactNode }) {
 	return (
-		<Frame actions={<TabButton onClick={onBack}>Indietro</TabButton>}>
+		<Frame
+			actions={
+				<>
+					{onDelete && <TabButton onClick={onDelete}>Elimina...</TabButton>}
+					<TabButton onClick={onBack}>Indietro</TabButton>
+				</>
+			}
+		>
 			<div className="mb-2 text-mo-accent">{title}</div>
 			{children}
 		</Frame>
@@ -55,6 +62,16 @@ function useSelection() {
 	const [selected, setSelected] = useState<GameFile | null>(null)
 	const [open, setOpen] = useState<GameFile | null>(null)
 	return { selected, setSelected, open, setOpen }
+}
+
+/** Elimina un file del server connesso; se ci riesce richiama onDone (es. per tornare all'elenco) */
+function useDeleteRemote() {
+	const game = useGame()
+	const showDialog = useApp((s) => s.showDialog)
+	return (file: GameFile, onDone: () => void) => {
+		if (game.act(() => game.network.deleteRemoteFile(file))) onDone()
+		else showDialog("Impossibile eliminare un file di sistema.")
+	}
 }
 
 /** Esegue un'azione del motore e mostra l'eventuale messaggio di errore (o di esito) */
@@ -241,13 +258,19 @@ function FileServerView() {
 	)
 }
 
-/** News Server e Mail Server: elenco dei titoli e lettura (le mail hanno già l'intestazione nel testo) */
-function ReadingView({ empty }: { empty: string }) {
+/** News Server e Mail Server: elenco dei titoli e lettura (le mail hanno già l'intestazione nel testo); solo le mail si eliminano */
+function ReadingView({ empty, deletable }: { empty: string; deletable?: boolean }) {
 	const game = useGame()
+	const remove = useDeleteRemote()
 	const { open, setOpen } = useSelection()
 	const files = game.network.visibleFiles()
 
-	if (open) return <Reader title={open.name} onBack={() => setOpen(null)}><div className="whitespace-pre-wrap">{open.contents}</div></Reader>
+	if (open)
+		return (
+			<Reader title={open.name} onBack={() => setOpen(null)} onDelete={deletable ? () => remove(open, () => setOpen(null)) : undefined}>
+				<div className="whitespace-pre-wrap">{open.contents}</div>
+			</Reader>
+		)
 
 	return (
 		<Frame>
@@ -392,6 +415,7 @@ function portraitOf(img: GameFile["img"]): string | null {
 /** Database Server: fascicoli con ritratto (img = global.spr_portrait[N]) */
 function DatabaseView() {
 	const game = useGame()
+	const remove = useDeleteRemote()
 	const { open, setOpen } = useSelection()
 	const [picking, setPicking] = useUploadPicker()
 	const files = game.network.visibleFiles()
@@ -401,7 +425,7 @@ function DatabaseView() {
 	if (open) {
 		const portrait = portraitOf(open.img)
 		return (
-			<Reader title={open.name} onBack={() => setOpen(null)}>
+			<Reader title={open.name} onBack={() => setOpen(null)} onDelete={() => remove(open, () => setOpen(null))}>
 				<div className="flex gap-3">
 					{portrait && <img src={portrait} alt="" className="h-fit w-[120px] shrink-0 border border-mo-line" draggable={false} />}
 					<div className="min-w-0 flex-1 whitespace-pre-wrap">{open.contents}</div>
@@ -507,7 +531,7 @@ function TerminalView({ host }: { host: ServerState }) {
 		case "NewsServer":
 			return <ReadingView empty="Nessuna notizia pubblicata." />
 		case "MailServer":
-			return <ReadingView empty="Nessun messaggio nella casella di posta." />
+			return <ReadingView empty="Nessun messaggio nella casella di posta." deletable />
 		case "CommerceServer":
 			return <CommerceView />
 		case "SoftwareServer":

@@ -93,3 +93,47 @@ export function MailIcon({ unread, active, onClick, className }: { unread: numbe
 		</button>
 	)
 }
+
+/** Pulsante quadrato 32x32 con un simbolo bianco (schermata di login) */
+function SmallIconButton({ title, onClick, className, children }: { title: string; onClick?: () => void; className?: string; children: React.ReactNode }) {
+	const [hover, setHover] = useState(false)
+	return (
+		<button
+			type="button"
+			title={title}
+			onClick={onClick}
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}
+			className={twMerge("cursor-pointer", className)}
+		>
+			<Frame size={32} cut={8} hover={hover}>
+				{children}
+			</Frame>
+		</button>
+	)
+}
+
+/** Informazioni: "i" bianca */
+export function InfoIcon(props: { onClick?: () => void; className?: string }) {
+	return (
+		<SmallIconButton title="Informazioni" {...props}>
+			<circle cx="15.5" cy="9.6" r="2.1" fill="#ffffff" />
+			<path d="M12.6 13.6 H17.4 V22.4 H19.4 V25 H12.6 V22.4 H14.6 V16.2 H12.6 Z" fill="#ffffff" />
+		</SmallIconButton>
+	)
+}
+
+/** Impostazioni: ingranaggio a otto denti */
+export function SettingsIcon(props: { onClick?: () => void; className?: string }) {
+	return (
+		<SmallIconButton title="Impostazioni" {...props}>
+			<g transform="translate(15.5 17)">
+				{[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+					<rect key={a} x="-1.9" y="-10" width="3.8" height="5" rx="0.6" fill="#ffffff" transform={`rotate(${a})`} />
+				))}
+				<circle r="6.6" fill="#ffffff" />
+				<circle r="2.7" fill="#164a8e" />
+			</g>
+		</SmallIconButton>
+	)
+}

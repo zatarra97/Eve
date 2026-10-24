@@ -43,10 +43,9 @@ e connessioni, console con i comandi di gioco, terminali dei server (file, news,
 sottoscrizioni, database, chat, netbanking), programmi MomPad, UAVsys, MomAMP, tut_hack, rootbreaker,
 wavehacker, backmirror, fileforce, nukelord e netpatch6231, backtrace e sequestro dei server, distruzione dei server
 (riavvio senza file di sistema, nuke dei Web Server), cluster di Personal Server (stato nel Sysmon),
-impostazioni, salvataggi (F5/F9).
+impostazioni, tutorial guidato, salvataggi (F5/F9).
 
-Da fare: tutorial guidato sullo schermo,
-caricamento delle mod dall'interfaccia, icone vettoriali della schermata di login.
+Da fare: caricamento delle mod dall'interfaccia.
 
 ## Licenza
 

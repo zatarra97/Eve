@@ -106,7 +106,7 @@ async function main() {
     // Verifica che siamo in un repository git
     try {
       runGitCommand('git rev-parse --git-dir');
-    } catch (error) {
+    } catch {
       console.error('❌ Non sei in un repository git');
       process.exit(1);
     }

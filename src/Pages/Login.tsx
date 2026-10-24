@@ -7,7 +7,8 @@ import { useApp } from "@/store/app"
 import { useSettings } from "@/store/settings"
 import Settings from "@/Components/Settings"
 import { playSound } from "@/audio"
-import { Dialog, SpriteButton, TabButton } from "@/Components/ui"
+import { Dialog, TabButton } from "@/Components/ui"
+import { InfoIcon, SettingsIcon } from "@/Components/Icons"
 import { asset } from "@/assets"
 
 type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "settings" } | { kind: "delete"; user: string } | null
@@ -142,8 +143,8 @@ export default function Login() {
 				</div>
 			)}
 
-			<SpriteButton name="credits_button" w={32} h={32} frames={2} className="absolute right-8 bottom-0" title="Informazioni" onClick={() => setPrompt({ kind: "info" })} />
-			<SpriteButton name="settings_button" w={32} h={32} frames={2} className="absolute right-0 bottom-0" title="Impostazioni" onClick={() => setPrompt({ kind: "settings" })} />
+			<InfoIcon className="absolute right-[34px] bottom-0" onClick={() => setPrompt({ kind: "info" })} />
+			<SettingsIcon className="absolute right-0 bottom-0" onClick={() => setPrompt({ kind: "settings" })} />
 
 			{prompt?.kind === "create" && (
 				<Dialog

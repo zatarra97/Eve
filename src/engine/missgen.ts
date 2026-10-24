@@ -52,6 +52,15 @@ export function emptyMissGen(): MissGenState {
 	return { nextId: 1, nextAt: {}, offers: [] }
 }
 
+/** Tempo residuo fino alla scadenza, "m:ss" o "h:mm:ss" ("0:00" se già scaduta) */
+export function formatRemaining(ms: number): string {
+	const total = Math.max(0, Math.ceil(ms / 1000))
+	const h = Math.floor(total / 3600)
+	const m = Math.floor((total % 3600) / 60)
+	const s = String(total % 60).padStart(2, "0")
+	return h ? `${h}:${String(m).padStart(2, "0")}:${s}` : `${m}:${s}`
+}
+
 /** Fazioni dei Subscription Server (MissGenFaction): dominio del mittente delle mail */
 const FACTIONS: Record<string, { domain: string }> = {
 	underground: { domain: "underground" },
@@ -76,6 +85,13 @@ export class MissGen {
 	/** Stato salvato; le partite salvate prima di MissGen non lo hanno */
 	get state(): MissGenState {
 		return (this.game.state.missgen ??= emptyMissGen())
+	}
+
+	/** Obiettivo dell'offerta in una riga, per il terminale */
+	objective(offer: MissGenOffer): string {
+		const target = this.game.network.server(offer.target)
+		const where = target ? `${target.name} [${target.ip}]` : offer.target
+		return offer.def.type === "FileDeleting" ? `Eliminare il file '${offer.file.name}' da ${where}.` : `Caricare il file '${offer.file.name}' su ${where}.`
 	}
 
 	get offers(): MissGenOffer[] {

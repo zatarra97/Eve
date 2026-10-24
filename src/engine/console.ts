@@ -9,6 +9,7 @@
 // Comandi di gioco: docs/riferimento-originale.md, sezione Console.
 
 import type { Game } from "./game"
+import { formatRemaining } from "./missgen"
 
 interface Command {
 	help: string
@@ -188,7 +189,11 @@ export class Shell {
 	private listMissions() {
 		const list = this.game.missions.list()
 		if (!list.length) this.out("nessuna missione attiva.")
-		for (const m of list) this.out(`${m.id.padEnd(16)}${m.name}${m.done ? " [completata]" : ""}`)
+		for (const m of list) {
+			// Le missioni casuali (MissGen) accettate scadono: tempo residuo
+			const status = m.done ? " [completata]" : m.expiresAt !== undefined ? ` [scade tra ${formatRemaining(m.expiresAt - this.game.now)}]` : ""
+			this.out(`${m.id.padEnd(16)}${m.name}${status}`)
+		}
 	}
 
 	// --- script ---

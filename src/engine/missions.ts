@@ -183,7 +183,7 @@ export class Missions {
 	}
 
 	/** Missioni visibili al giocatore (comando missions) */
-	list(): { id: string; name: string; done: boolean }[] {
-		return this.active.map((m) => ({ id: m.def.id, name: m.def.name, done: !!m.done }))
+	list(): { id: string; name: string; done: boolean; expiresAt?: number }[] {
+		return this.active.map((m) => ({ id: m.def.id, name: m.def.name, done: !!m.done, expiresAt: m.expiresAt }))
 	}
 }

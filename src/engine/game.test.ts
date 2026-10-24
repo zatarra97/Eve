@@ -20,6 +20,7 @@ import {
 } from "./balance"
 import { addToPack, emptyPack, type ContentPack } from "./content"
 import { Game } from "./game"
+import { formatRemaining } from "./missgen"
 
 const GAME = join(process.cwd(), "public/game")
 
@@ -1408,6 +1409,30 @@ describe("partita", () => {
 			const credits = game.state.credits
 			game.reply(mail.id)
 			expect(game.state.credits).toBe(credits)
+		})
+
+		it("tempo residuo: formato e comando console missions", () => {
+			expect(formatRemaining(0)).toBe("0:00")
+			expect(formatRemaining(-5_000)).toBe("0:00")
+			expect(formatRemaining(61_000)).toBe("1:01")
+			expect(formatRemaining(599_500)).toBe("10:00")
+			expect(formatRemaining(3_600_000)).toBe("1:00:00")
+			expect(formatRemaining(3_725_000)).toBe("1:02:05")
+
+			const game = setup()
+			const offer = offerOf(game, "FileDeleting")
+			expect(game.missgen.objective(offer)).toContain(offer.file.name)
+			expect(game.missgen.accept(offer.id)).toBeNull()
+			const missions = () => {
+				const before = game.state.console.length
+				game.shell.exec("missions")
+				return game.state.console.slice(before + 1).join("\n")
+			}
+			expect(missions()).toContain(`${offer.def.name} [scade tra ${formatRemaining(offer.expiresAt - game.now)}]`)
+			advance(game, 600_000)
+			expect(missions()).toContain(`[scade tra ${formatRemaining(offer.expiresAt - game.now)}]`)
+			// Le missioni dei file .miss non hanno scadenza
+			expect(missions()).not.toMatch(/^ {4}(?!R-).*\[scade tra/m)
 		})
 
 		it("salvataggio e caricamento con una missione casuale in corso", () => {

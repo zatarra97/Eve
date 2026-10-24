@@ -5,6 +5,7 @@
 import { useState, type ReactNode } from "react"
 import { asset } from "@/assets"
 import type { Game } from "@/engine/game"
+import { formatRemaining } from "@/engine/missgen"
 import { acceptSubscription, buyHardware, buySoftware } from "@/engine/shop"
 import type { GameFile, ServerState } from "@/engine/types"
 import { useGame } from "@/hooks/useGame"
@@ -325,28 +326,57 @@ function SoftwareView() {
 }
 
 /** Subscription Server: dim = ricompensa, img = file missione, contents = descrizione, owner = ranking minimo */
-function SubscriptionView() {
+function SubscriptionView({ host }: { host: ServerState }) {
 	const game = useGame()
 	const run = useRun()
 	const { selected, setSelected } = useSelection()
+	// Offerta casuale selezionata (MissGen), per numero di sottoscrizione
+	const [offerId, setOfferId] = useState<string | null>(null)
 	const items = game.network.visibleFiles()
+	// Le offerte casuali si aggiungono a quelle fisse; il tempo residuo si aggiorna a ogni tick
+	const offers = game.missgen.offersOf(host.ip)
+	const offer = offers.find((o) => o.id === offerId) ?? null
+	const accepted = "Sottoscrizione accettata: riceverai a breve le istruzioni via mail."
+
+	function accept() {
+		if (selected) run((g) => acceptSubscription(g, selected), accepted)
+		else if (offer) run((g) => g.missgen.accept(offer.id), accepted)
+	}
 
 	return (
 		<Frame
 			actions={
-				<TabButton
-					disabled={!selected}
-					onClick={() => selected && run((g) => acceptSubscription(g, selected), "Sottoscrizione accettata: riceverai a breve le istruzioni via mail.")}
-				>
+				<TabButton disabled={!selected && !offer} onClick={accept}>
 					Accetta...
 				</TabButton>
 			}
 		>
-			{items.length === 0 && <Empty>Nessuna sottoscrizione disponibile.</Empty>}
+			{items.length === 0 && offers.length === 0 && <Empty>Nessuna sottoscrizione disponibile.</Empty>}
 			{items.map((f, i) => (
-				<Item key={`${f.name}-${i}`} selected={f === selected} onClick={() => setSelected(f)}>
+				<Item
+					key={`${f.name}-${i}`}
+					selected={f === selected}
+					onClick={() => {
+						setSelected(f)
+						setOfferId(null)
+					}}
+				>
 					{f.name} — Ricompensa: {f.dim} Crediti — Ranking minimo: {String(f.owner) || 0}
 					<div className="text-mo-accent">{f.contents}</div>
+				</Item>
+			))}
+			{offers.map((o) => (
+				<Item
+					key={o.id}
+					selected={o === offer}
+					onClick={() => {
+						setOfferId(o.id)
+						setSelected(null)
+					}}
+				>
+					Sottoscrizione No. {o.id} — Ricompensa: {o.def.credits} Crediti — Ranking minimo: {o.minRanking} — Scade tra{" "}
+					{formatRemaining(o.expiresAt - game.now)}
+					<div className="text-mo-accent">{game.missgen.objective(o)}</div>
 				</Item>
 			))}
 		</Frame>
@@ -483,7 +513,7 @@ function TerminalView({ host }: { host: ServerState }) {
 		case "SoftwareServer":
 			return <SoftwareView />
 		case "SubscriptionServer":
-			return <SubscriptionView />
+			return <SubscriptionView host={host} />
 		case "DatabaseServer":
 			return <DatabaseView />
 		case "ChatServer":

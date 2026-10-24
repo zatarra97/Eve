@@ -45,7 +45,7 @@ wavehacker, backmirror, fileforce, nukelord e netpatch6231, backtrace e sequestr
 (riavvio senza file di sistema, nuke dei Web Server), cluster di Personal Server (stato nel Sysmon),
 impostazioni, salvataggi (F5/F9).
 
-Da fare: missioni casuali (MissGen), tutorial guidato sullo schermo,
+Da fare: tutorial guidato sullo schermo,
 caricamento delle mod dall'interfaccia, icone vettoriali della schermata di login.
 
 ## Licenza

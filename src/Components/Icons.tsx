@@ -137,3 +137,26 @@ export function SettingsIcon(props: { onClick?: () => void; className?: string }
 		</SmallIconButton>
 	)
 }
+
+/** Barra di espansione del Sysmon (252x14) con la freccia verso il basso o verso l'alto */
+export function ExpandBar({ expanded, width = 252 }: { expanded: boolean; width?: number }) {
+	const id = useId()
+	const w = width
+	const h = 14
+	const cx = w / 2
+	// Freccia: verso il basso per espandere, verso l'alto per restringere
+	const arrow = expanded ? `M${cx - 3.6} 8.76 L${cx} 5.24 L${cx + 3.6} 8.76` : `M${cx - 3.6} 5.24 L${cx} 8.76 L${cx + 3.6} 5.24`
+	return (
+		<svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="group block">
+			<defs>
+				<linearGradient id={`${id}-bg`} x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0" stopColor="#2a6bc4" />
+					<stop offset="1" stopColor="#0a2a5e" />
+				</linearGradient>
+			</defs>
+			<path d={`M0.75 0.75 H${w - 0.75} V${h - 5} L${w - 5} ${h - 0.75} H5 L0.75 ${h - 5} Z`} fill={`url(#${id}-bg)`} className="opacity-85 group-hover:opacity-100" />
+			<path d={`M0.75 0.75 H${w - 0.75} V${h - 5} L${w - 5} ${h - 0.75} H5 L0.75 ${h - 5} Z`} fill="none" stroke="#6fb8ff" strokeWidth="1.2" />
+			<path d={arrow} fill="none" stroke="#ffffff" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+		</svg>
+	)
+}

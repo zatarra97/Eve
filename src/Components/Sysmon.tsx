@@ -2,7 +2,7 @@
 
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
-import { Sprite } from "./ui"
+import { ExpandBar } from "./Icons"
 
 function Meter({ label, pct, model, used, alert }: { label: string; pct: number; model: string; used: string; alert?: boolean }) {
 	const expanded = useApp((s) => s.sysmonExpanded)
@@ -51,17 +51,24 @@ export default function Sysmon() {
 			/>
 			{expanded && (
 				<div className="mt-[3px] border border-mo-line bg-mo-panel/80 px-1 pb-1 leading-[13px]">
-					<div className="text-mo-accent">== Info Utente {"=".repeat(24)}</div>
-					<div>Account : {game.address}</div>
-					<div>Ranking : {ranking}</div>
-					<div>Classe : {game.userClass}</div>
-					<div>Crediti : {Math.round(credits * 100) / 100}</div>
+					{/* Titolo con una linea che riempie lo spazio: non va mai a capo */}
+					<div className="flex items-center gap-1.5 text-mo-accent">
+						<span className="shrink-0">Info Utente</span>
+						<span className="h-px flex-1 bg-gradient-to-r from-mo-line to-transparent" />
+					</div>
+					<div className="truncate">Account : {game.address}</div>
+					<div className="truncate">Ranking : {ranking}</div>
+					<div className="truncate">Classe : {game.userClass}</div>
+					<div className="truncate">Crediti : {Math.round(credits * 100) / 100}</div>
 				</div>
 			)}
 			{/* Nei contenuti non c'è un server con terminale Cluster: lo stato dei nodi sta qui */}
 			{expanded && game.state.cluster.length > 0 && (
 				<div className="mt-[3px] border border-mo-line bg-mo-panel/80 px-1 pb-1 leading-[13px]">
-					<div className="text-mo-accent">== Cluster {"=".repeat(28)}</div>
+					<div className="flex items-center gap-1.5 text-mo-accent">
+						<span className="shrink-0">Cluster</span>
+						<span className="h-px flex-1 bg-gradient-to-r from-mo-line to-transparent" />
+					</div>
 					<div>Nodi : {game.state.cluster.length}</div>
 					<div>Banda : {game.network.clusterBandwidth()} MBps</div>
 					{game.state.cluster.map((ip) => {
@@ -84,7 +91,7 @@ export default function Sysmon() {
 				</div>
 			)}
 			<button type="button" data-tut="sysmon-expand" className="mt-[3px] block cursor-pointer" onClick={toggle} title={expanded ? "Comprimi" : "Espandi"}>
-				<Sprite name={expanded ? "expand_up" : "expand_down"} w={252} h={14} frames={2} />
+				<ExpandBar expanded={expanded} />
 			</button>
 		</div>
 	)

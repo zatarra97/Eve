@@ -1,18 +1,20 @@
-// Network Map (NETCONN): earth_map.jpg 1280x640 stirata su tutta la larghezza del palco, alta 384
-// (y 50-434). Nell'originale, a 1024 di larghezza: x = MapX * 0.8, y = MapY * 0.6.
+// Network Map (NETCONN): mappa equirettangolare (coordinate MapX/MapY riferite a earth_map.jpg,
+// 1280x640) dal bordo superiore fino a metà schermo in altezza, larga quanto il palco.
+// Nell'originale era alta 384 da y=50.
 
 import { useEffect, useState } from "react"
-import { asset } from "@/assets"
 import { useGame } from "@/hooks/useGame"
+import { STAGE_H } from "@/assets"
 import { useStageWidth } from "@/stage"
 import { useApp } from "@/store/app"
 import type { ServerState } from "@/engine/types"
 import { Sprite, TabButton } from "./ui"
+import WorldMap from "./WorldMap"
 
-const MAP_TOP = 50
-const MAP_H = 384
 const MAP_IMG_W = 1280
-const SY = 0.6
+const MAP_IMG_H = 640
+/** Al massimo metà schermo in altezza */
+const MAP_H = STAGE_H / 2
 /** Posizione fittizia del computer del giocatore (in coordinate dell'immagine) */
 const LOCALHOST_MAP = { x: 914, y: 42 }
 
@@ -23,8 +25,11 @@ export default function NetworkMap() {
 	const [hover, setHover] = useState<ServerState | null>(null)
 	const [frame, setFrame] = useState(0)
 	const width = useStageWidth()
+	const mapH = MAP_H
 	const sx = width / MAP_IMG_W
-	const pos = (s: { mapX: number; mapY: number }) => ({ x: s.mapX * sx, y: s.mapY * SY })
+	const sy = mapH / MAP_IMG_H
+	const pos = (s: { mapX: number; mapY: number }) => ({ x: s.mapX * sx, y: s.mapY * sy })
+	const buttonsTop = mapH + 4
 	const LOCALHOST = pos({ mapX: LOCALHOST_MAP.x, mapY: LOCALHOST_MAP.y })
 
 	useEffect(() => {
@@ -45,9 +50,9 @@ export default function NetworkMap() {
 
 	return (
 		<>
-			<div data-tut="netmap" className="absolute left-0 z-20 border-y border-mo-line" style={{ top: MAP_TOP, height: MAP_H, width }}>
-				<img src={asset("graphics/earth_map.jpg")} alt="" className="absolute inset-0 h-full w-full" draggable={false} />
-				<svg className="pointer-events-none absolute inset-0" width={width} height={MAP_H}>
+			<div data-tut="netmap" className="absolute top-0 left-0 z-20 border-b border-mo-line" style={{ height: mapH, width }}>
+				<WorldMap width={width} height={mapH} />
+				<svg className="pointer-events-none absolute inset-0" width={width} height={mapH}>
 					{points.slice(1).map((p, i) => (
 						<line key={i} x1={points[i].x} y1={points[i].y} x2={p.x} y2={p.y} stroke="#6fb8ff" strokeWidth={1} />
 					))}
@@ -75,7 +80,8 @@ export default function NetworkMap() {
 				{hover && (
 					<div
 						className="pointer-events-none absolute z-10 w-[163px] border border-mo-line bg-[#0b2f6e] px-0.5 text-[12px] leading-[13px] text-mo-accent"
-						style={{ left: Math.max(0, Math.min(pos(hover).x - 82, width - 165)), top: pos(hover).y + 22 }}
+						// Sotto l'icona, oppure sopra se è vicina al bordo inferiore della mappa
+						style={{ left: Math.max(0, Math.min(pos(hover).x - 82, width - 165)), top: pos(hover).y + (pos(hover).y + 70 > mapH ? -52 : 22) }}
 					>
 						<div>{hover.name}</div>
 						<div>[{hover.ip}]</div>
@@ -83,15 +89,17 @@ export default function NetworkMap() {
 					</div>
 				)}
 			</div>
-			<TabButton className="absolute top-[438px] left-0.5 z-20" onClick={() => setNetmap(false)}>
-				Chiudi
-			</TabButton>
-			<TabButton className="absolute top-[438px] right-[118px] z-20" onClick={() => game.act(() => net.removeLastNode())} disabled={nodes.length === 0}>
-				Annulla Nodo
-			</TabButton>
-			<TabButton tut="netmap-connect" className="absolute top-[438px] right-0.5 z-20" onClick={connect} disabled={nodes.length === 0}>
-				Connetti
-			</TabButton>
+			{/* Pulsanti subito sotto la mappa */}
+			<div className="pointer-events-none absolute right-0.5 left-0.5 z-20 flex items-center gap-2 [&>button]:pointer-events-auto" style={{ top: buttonsTop }}>
+				<TabButton onClick={() => setNetmap(false)}>Chiudi</TabButton>
+				<div className="flex-1" />
+				<TabButton onClick={() => game.act(() => net.removeLastNode())} disabled={nodes.length === 0}>
+					Annulla Nodo
+				</TabButton>
+				<TabButton tut="netmap-connect" onClick={connect} disabled={nodes.length === 0}>
+					Connetti
+				</TabButton>
+			</div>
 		</>
 	)
 }

@@ -556,16 +556,23 @@ export default function Terminal() {
 	const host = game.network.host
 	if (!host) return null
 	const logged = game.network.connection?.logged ?? ""
+	const auth = !host.seizedUntil && game.network.needsAuth()
 	return (
-		<div data-tut="terminal" className="absolute top-4 left-2 z-10 w-[752px]">
-			<div className="pl-0.5 font-title text-[15px] leading-[21px] whitespace-pre-wrap text-[#cfd8e6]">{host.welcome}</div>
-			{/* Selezioni e file aperti ripartono da zero cambiando server o utente */}
-			{/* Server sotto sequestro (modello hackedsys.fak): solo il comunicato Intrapol */}
-			{host.seizedUntil ? null : game.network.needsAuth() ? (
-				<LoginView key={host.ip} host={host} />
-			) : (
-				<TerminalView key={`${host.ip}/${logged}`} host={host} />
+		<>
+			<div data-tut="terminal" className="absolute top-4 left-2 z-10 w-[752px]">
+				<div className="pl-0.5 font-title text-[15px] leading-[21px] whitespace-pre-wrap text-[#cfd8e6]">{host.welcome}</div>
+				{/* Selezioni e file aperti ripartono da zero cambiando server o utente */}
+				{/* Server sotto sequestro (modello hackedsys.fak): solo il comunicato Intrapol */}
+				{host.seizedUntil || auth ? null : <TerminalView key={`${host.ip}/${logged}`} host={host} />}
+			</div>
+			{/* Interfaccia di accesso al centro dello schermo, come il login iniziale */}
+			{auth && (
+				<div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+					<div className="pointer-events-auto">
+						<LoginView key={host.ip} host={host} />
+					</div>
+				</div>
 			)}
-		</div>
+		</>
 	)
 }

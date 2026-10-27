@@ -5,6 +5,9 @@ Massimo "v4ldemar" Pinzaglia (Valdemar Indie Software). Il motore interpreta dir
 originali del gioco (`.svr`, `.miss`, `.script`, in sintassi GML), quindi anche le mod funzionano
 così come sono.
 
+Si gioca dal browser su **https://zatarra97.github.io/Eve/** (pubblicato da GitHub Actions a
+ogni push su `main`).
+
 ## Avvio
 
 ```sh

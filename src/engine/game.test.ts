@@ -53,9 +53,23 @@ describe("partita", () => {
 		expect(game.userClass).toBe("Lamer")
 		expect(game.flashramUsed).toBe(120)
 
+		// Al primo avvio arriva solo la mail di 1ronCh4ng; la chat Underground dopo la risposta
+		game.missions.load("def/tut0.miss")
 		game.advance(60_000)
-		const subjects = game.state.mails.map((m) => m.subject)
-		expect(subjects).toContain("Un benvenuto da tutta la community!")
+		expect(game.state.mails.map((m) => m.subject)).toEqual(["Piccoli Lamer crescono!!"])
+		// Collegarsi alla chat prima di aver ricevuto la missione non la chiude
+		game.state.visitedChats.push("412.23.0.69")
+		game.advance(60_000)
+		expect(game.state.completed).not.toContain("uground/a00.miss")
+		game.reply(game.state.mails[0].id)
+		game.advance(60_000)
+		expect(game.state.mails.map((m) => m.subject)).toContain("La chat della comunità")
+		// La visita fatta prima non vale: serve collegarsi di nuovo
+		game.advance(60_000)
+		expect(game.state.completed).not.toContain("uground/a00.miss")
+		game.state.visitedChats.push("412.23.0.69")
+		game.advance(60_000)
+		expect(game.state.completed).toContain("uground/a00.miss")
 	})
 
 	it("tutorial: risposta a 1ronCh4ng e tut_hack in flashram", () => {
@@ -93,12 +107,16 @@ describe("partita", () => {
 	it("obiettivi: ogni missione iniziale dice cosa fare, anche senza mail", () => {
 		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
 		game.missions.load("def/tut0.miss")
-		const byId = Object.fromEntries(game.missions.list().map((m) => [m.path, m.objective?.text]))
-		// def/000 è solo una mail di benvenuto
-		expect(byId["def/000.miss"]).toBeUndefined()
-		expect(byId["uground/a00.miss"]).toMatch(/^Collegati al Chat Server /)
-		expect(byId["xmiss/nmcha-01.miss"]).toMatch(/^Elimina il file 'exe\.hotmeat' da /)
-		expect(byId["def/tut0.miss"]).toMatch(/^Rispondi alla mail di 1ronch4ng@mother/i)
+		const objectives = () => Object.fromEntries(game.missions.list().map((m) => [m.path, m.objective?.text]))
+		// Al primo avvio il Diario ha solo la risposta a 1ronCh4ng: la chat aspetta, la sfida è segreta
+		expect(Object.keys(objectives())).toEqual(["def/000.miss", "def/tut0.miss"])
+		expect(objectives()["def/000.miss"]).toBeUndefined()
+		expect(objectives()["def/tut0.miss"]).toMatch(/^Rispondi alla mail di 1ronch4ng@mother/i)
+		game.advance(30_000)
+		game.reply(game.state.mails[0].id)
+		expect(objectives()["uground/a00.miss"]).toMatch(/^Collegati al Chat Server /)
+		expect(objectives()["xmiss/nmcha-01.miss"]).toBeUndefined()
+		expect(objectiveOf(game, game.missions.active.find((m) => m.def.path === "xmiss/nmcha-01.miss")!.def)?.text).toMatch(/^Elimina il file 'exe\.hotmeat' da /)
 
 		// Server non ancora in mappa: l'obiettivo dice come trovarlo
 		const a01 = game.missions.load("uground/a01.miss")!

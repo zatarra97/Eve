@@ -276,7 +276,7 @@ export default function Desktop() {
 
 			{askTutorial && (
 				<Dialog
-					text="Giocare a Mother per la prima volta potrebbe risultare piuttosto difficile, soprattutto se non hai la minima idea di come funzioni l'ambiente operativo. Vuoi che venga eseguito il tutorial introduttivo sull'interfaccia utente di Mother?"
+					text="Prima volta in Mother? Il tutorial ti mostra le basi in pochi passi."
 					actions={[
 						{ label: "Esegui Tutorial", onClick: () => startTutorial(true) },
 						{ label: "Salta Tutorial", onClick: () => startTutorial(false) },

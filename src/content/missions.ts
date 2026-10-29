@@ -15,23 +15,20 @@ export interface MissionText {
 	replyMailText?: string
 	/** Consiglio pratico mostrato nel Diario sotto l'obiettivo */
 	hint?: string
+	/**
+	 * Le mail di inizio arrivano solo quando questa missione è completata; fino ad allora la missione
+	 * non compare nel Diario. Serve a non presentare tutto insieme al primo avvio.
+	 */
+	after?: string
+	/** Sfida segreta: non compare mai nel Diario, il giocatore la scopre da solo */
+	secret?: boolean
 }
 
 /** Chiave: percorso normalizzato della missione (come MissionDef.path) */
 export const MISSION_TEXT: Record<string, MissionText> = {
-	"def/000.miss": {
-		begin: [
-			{
-				body:
-					"Benvenuto in Mother, {user}: il tuo account è attivo.\n\n" +
-					"Nella Network Map trovi già alcuni server da cui partire:\n" +
-					"- jimmyhardware.mothernet: hardware per il tuo sistema;\n" +
-					"- ivoice.mothernet: la chat più frequentata del Network;\n" +
-					"- sutra.underground e warez.underground: notizie e programmi della comunità Underground.\n\n" +
-					"Buon viaggio!\nThe Mother Sys Administrator",
-			},
-		],
-	},
+	// Al primo avvio arriva solo la mail di 1ronCh4ng (tut0), quella che il tutorial fa aprire: il
+	// benvenuto ripeteva i server già nella Network Map, la chat Underground arriva dopo la risposta.
+	"def/000.miss": { begin: [] },
 	"def/tut0.miss": {
 		begin: [
 			{
@@ -66,7 +63,9 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 			},
 		],
 		hint: "Apri la Network Map, clicca su ivoice.mothernet e poi su 'Connetti'.",
+		after: "def/tut0.miss",
 	},
+	"xmiss/nmcha-01.miss": { secret: true },
 	"uground/a01.miss": {
 		begin: [
 			{

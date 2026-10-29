@@ -150,6 +150,8 @@ export interface ActiveMission {
 	startedAt: number
 	/** Missione casuale (MissGen): ritirata a questo timestamp se non è stata completata */
 	expiresAt?: number
+	/** Mail di inizio trattenute finché non si completa questa missione (MissionText.after) */
+	waitingFor?: string
 }
 
 /** Stato a runtime di un server, sovrapposto alla definizione */

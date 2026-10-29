@@ -25,6 +25,9 @@ export function withEveText(def: MissionDef, user: string): MissionDef {
 	}
 }
 
+/** Secondi tra la fine di una missione e le mail di quella che la aspettava (MissionText.after) */
+const RELEASE_DELAY_S = 20
+
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
 
 export class Missions {
@@ -77,15 +80,29 @@ export class Missions {
 		const m: ActiveMission = { def, subscription: opts.subscription, startedAt: g.now }
 		if (opts.expiresAt !== undefined) m.expiresAt = opts.expiresAt
 		this.active.push(m)
-
-		// Le mail di inizio arrivano dopo qualche secondo, una dopo l'altra
-		let delay = 0
-		for (const mail of def.begin) {
-			delay += g.randomDelay([2, 6])
-			g.sendMailLater({ ...mail, mission: def.path }, delay)
-		}
+		const after = MISSION_TEXT[def.path]?.after
+		if (after && !this.isDone(after)) m.waitingFor = after
+		else this.sendBegin(m)
 		g.changed()
 		return m
+	}
+
+	/** Le mail di inizio arrivano dopo qualche secondo, una dopo l'altra */
+	private sendBegin(m: ActiveMission, delay = 0) {
+		const g = this.game
+		for (const mail of m.def.begin) {
+			delay += g.randomDelay([2, 6])
+			g.sendMailLater({ ...mail, mission: m.def.path }, delay)
+		}
+	}
+
+	private isDone(path: string) {
+		return this.game.state.completed.includes(path) || this.active.some((m) => m.def.path === path && m.done)
+	}
+
+	/** Missione da mostrare nel Diario: né segreta né in attesa che ne finisca un'altra */
+	visible(m: ActiveMission) {
+		return !m.waitingFor && !MISSION_TEXT[m.def.path]?.secret
 	}
 
 	/** Testo compilato automaticamente rispondendo a una mail */
@@ -126,7 +143,8 @@ export class Missions {
 	/** Verifica degli obiettivi delle missioni che si chiudono senza mail */
 	check() {
 		for (const m of [...this.active]) {
-			if (m.done) continue
+			// Una missione non ancora presentata non si chiude: le sue mail arriverebbero fuori contesto
+			if (m.done || m.waitingFor) continue
 			const auto = m.def.noMailNeeded || !m.def.targetMailFrom
 			if (auto && this.objectiveMet(m.def)) this.complete(m)
 		}
@@ -168,6 +186,19 @@ export class Missions {
 		const g = this.game
 		const d = m.def
 		m.done = true
+		for (const w of this.active) {
+			if (w.waitingFor !== d.path) continue
+			delete w.waitingFor
+			w.startedAt = g.now
+			// Conta solo la visita alla chat fatta dopo aver ricevuto la missione (il tutorial ne fa
+			// visitare una prima)
+			if (w.def.type === "ChatPartecipation") {
+				const ip = g.network.server(w.def.targetChatServerIP)?.ip ?? w.def.targetChatServerIP
+				g.state.visitedChats = g.state.visitedChats.filter((v) => v !== ip)
+			}
+			// Dopo le mail della missione appena finita, non insieme
+			this.sendBegin(w, RELEASE_DELAY_S)
+		}
 		g.state.credits += d.credits
 		g.state.ranking += d.extraRanking
 		if (d.credits || d.extraRanking) g.log(`Missione '${d.name}' completata: +${d.credits} crediti, +${d.extraRanking} ranking.`)
@@ -202,7 +233,7 @@ export class Missions {
 
 	/** Missioni visibili al giocatore (Diario e comando missions), con l'obiettivo in parole semplici */
 	list(): { path: string; id: string; name: string; done: boolean; expiresAt?: number; objective: Objective | null }[] {
-		return this.active.map((m) => ({
+		return this.active.filter((m) => this.visible(m)).map((m) => ({
 			path: m.def.path,
 			id: m.def.id,
 			name: m.def.name,

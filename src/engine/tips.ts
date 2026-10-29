@@ -40,7 +40,7 @@ export class Tips {
 		if (cls !== this.lastClass && g.state.ranking > this.lastRanking && !cls.includes("Cracker")) this.show("class", { class: cls })
 		this.lastClass = cls
 		this.lastRanking = g.state.ranking
-		const stuck = g.state.missions.some((m) => !m.done && m.def.type && g.now - m.startedAt > STUCK_MINUTES * 60_000)
+		const stuck = g.state.missions.some((m) => !m.done && m.def.type && g.missions.visible(m) && g.now - m.startedAt > STUCK_MINUTES * 60_000)
 		if (stuck) this.show("stuck")
 	}
 }

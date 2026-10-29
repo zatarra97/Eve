@@ -1,4 +1,4 @@
-// Tutorial guidato dell'interfaccia di Mother (testi e ordine dal tutorial originale,
+// Tutorial guidato dell'interfaccia di Mother (ridotto rispetto al tutorial originale descritto in
 // docs/riferimento-originale.md). Lo schermo si scurisce e resta illuminata solo la parte di cui
 // si sta parlando; le zone scure non sono cliccabili. I passi che chiedono un'azione avanzano da
 // soli quando l'azione è fatta, gli altri con "Continua".
@@ -30,82 +30,51 @@ interface Step {
 const IRON = "1ronch4ng@mother"
 const openMail = (c: Ctx) => (c.right?.kind === "mail" ? c.game.state.mails.find((m) => m.id === (c.right as { id: number }).id) : undefined)
 
+// Al massimo 10 passi, solo l'essenziale per muoversi: il resto lo spiegano Diario, Guida e i
+// consigli di 1ronCh4ng quando serve.
 const STEPS: Step[] = [
-	{ text: "Benvenuto! Questo tutorial ha lo scopo di descriverti l'interfaccia utente di Mother e tutte le relative componenti. Clicca su 'Continua' per proseguire..." },
 	{
-		text: "Cominciamo con il Pulsante Applicazioni: attraverso di esso puoi accedere a tutte le interfacce e ai programmi installati nel sistema. È posizionato nella parte inferiore sinistra dello schermo: prova a cliccarci sopra...",
+		text: "Benvenuto in Mother! Ti mostro le basi in pochi passi. Il Pulsante Applicazioni, in basso a sinistra, apre i programmi e le funzioni del sistema: cliccalo...",
 		target: ["apps"],
 		until: (c) => c.menuOpen,
 	},
 	{
-		text: "Il Pulsante Applicazioni apre questo menu di sistema. In alto trovi i programmi installati nella tua memoria, sotto le componenti di Mother. Ogni volta che installerai nuovi software verranno aggiunte ulteriori voci.",
-		target: ["apps", "appsmenu"],
-	},
-	{ text: "Clicca nuovamente sul Pulsante Applicazioni per chiudere il menu di sistema...", target: ["apps", "appsmenu"], until: (c) => !c.menuOpen },
-	{
-		text: "In alto a destra c'è il Monitor di Sistema: riporta in tempo reale la percentuale di utilizzo dell'hardware, come il consumo di CPU e di banda, e lo spazio occupato nella memoria.",
-		target: ["sysmon"],
-	},
-	{ text: "Il Monitor di Sistema può essere espanso, fornendo così maggiori informazioni. Clicca sul pulsante di espansione posto appena sotto gli indicatori...", target: ["sysmon-expand"], until: (c) => c.sysmonExpanded },
-	{
-		text: "Ora vedi il tipo di hardware installato e i consumi precisi, oltre allo stato del tuo account: l'indirizzo '@mother' ti identifica nel Network; il Ranking misura le tue capacità e la Classe la tua posizione nella comunità Underground; i Crediti sono la moneta del Network.",
-		target: ["sysmon"],
-	},
-	{
-		text: "Andiamo ora a vedere come navigare nel Network. Apri il menu con il Pulsante Applicazioni e clicca sulla voce 'Apri Network Map'...",
+		text: "Qui trovi le funzioni di Mother; i programmi che installerai compariranno in alto. Clicca su 'Apri Network Map'...",
 		target: ["apps", "appsmenu"],
 		until: (c) => c.netmapOpen,
 	},
 	{
-		text: "Questa è la mappa mondiale del Network: i server che conosci compaiono come icone bianche. Passandoci sopra con il mouse vedi nome, indirizzo IP e tipo di macchina. L'icona fissa rappresenta il tuo computer, in una posizione fittizia per mascherare i tuoi dati.",
-		target: ["netmap"],
-	},
-	{
-		text: "Per collegarti a un server devi impostare il nodo di connessione: clicca su una delle icone sulla mappa. Cliccando su più server in sequenza crei una connessione multinodo, più difficile da rintracciare ma più costosa in banda.",
+		text: "Questa è la Network Map: ogni icona è un server che conosci. Clicca su un server per sceglierlo come destinazione...",
 		target: ["netmap"],
 		until: (c) => c.game.network.pendingNodes.length > 0,
 	},
-	{ text: "Ora clicca sul pulsante 'Connetti' e attendi la fine della procedura di connessione...", target: ["netmap-connect"], until: (c) => c.game.network.connection?.status === "connected" },
+	{ text: "Ora premi 'Connetti' e attendi la fine della connessione...", target: ["netmap-connect"], until: (c) => c.game.network.connection?.status === "connected" },
 	{
-		text: "Perfetto, ti sei collegato al server. Ti viene mostrata l'interfaccia del Terminal Server, diversa in base al tipo di macchina: potrai leggere news, scaricare file, acquistare software o accedere a caselle di posta.",
-		target: ["terminal"],
+		text: "Sei collegato! Ogni server ha la sua interfaccia: news, file, negozi, posta. Per uscire, apri il Pulsante Applicazioni e scegli 'Disconnetti'...",
+		target: ["apps", "appsmenu"],
+		until: (c) => !c.game.network.connection,
 	},
-	{ text: "Ora chiudi la connessione cliccando sulla voce 'Disconnetti' dal menu del Pulsante Applicazioni...", target: ["apps", "appsmenu"], until: (c) => !c.game.network.connection },
 	{
-		text: "Passiamo alla posta elettronica. L'icona in basso a destra mostra quanti messaggi non hai ancora letto: cliccaci sopra per aprire la casella di posta...",
+		text: "Ti è arrivata una mail: clicca sull'icona della posta in basso a destra...",
 		target: ["mail"],
 		until: (c) => c.inboxOpen,
 	},
 	{
-		text: "Qui trovi tutte le mail ricevute, dalla più recente. È appena arrivato un messaggio da 1ronCh4ng (se non lo vedi ancora attendi qualche istante): aprilo cliccandoci sopra...",
+		text: "Apri il messaggio di 1ronCh4ng (se non c'è ancora, attendi qualche istante)...",
 		target: ["inbox", "mail"],
 		until: (c) => openMail(c)?.from.toLowerCase() === IRON,
 	},
 	{
-		text: "Il messaggio si apre in alto a destra. 1ronCh4ng sembra voglia offrirti un aiuto: proviamo a rispondere alla sua lettera. Clicca sul pulsante 'Rispondi'...",
-		target: ["mailpanel"],
-		until: (c) => c.right?.kind === "compose",
-	},
-	{
-		text: "Il testo della risposta si compila da solo. Se hai letto attentamente la mail avrai capito che 1ronCh4ng non gradisce allegati: non allegare nulla e inoltra la risposta cliccando su 'Invia'...",
+		text: "1ronCh4ng vuole aiutarti: premi 'Rispondi' e poi 'Invia'. Il testo si compila da solo; non allegare nulla...",
 		target: ["mailpanel"],
 		until: (c) => c.game.state.mails.some((m) => m.sent && m.subject.toLowerCase().includes("piccoli lamer")),
 	},
 	{
-		text: "Ottimo! Ora abbi pazienza, riceverai una risposta tra qualche istante. Quando arriva, aprila dalla casella di posta...",
-		target: ["inbox", "mail"],
-		until: (c) => openMail(c)?.subject === "Ecco l'aiuto...",
-	},
-	{
-		text: "Il tuo amico ha allegato alla mail un programma: tutti gli allegati vengono salvati automaticamente nella memoria, e nel menu del Pulsante Applicazioni troverai la voce 'tut_hack-1.0'. Avvialo quando vuoi: ti spiegherà i primi passi nel Network.",
-		target: ["mailpanel"],
-	},
-	{
-		text: "Accanto alla posta c'è il Diario: elenca le missioni in corso, cosa devi fare e un suggerimento per farlo. Le parole sottolineate, come Banda, si spiegano da sole passandoci sopra il mouse, e restano nella Guida del menu Applicazioni.",
+		text: "Accanto alla posta c'è il Diario: ti dice sempre cosa fare e come. Le parole sottolineate si spiegano passandoci sopra il mouse.",
 		target: ["journal"],
 	},
 	{
-		text: "Il tutorial base di Mother si conclude qui. Segui le mail e il Diario; 1ronCh4ng ti darà qualche consiglio quando incontrerai qualcosa di nuovo. Buon divertimento!",
+		text: "Fatto! 1ronCh4ng ti risponderà a breve. Segui le mail e il Diario: al resto penseremo strada facendo. Buon divertimento!",
 	},
 ]
 
@@ -196,12 +165,7 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
 				className="pointer-events-auto absolute bottom-1.5 left-1/2 w-[420px] -translate-x-1/2 border border-mo-line bg-[#06173a]/90 p-2 text-[12.5px] leading-[16px] shadow-[0_0_18px_#3a8fe055] backdrop-blur-[3px]"
 				style={{ clipPath: "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%)" }}
 			>
-				<div className="mb-1 flex items-center justify-between font-title text-[9.5px] tracking-[0.12em] text-mo-line uppercase">
-					<span>Tutorial</span>
-					<span>
-						{index + 1}/{STEPS.length}
-					</span>
-				</div>
+				<div className="mb-1 font-title text-[9.5px] tracking-[0.12em] text-mo-line uppercase">Tutorial</div>
 				<div className="min-h-[64px] text-white">
 					<Typewriter key={index} text={step.text} done={(t) => <GlossaryText text={t} />} />
 				</div>

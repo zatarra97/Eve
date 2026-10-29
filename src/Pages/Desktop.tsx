@@ -16,6 +16,7 @@ import NetworkMap from "@/Components/NetworkMap"
 import { Draggable, type Offset } from "@/Components/Draggable"
 import { GlossaryTooltip, Guide } from "@/Components/Glossary"
 import { Journal } from "@/Components/Journal"
+import { JournalIcon } from "@/Components/Icons"
 import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
@@ -248,6 +249,12 @@ export default function Desktop() {
 			})}
 			<AppsMenu onProgram={openProgram} onNetmap={openNetmap} onSettings={() => setSettingsOpen(true)} onLogout={logout} />
 			<MailBar />
+			<JournalIcon
+				count={game.missions.list().filter((m) => !m.done && m.objective).length}
+				active={programs.some((p) => p.id === "diario")}
+				onClick={() => (programs.some((p) => p.id === "diario") ? closeProgram("diario") : openProgram("Diario", "diario"))}
+				className="absolute right-[36px] bottom-0 z-20"
+			/>
 			{toast && (
 				<MailToast
 					mail={toast}

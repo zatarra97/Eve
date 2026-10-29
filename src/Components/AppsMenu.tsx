@@ -112,7 +112,6 @@ export default function AppsMenu({
 							<Section title="Sistema">
 								<Item label="Apri Network Map" onClick={run(onNetmap)} />
 								<Item label="Apri Console" onClick={run(() => setConsole(true))} />
-								<Item label="Diario" hint={`${game.missions.list().filter((m) => !m.done && m.objective).length} missioni`} onClick={run(() => onProgram("Diario", "diario"))} />
 								<Item label="Guida" hint={`${game.glossary.length} voci`} onClick={run(() => onProgram("Guida", "guida"))} />
 								<Item label="Impostazioni" onClick={run(onSettings)} />
 							</Section>

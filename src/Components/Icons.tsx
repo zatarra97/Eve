@@ -94,6 +94,33 @@ export function MailIcon({ unread, active, onClick, className }: { unread: numbe
 	)
 }
 
+/** Icona del Diario (accanto alla posta): taccuino con il numero di missioni in corso */
+export function JournalIcon({ count, active, onClick, className }: { count: number; active?: boolean; onClick?: () => void; className?: string }) {
+	const [hover, setHover] = useState(false)
+	return (
+		<button
+			type="button"
+			title={count ? `Diario: ${count} ${count === 1 ? "missione" : "missioni"} in corso` : "Diario"}
+			onClick={onClick}
+			onMouseEnter={() => setHover(true)}
+			onMouseLeave={() => setHover(false)}
+			data-tut="journal"
+			className={twMerge("relative cursor-pointer", className)}
+		>
+			<Frame size={32} cut={8} hover={hover} active={active}>
+				<rect x="9" y="7.5" width="15" height="18" rx="1" fill="none" stroke="#ffffff" strokeWidth="1.6" />
+				<path d="M12 7.5 V25.5" stroke="#ffffff" strokeWidth="1.2" />
+				<path d="M14.5 12.5 H21 M14.5 16 H21 M14.5 19.5 H19" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" />
+			</Frame>
+			{count > 0 && (
+				<span className="absolute -top-1.5 -left-1.5 flex h-[15px] min-w-[15px] items-center justify-center rounded-full border border-white bg-mo-ok px-[3px] text-[10px] leading-none font-bold text-white shadow-[0_0_6px_#2fae4a]">
+					{count}
+				</span>
+			)}
+		</button>
+	)
+}
+
 /** Pulsante quadrato 32x32 con un simbolo bianco (schermata di login) */
 function SmallIconButton({ title, onClick, className, children }: { title: string; onClick?: () => void; className?: string; children: React.ReactNode }) {
 	const [hover, setHover] = useState(false)

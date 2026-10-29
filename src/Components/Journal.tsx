@@ -1,14 +1,16 @@
 // Diario: le missioni in corso con l'obiettivo in parole semplici, anche quelle che non hanno una
-// mail di inizio. Si apre dal menu Applicazioni come i programmi.
+// mail di inizio. Si apre dall'icona accanto alla posta.
 
+import { useState } from "react"
 import { formatRemaining } from "@/engine/missgen"
 import type { Objective } from "@/engine/objectives"
 import { useGame } from "@/hooks/useGame"
 import { GlossaryText } from "./Glossary"
 import { TabButton, Window } from "./ui"
 
-/** Riquadro con l'obiettivo di una missione (Diario e mail di inizio) */
-export function ObjectiveBox({ objective, className }: { objective: Objective; className?: string }) {
+/** Riquadro con l'obiettivo di una missione; il suggerimento resta chiuso finché il giocatore non lo apre */
+function ObjectiveBox({ objective, className }: { objective: Objective; className?: string }) {
+	const [hintOpen, setHintOpen] = useState(false)
 	return (
 		<div className={`border-l-2 border-mo-ok bg-[#071226]/70 px-1.5 py-1 ${className ?? ""}`}>
 			<div className="font-title text-[9.5px] tracking-[0.1em] text-mo-ok uppercase">
@@ -18,8 +20,15 @@ export function ObjectiveBox({ objective, className }: { objective: Objective; c
 				<GlossaryText text={objective.text} />
 			</div>
 			{objective.hint && (
-				<div className="mt-0.5 text-[11.5px] text-mo-accent">
-					<GlossaryText text={`Suggerimento: ${objective.hint}`} />
+				<div className="mt-0.5 text-[11.5px]">
+					<button type="button" className="cursor-pointer text-mo-line hover:text-mo-accent" onClick={() => setHintOpen((o) => !o)}>
+						{hintOpen ? "▾" : "▸"} Suggerimento
+					</button>
+					{hintOpen && (
+						<div className="mt-0.5 text-mo-accent">
+							<GlossaryText text={objective.hint} />
+						</div>
+					)}
 				</div>
 			)}
 		</div>

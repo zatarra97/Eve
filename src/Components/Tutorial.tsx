@@ -70,7 +70,7 @@ const STEPS: Step[] = [
 		until: (c) => c.game.state.mails.some((m) => m.sent && m.subject.toLowerCase().includes("piccoli lamer")),
 	},
 	{
-		text: "Accanto alla posta c'è il Diario: ti dice sempre cosa fare e come. Le parole sottolineate si spiegano passandoci sopra il mouse.",
+		text: "Accanto alla posta c'è il Diario: ti dice cosa fare e, se ti blocchi, ha un suggerimento per ogni missione. Le parole sottolineate si spiegano passandoci sopra il mouse.",
 		target: ["journal"],
 	},
 	{

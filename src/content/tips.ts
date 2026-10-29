@@ -23,7 +23,7 @@ export const TIPS = {
 	netbanking:
 		"Un Netbanking: da qui puoi spostare crediti da un conto. Attento: rubare crediti abbassa il Karma, e oltre il limite del conto il server ti rintraccia.",
 	class: "Sei salito di classe: ora sei {class}! Con più Ranking ti arriveranno lavori migliori su karma.underground.",
-	stuck: "Sei bloccato? Apri il Diario, l'icona accanto alla posta: sotto ogni obiettivo c'è un suggerimento.",
+	stuck: "Sei bloccato? Apri il Diario, l'icona accanto alla posta: sotto ogni obiettivo puoi aprire un suggerimento.",
 } as const
 
 export type TipId = keyof typeof TIPS

@@ -35,6 +35,8 @@ npm run import -- <cartella Mother 1.0> [<cartella upgrade 1.02>]
 
 - `src/engine/` — motore senza React: interprete GML (`gml/`), caricamento contenuti, stato di
   partita, rete, missioni, script, virus, salvataggi
+- `src/content/` — contenuti aggiunti da Eve per insegnare il gioco: glossario, consigli del mentore,
+  testi riscritti delle prime missioni (si sovrappongono agli originali, che restano intatti)
 - `src/Pages/`, `src/Components/` — interfaccia (palco alto 768 px come l'originale, largo quanto la finestra)
 - `scripts/import-original.ts` — importa i contenuti del gioco originale
 - `docs/riferimento-originale.md` — interfaccia e meccaniche osservate nell'originale
@@ -47,6 +49,11 @@ sottoscrizioni, database, chat, netbanking), programmi MomPad, UAVsys, MomAMP, t
 wavehacker, backmirror, fileforce, nukelord e netpatch6231, backtrace e sequestro dei server, distruzione dei server
 (riavvio senza file di sistema, nuke dei Web Server), cluster di Personal Server (stato nel Sysmon),
 impostazioni, tutorial guidato, salvataggi (F5/F9).
+
+Aggiunte di Eve per chi non conosce il gergo: termini sottolineati con una spiegazione al passaggio
+del mouse e app Guida, Diario con l'obiettivo di ogni missione e un suggerimento, consigli di
+1ronCh4ng la prima volta che si incontra un meccanismo, mail delle prime missioni più brevi, errori
+che dicono cosa manca e cosa fare.
 
 Da fare: caricamento delle mod dall'interfaccia.
 

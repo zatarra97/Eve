@@ -213,8 +213,35 @@ describe("partita", () => {
 		it("comando sconosciuto e help con i comandi di gioco", () => {
 			const game = setup()
 			expect(exec(game, "pippo")).toContain("comando sconosciuto!")
+			// Chi sbaglia a scrivere riceve un suggerimento
+			expect(exec(game, "conect 1.2.3.4")).toContain("forse intendevi 'connect'?")
+			expect(exec(game, "missons")).toContain("forse intendevi 'missions'?")
 			const help = exec(game, "help")
-			for (const name of ["ls", "view", "run", "connect", "resolve", "missions", "runscript", "debug"]) expect(help).toMatch(new RegExp(`^ {4}${name} `, "m"))
+			for (const name of ["ls", "rm", "view", "run", "connect", "resolve", "missions"]) expect(help).toMatch(new RegExp(`^ {4}${name} `, "m"))
+			// I comandi per chi crea missioni e mod compaiono solo con debug 1
+			expect(help).not.toMatch(/^ {4}runscript /m)
+			game.state.debug = true
+			expect(exec(game, "help")).toMatch(/^ {4}runscript /m)
+		})
+
+		it("rm senza server remoto elimina i file della flashram, non quelli di sistema", () => {
+			const game = setup()
+			game.addLocalFile({ name: "dat.vecchio", dim: 50, img: -1, contents: "", owner: "eve" })
+			game.addLocalFile({ name: "sys.core", dim: 5, img: -1, contents: "%SYSTEM%", owner: "eve" })
+			const free = game.flashramFree
+			expect(exec(game, "rm dat.vecchio")).toContain("eliminato dalla flashram")
+			expect(game.flashramFree).toBe(free + 50)
+			expect(exec(game, "rm sys.core")).toContain("impossibile eliminare")
+		})
+
+		it("errori che insegnano: numeri e cosa fare", () => {
+			const game = setup()
+			for (const ip of ["547.2.8.791", "632.639.14.633", "666.underground.0.1", "412.23.0.69"]) game.network.addNode(ip)
+			const err = game.network.connect()!
+			expect(err).toContain("4 nodi richiede 160 MBps e ne hai 80 liberi")
+			expect(err).toContain("Togli un nodo")
+			// Il firewall dice da quale indirizzo accetta connessioni
+			expect(setup().network.connectDirect("10.258.26.13")).toContain("accetta solo connessioni provenienti da 10.258.1.119")
 		})
 
 		it("ls, view e run sui file in flashram", () => {
@@ -356,7 +383,7 @@ describe("partita", () => {
 			connect(game, LOGIN)
 			const srv = game.state.servers[LOGIN]
 			expect(game.network.needsAuth()).toBe(true)
-			expect(game.network.startCrack()).toContain("rootbreaker non presente")
+			expect(game.network.startCrack()).toContain("rootbreaker non è nella tua Flashram")
 
 			install(game, "rootbreaker", "1.1")
 			const ranking = game.state.ranking
@@ -591,7 +618,7 @@ describe("partita", () => {
 
 			install(game, "rootbreaker", "1.1")
 			connect(game, PURESUN)
-			expect(game.network.upload(file)).toContain("fileforce non presente")
+			expect(game.network.upload(file)).toContain("fileforce non è nella tua Flashram")
 			install(game, "fileforce", "3.0")
 			expect(game.network.upload(file)).toContain("Nessun File Server")
 			expect(game.network.startCrack()).toBeNull()
@@ -770,7 +797,7 @@ describe("partita", () => {
 		it("wavehacker: registra la voce al telefono e la usa sul VRLS", () => {
 			const game = setup()
 			connect(game, PHONE_OK)
-			expect(game.network.recordVoice()).toContain("wavehacker non presente")
+			expect(game.network.recordVoice()).toContain("wavehacker non è nella tua Flashram")
 			install(game, "wavehacker", "4")
 
 			// Voce di un altro admin: il VRLS non la accetta
@@ -864,9 +891,9 @@ describe("partita", () => {
 			startMission(game, MISSION, "Ci siamo!")
 			game.addLocalFile({ name: "KEY.FG2GB9GD1EF2", dim: 1, img: -1, contents: "%KEY%", owner: "eve" })
 			connect(game, MASTER)
-			// Non ancora autenticati: ls mostra la flashram, rm e reboot non hanno un server su cui agire
+			// Non ancora autenticati: ls e rm agiscono sulla flashram, reboot non ha un server su cui agire
 			expect(exec(game, "ls")).toContain("KEY.FG2GB9GD1EF2")
-			expect(exec(game, "rm sys.kernel")).toContain("nessun server remoto autenticato")
+			expect(exec(game, "rm sys.kernel")).toContain("file inesistente!")
 			expect(game.network.loginWithKeyFile()).toBe(true)
 
 			const ls = exec(game, "ls")
@@ -912,7 +939,7 @@ describe("partita", () => {
 			}
 
 			via()
-			expect(game.network.startNuke()).toContain("nukelord non presente")
+			expect(game.network.startNuke()).toContain("nukelord non è nella tua Flashram")
 			install(game, "nukelord", "8")
 			const srv = game.state.servers[WEB4]
 			// 80 MBps meno i 40 della connessione a due nodi: non bastano contro i 200 del server

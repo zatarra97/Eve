@@ -14,6 +14,23 @@ import { formatRemaining } from "./missgen"
 interface Command {
 	help: string
 	run: (args: string[]) => void
+	/** Comando per chi crea missioni e mod: in help solo con debug 1 */
+	dev?: boolean
+}
+
+/** Distanza di modifica tra due parole (per suggerire il comando giusto a chi sbaglia a scrivere) */
+function distance(a: string, b: string): number {
+	const row = Array.from({ length: b.length + 1 }, (_, i) => i)
+	for (let i = 1; i <= a.length; i++) {
+		let prev = row[0]
+		row[0] = i
+		for (let j = 1; j <= b.length; j++) {
+			const tmp = row[j]
+			row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1))
+			prev = tmp
+		}
+	}
+	return row[b.length]
 }
 
 export interface ExecOptions {
@@ -39,7 +56,7 @@ export class Shell {
 			clear: { help: "pulisce la console", run: () => this.clear() },
 			exit: { help: "chiude la console", run: () => game.emit({ type: "ui", action: "console", arg: 0 }) },
 			ls: { help: "elenco dei file in flashram (del server remoto se autenticati)", run: () => this.ls() },
-			rm: { help: "<file> elimina un file dal server remoto", run: (a) => this.rm(a.join(" ")) },
+			rm: { help: "<file> elimina un file (dal server remoto se autenticati)", run: (a) => this.rm(a.join(" ")) },
 			reboot: { help: "riavvia il server remoto (solo Admin)", run: () => this.reboot() },
 			view: { help: "<file> mostra il contenuto di un file", run: (a) => this.view(a.join(" ")) },
 			run: { help: "<programma> esegue un programma", run: (a) => this.runProgram(a.join(" ")) },
@@ -48,12 +65,12 @@ export class Shell {
 			resolve: { help: "<servername> aggiunge un server alla mappa", run: (a) => this.resolve(a[0]) },
 			removeserver: { help: "<ip|servername> toglie un server dalla mappa", run: (a) => this.removeServer(a[0]) },
 			refreshservers: { help: "carica i server nuovi", run: () => this.refreshServers() },
-			addmission: { help: "<percorso> carica una missione", run: (a) => this.addMission(a[0]) },
+			addmission: { help: "<percorso> carica una missione", run: (a) => this.addMission(a[0]), dev: true },
 			missions: { help: "elenco delle missioni attive", run: () => this.listMissions() },
-			runscript: { help: "<script> avvia uno script", run: (a) => this.runScript(a[0]) },
-			lsscript: { help: "elenco degli script in esecuzione", run: () => this.listScripts() },
-			killscript: { help: "<script> termina uno script", run: (a) => this.killScript(a[0]) },
-			debug: { help: "0|1 messaggi di debug", run: (a) => this.debug(a[0]) },
+			runscript: { help: "<script> avvia uno script", run: (a) => this.runScript(a[0]), dev: true },
+			lsscript: { help: "elenco degli script in esecuzione", run: () => this.listScripts(), dev: true },
+			killscript: { help: "<script> termina uno script", run: (a) => this.killScript(a[0]), dev: true },
+			debug: { help: "0|1 messaggi di debug e comandi per le mod", run: (a) => this.debug(a[0]), dev: true },
 		}
 	}
 
@@ -72,6 +89,8 @@ export class Shell {
 		const cmd = this.commands[name.toLowerCase()]
 		if (!cmd) {
 			this.game.log("    comando sconosciuto!")
+			const guess = this.suggest(name.toLowerCase())
+			this.out(guess ? `forse intendevi '${guess}'? Scrivi 'help' per l'elenco dei comandi.` : "scrivi 'help' per l'elenco dei comandi.")
 			return
 		}
 		cmd.run(args)
@@ -101,7 +120,22 @@ export class Shell {
 	}
 
 	private help() {
-		for (const [name, cmd] of Object.entries(this.commands)) this.game.log(`    ${name.padEnd(16)}${cmd.help}`)
+		for (const [name, cmd] of Object.entries(this.commands)) if (!cmd.dev || this.game.state.debug) this.game.log(`    ${name.padEnd(16)}${cmd.help}`)
+	}
+
+	/** Comando più simile a quello scritto, se la differenza è piccola */
+	private suggest(word: string): string | null {
+		let best: string | null = null
+		let bestDist = Math.max(1, Math.floor(word.length / 3))
+		for (const [name, cmd] of Object.entries(this.commands)) {
+			if (cmd.dev && !this.game.state.debug) continue
+			const d = distance(word, name)
+			if (d <= bestDist && (best === null || d < distance(word, best))) {
+				best = name
+				bestDist = d
+			}
+		}
+		return best
 	}
 
 	private clear() {
@@ -163,7 +197,13 @@ export class Shell {
 
 	private rm(name: string) {
 		if (!this.need(name, "rm <file>")) return
-		if (!this.remote()) return this.out("nessun server remoto autenticato.")
+		// Senza un server remoto autenticato si eliminano i file della flashram
+		if (!this.remote()) {
+			const i = this.game.findLocalFile(name)
+			if (i < 0) return this.out("file inesistente!")
+			const f = this.game.state.files[i]
+			return this.out(this.game.deleteLocalFile(i) ? `${f.name} eliminato dalla flashram.` : "impossibile eliminare un file di sistema.")
+		}
 		const net = this.game.network
 		const f = net.visibleFiles().find((x) => x.name.toLowerCase() === name.toLowerCase())
 		if (!f) return this.out("file inesistente!")

@@ -23,6 +23,7 @@ import {
 	violationRanking,
 } from "./balance"
 import { normPath } from "./content"
+import { firewallRefused, missingProgram, noBandwidth, noCredits, noSpace } from "./errors"
 import type { Game } from "./game"
 import { loadServer } from "./loaders"
 import type { GameFile, ServerState, ServerUser } from "./types"
@@ -234,7 +235,7 @@ export class Network {
 		if (!srv || !this.isOnline(srv)) return "Impossibile raggiungere l'host remoto."
 		if (connectionBandwidth(nodes.length) > this.game.netTotal - this.game.netUsed) {
 			this.game.tips.show("bandwidth")
-			return "Banda insufficiente per impostare la connessione."
+			return noBandwidth(this.game, nodes.length)
 		}
 		// Firewall: il penultimo nodo deve corrispondere all'indirizzo accettato
 		if (srv.firewall && srv.firewallMask !== "*.*.*.*") {
@@ -242,7 +243,7 @@ export class Network {
 			if (previous !== srv.firewallMask) {
 				this.game.tips.show("firewall")
 				this.game.log("Connessione rifiutata dal Firewall remoto.")
-				return "Connessione rifiutata dal Firewall remoto."
+				return firewallRefused(srv.name, srv.firewallMask)
 			}
 		}
 		this.connection = { nodes, target, status: "dialing", dial: 0, forced: false }
@@ -349,7 +350,7 @@ export class Network {
 	/** rootbreaker: cracking dell'interfaccia Login. Il server avvia subito il backtrace. */
 	startCrack(programName?: string): string | null {
 		const prog = this.program("rootbreaker", programName)
-		if (!prog) return "rootbreaker non presente in Flashram."
+		if (!prog) return missingProgram("rootbreaker")
 		const t = this.breachTarget("Login")
 		if (typeof t === "string") return t
 		const seconds = crackSeconds(t.admin.ranking, t.srv.cpu, this.game.state.hardware.cpu.value, crackerSpeed(versionOf(prog)))
@@ -359,7 +360,7 @@ export class Network {
 
 	/** wavehacker sul VRLS: invia il campione vocale dell'admin registrato in flashram */
 	startVoiceForge(): string | null {
-		if (!this.program("wavehacker")) return "wavehacker non presente in Flashram."
+		if (!this.program("wavehacker")) return missingProgram("wavehacker")
 		const t = this.breachTarget("VRLS")
 		if (typeof t === "string") return t
 		const sample = this.voiceSamples().find((f) => String(f.img) === t.admin.password)
@@ -440,12 +441,12 @@ export class Network {
 	/** wavehacker su una linea telefonica: registra la voce in un campione in flashram */
 	recordVoice(): string | null {
 		const g = this.game
-		if (!this.program("wavehacker")) return "wavehacker non presente in Flashram."
+		if (!this.program("wavehacker")) return missingProgram("wavehacker")
 		const srv = this.host
 		const sample = this.phoneSample()
 		if (!srv || !sample) return "Nessuna linea telefonica attiva."
 		if (this.breach || g.tasks.some((t) => t.kind === "call")) return "Operazione già in corso."
-		if (sample.dim > g.flashramFree) return "Spazio insufficiente sulla Flashram."
+		if (sample.dim > g.flashramFree) return noSpace(g, sample.dim)
 		const free = Math.max(1, g.netFree)
 		// "snd_phone_admin:3" → sounds/phone_admin_3.wav
 		g.emit({ type: "sound", name: String(sample.img).replace(/^snd_/, "").replace(":", "_") })
@@ -598,9 +599,9 @@ export class Network {
 		const g = this.game
 		if (file.dim > g.flashramFree) {
 			g.tips.show("flashram")
-			return "Spazio insufficiente sulla Flashram."
+			return noSpace(g, file.dim)
 		}
-		if (cost > g.state.credits) return "Crediti insufficienti."
+		if (cost > g.state.credits) return noCredits(g, cost)
 		const free = Math.max(1, g.netFree)
 		g.startTask({
 			kind: "download",
@@ -627,7 +628,7 @@ export class Network {
 	/** fileforce: carica un file della flashram sul server connesso, con proprietario l'utente autenticato */
 	upload(file: GameFile): string | null {
 		const g = this.game
-		if (!g.hasProgram("fileforce")) return "fileforce non presente in Flashram."
+		if (!g.hasProgram("fileforce")) return missingProgram("fileforce")
 		const srv = this.uploadTarget()
 		const user = this.connection?.logged
 		if (!srv) return "Nessun File Server o Database Server disponibile per il caricamento."
@@ -704,13 +705,13 @@ export class Network {
 	 */
 	startNuke(): string | null {
 		const g = this.game
-		if (!this.program("nukelord")) return "nukelord non presente in Flashram."
+		if (!this.program("nukelord")) return missingProgram("nukelord")
 		const srv = this.nukeTarget()
 		if (!srv) return "Nessun Web Server connesso."
 		if (this.nuke) return "Operazione già in corso."
 		if (srv.cantBeNuked) return "Il server remoto ha respinto l'attacco: impossibile nukarlo."
 		const free = g.netFree
-		if (free <= 0) return "Banda insufficiente per avviare l'attacco."
+		if (free <= 0) return "Banda insufficiente per avviare l'attacco: chiudi i download in corso o collegati con meno nodi."
 		const destroys = free >= srv.net
 		const task = g.startTask({
 			kind: "nuke",

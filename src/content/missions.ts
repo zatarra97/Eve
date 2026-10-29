@@ -162,7 +162,7 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 			},
 		],
 		end: [{ body: "Fatto, {user}: i file sono nostri. Eccoti i 60 Cr. promessi, e i saluti di 1ronCh4ng.\n\nRoM4N" }],
-		hint: "nukelord costa 19 Cr. su warez.underground e occupa molta banda: chiudi i download prima di lanciarlo.",
+		hint: "nukelord costa 19 Cr. su warez.underground e occupa molta banda. web4.telemark ha un firewall: se rifiuta la connessione, il messaggio ti dice da quale server passare.",
 	},
 	"xmiss/nmcha-02.miss": {
 		begin: [

@@ -1,6 +1,7 @@
 // Acquisti sui terminali: hardware (Commerce Server), software (Software Server) e
 // accettazione delle sottoscrizioni (Subscription Server).
 
+import { noCredits } from "./errors"
 import type { Game } from "./game"
 import type { GameFile, HardwarePart } from "./types"
 
@@ -16,7 +17,7 @@ export function buyHardware(game: Game, item: GameFile): string | null {
 	const slot = slotOf(item.owner)
 	if (!slot) return "Articolo non disponibile."
 	const cost = Number(item.img)
-	if (cost > game.state.credits) return "Crediti insufficienti."
+	if (cost > game.state.credits) return noCredits(game, cost)
 	const current = game.state.hardware[slot]
 	if (current.name === item.name) return "Questo componente è già installato."
 	if (slot === "flashram" && item.dim < game.flashramUsed) return "La nuova Flashram non può contenere i file attuali."

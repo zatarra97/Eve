@@ -9,7 +9,7 @@ export const TIPS = {
 	bandwidth:
 		"Non hai abbastanza banda per quella connessione: 1 nodo occupa 20 MBps, 2 nodi 40, 3 nodi 80. Togli un nodo, chiudi i download o compra una scheda di rete più veloce.",
 	firewall:
-		"Quel server ha un firewall: accetta connessioni solo da certi indirizzi. Prova a cambiare l'ultimo nodo prima della destinazione.",
+		"Quel server ha un firewall: accetta connessioni solo da un indirizzo preciso, scritto nel messaggio di errore. Mettilo come ultimo nodo prima della destinazione.",
 	login:
 		"Questo server chiede un Login. Senza credenziali puoi forzarlo con rootbreaker, ma il server avvierà subito il backtrace: collegati passando da qualche nodo.",
 	backtrace:

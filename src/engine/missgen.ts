@@ -16,6 +16,7 @@ import {
 	MISSGEN_VARIATION,
 } from "./balance"
 import type { Game } from "./game"
+import { noSpace } from "./errors"
 import { objectiveOf } from "./objectives"
 import type { GameFile, MissionDef, ServerState } from "./types"
 
@@ -231,7 +232,7 @@ export class MissGen {
 		const target = g.network.server(offer.target)
 		if (!target || !g.network.isOnline(target)) return "Il server della sottoscrizione non è raggiungibile."
 		if (offer.def.type === "FileUploading") {
-			if (!g.addLocalFile({ ...offer.file, owner: g.state.user })) return "Spazio insufficiente sulla Flashram."
+			if (!g.addLocalFile({ ...offer.file, owner: g.state.user })) return noSpace(g, offer.file.dim)
 		} else g.network.putFile(target, { ...offer.file })
 		this.state.offers = this.offers.filter((o) => o !== offer)
 		g.missions.start(offer.def, { subscription: true, expiresAt: offer.expiresAt })

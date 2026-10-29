@@ -5,6 +5,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactNode } from "react"
 import { create } from "zustand"
 import { GLOSSARY, findTerms, glossaryEntry, type GlossaryCategory } from "@/content/glossary"
+import { MENTOR, TIPS, type TipId } from "@/content/tips"
 import { useGame } from "@/hooks/useGame"
 import { TabButton, Window } from "./ui"
 
@@ -153,6 +154,9 @@ export function GlossaryTooltip() {
 	)
 }
 
+/** Voce della Guida con i consigli del mentore già ricevuti */
+const TIPS_PAGE = "@consigli"
+
 const CATEGORIES: GlossaryCategory[] = ["Il tuo sistema", "Account", "Network", "Server", "Protezioni", "Rischi", "Programmi"]
 
 /** Guida: le voci del glossario già incontrate, per categoria */
@@ -162,7 +166,8 @@ export function Guide({ onClose }: { name: string; onClose: () => void }) {
 	const entries = GLOSSARY.filter((e) => known.has(e.id))
 	const [selected, setSelected] = useState<string | null>(entries[0]?.id ?? null)
 	const detail = useRef<HTMLDivElement>(null)
-	const entry = selected ? glossaryEntry(selected) : undefined
+	const entry = selected && selected !== TIPS_PAGE ? glossaryEntry(selected) : undefined
+	const tips = (game.state.tipsSeen ?? []).filter((id): id is TipId => id in TIPS)
 
 	function open(id: string) {
 		game.act(() => game.learn(id))
@@ -197,10 +202,29 @@ export function Guide({ onClose }: { name: string; onClose: () => void }) {
 							</div>
 						)
 					})}
+					{tips.length > 0 && (
+						<div className="mb-1">
+							<div className="px-1.5 font-title text-[9px] tracking-[0.12em] text-mo-line uppercase">Consigli</div>
+							<button
+								type="button"
+								onClick={() => setSelected(TIPS_PAGE)}
+								className={`block w-full cursor-pointer truncate px-2 text-left ${selected === TIPS_PAGE ? "bg-[#1b5fb0]/70 text-white" : "hover:bg-[#123e80]/60"}`}
+							>
+								Consigli di {MENTOR} ({tips.length})
+							</button>
+						</div>
+					)}
 					{!entries.length && <div className="px-1.5 text-mo-accent">Nessuna voce ancora: i termini sottolineati nelle mail si aggiungono qui.</div>}
 				</div>
 				<div ref={detail} className="mo-scroll min-h-0 flex-1 overflow-y-auto pr-1">
-					{entry ? (
+					{selected === TIPS_PAGE ? (
+						tips.map((id) => (
+							<p key={id} className="mb-1.5 border-l-2 border-mo-ok pl-1.5">
+								{/* {class} resta generico: il consiglio mostrato riportava la classe del momento */}
+								<GlossaryText text={TIPS[id].replace("{class}", "di una classe superiore")} />
+							</p>
+						))
+					) : entry ? (
 						<>
 							<div className="font-title text-[12px] text-mo-accent">{entry.term}</div>
 							<p className="mt-1 text-white">{entry.short}</p>

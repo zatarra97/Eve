@@ -11,6 +11,7 @@ import { Scripts } from "./scripts"
 import { Shell } from "./console"
 import { Chat } from "./chat"
 import { Viruses } from "./viruses"
+import { Tips } from "./tips"
 import { createState, type GameState } from "./state"
 import type { GameFile, Mail, MailMessage, ScheduledEvent } from "./types"
 import { findTerms, glossaryEntry } from "../content/glossary"
@@ -24,6 +25,8 @@ export type GameEvent =
 	| { type: "traced"; ip: string }
 	| { type: "console"; line: string }
 	| { type: "ui"; action: "msgbox" | "console" | "sysmon" | "netmap"; arg?: string | number }
+	/** Consiglio del mentore (una sola volta per partita) */
+	| { type: "tip"; id: string; text: string }
 	/** Apertura di un programma in flashram: id = FileContents (uavsys, momamp…), name = nome del file */
 	| { type: "program"; id: string; name: string }
 
@@ -59,6 +62,7 @@ export class Game {
 	readonly shell: Shell
 	readonly chat: Chat
 	readonly missgen: MissGen
+	readonly tips: Tips
 	tasks: Task[] = []
 	private nextTaskId = 1
 	private listeners = new Set<() => void>()
@@ -78,6 +82,7 @@ export class Game {
 		this.shell = new Shell(this)
 		this.chat = new Chat(this)
 		this.missgen = new MissGen(this)
+		this.tips = new Tips(this)
 	}
 
 	/** Nuova partita: carica il Network e le missioni iniziali di def.miss */
@@ -161,6 +166,7 @@ export class Game {
 		this.network.tick(step)
 		this.missions.tick()
 		this.missgen.tick()
+		this.tips.tick()
 		this.scripts.tick(step)
 		this.viruses.tick(step)
 		this.changed()
@@ -283,7 +289,10 @@ export class Game {
 
 	/** Aggiunge un file in flashram; false se non c'è spazio */
 	addLocalFile(file: GameFile): boolean {
-		if (file.dim > this.flashramFree) return false
+		if (file.dim > this.flashramFree) {
+			this.tips.show("flashram")
+			return false
+		}
 		const existing = this.findLocalFile(file.name)
 		if (existing >= 0) this.state.files[existing] = { ...file }
 		else this.state.files.push({ ...file })

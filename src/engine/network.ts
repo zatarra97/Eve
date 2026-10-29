@@ -232,18 +232,22 @@ export class Network {
 		const target = nodes[nodes.length - 1]
 		const srv = this.servers[target]
 		if (!srv || !this.isOnline(srv)) return "Impossibile raggiungere l'host remoto."
-		if (connectionBandwidth(nodes.length) > this.game.netTotal - this.game.netUsed)
+		if (connectionBandwidth(nodes.length) > this.game.netTotal - this.game.netUsed) {
+			this.game.tips.show("bandwidth")
 			return "Banda insufficiente per impostare la connessione."
+		}
 		// Firewall: il penultimo nodo deve corrispondere all'indirizzo accettato
 		if (srv.firewall && srv.firewallMask !== "*.*.*.*") {
 			const previous = nodes.length > 1 ? nodes[nodes.length - 2] : this.localIP
 			if (previous !== srv.firewallMask) {
+				this.game.tips.show("firewall")
 				this.game.log("Connessione rifiutata dal Firewall remoto.")
 				return "Connessione rifiutata dal Firewall remoto."
 			}
 		}
 		this.connection = { nodes, target, status: "dialing", dial: 0, forced: false }
 		this.pendingNodes = []
+		if (nodes.length > 1) this.game.tips.show("multinode")
 		this.game.emit({ type: "sound", name: "access" })
 		this.game.changed()
 		return null
@@ -405,6 +409,7 @@ export class Network {
 		srv.traces = { at: g.now, ranking: admin.ranking }
 		this.restoreConnectionLog(srv, admin)
 		g.log(`Accesso forzato a ${srv.name} come ${admin.username}.`)
+		g.tips.show("forced")
 		g.emit({ type: "sound", name: "access" })
 		g.missions.check()
 	}
@@ -468,6 +473,7 @@ export class Network {
 		// I Proxy Server tra i nodi contano doppio
 		const hops = c.nodes.reduce((n, ip) => n + (this.servers[ip]?.type === "Proxy Server" ? 2 : 1), 0)
 		c.trace = { elapsed: 0, total: traceSeconds(srv.net, admin.ranking, hops, this.game.state.cluster.length) }
+		this.game.tips.show("backtrace")
 	}
 
 	/**
@@ -525,6 +531,7 @@ export class Network {
 		g.emit({ type: "sound", name: "alert" })
 		g.emit({ type: "traced", ip: srv.ip })
 		g.message(seized ? `${text}\nIl server è stato posto sotto sequestro.` : text, "Intrapol")
+		g.tips.show("crime")
 	}
 
 	/** Sequestro Intrapol: il server mostra il modello hackedsys.fak finché restoreServer non lo ripristina */
@@ -589,7 +596,10 @@ export class Network {
 	/** Scarica un file del server in flashram, con il tempo dato dalla banda libera */
 	download(file: GameFile, cost = 0): string | null {
 		const g = this.game
-		if (file.dim > g.flashramFree) return "Spazio insufficiente sulla Flashram."
+		if (file.dim > g.flashramFree) {
+			g.tips.show("flashram")
+			return "Spazio insufficiente sulla Flashram."
+		}
 		if (cost > g.state.credits) return "Crediti insufficienti."
 		const free = Math.max(1, g.netFree)
 		g.startTask({
@@ -867,6 +877,8 @@ export class Network {
 				if (srv?.terminal === "ChatServer" && !this.game.state.visitedChats.includes(srv.ip)) this.game.state.visitedChats.push(srv.ip)
 				this.game.log("Connesso al server remoto!")
 				this.game.emit({ type: "connected", ip: c.target })
+				if (srv?.protection === "Login" && this.needsAuth()) this.game.tips.show("login")
+				if (srv?.terminal === "NetbankingServer") this.game.tips.show("netbanking")
 				this.game.missions.check()
 			}
 		}

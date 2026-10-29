@@ -58,6 +58,8 @@ export interface GameState {
 	missgen: MissGenState
 	/** Voci del glossario incontrate (sbloccate nella Guida); assente nei salvataggi più vecchi */
 	glossary?: string[]
+	/** Consigli del mentore già mostrati (src/content/tips.ts) */
+	tipsSeen?: string[]
 	debug: boolean
 	/** File "sul disco" per le funzioni file_text_* degli script (cartella users/<nome>) */
 	vfs: Record<string, string>

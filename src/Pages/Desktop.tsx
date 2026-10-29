@@ -17,6 +17,7 @@ import { Draggable, type Offset } from "@/Components/Draggable"
 import { GlossaryTooltip, Guide } from "@/Components/Glossary"
 import { Journal } from "@/Components/Journal"
 import { JournalIcon } from "@/Components/Icons"
+import { TipToast } from "@/Components/Tip"
 import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
@@ -93,6 +94,8 @@ export default function Desktop() {
 	const [programs, setPrograms] = useState<OpenProgram[]>([])
 	const [settingsOpen, setSettingsOpen] = useState(false)
 	const [toast, setToast] = useState<Mail | null>(null)
+	// Consigli del mentore in attesa di essere letti (uno alla volta)
+	const [tips, setTips] = useState<string[]>([])
 	const music = useSettings((s) => s.music)
 
 	// L'anteprima della mail sparisce da sola dopo qualche secondo
@@ -149,6 +152,9 @@ export default function Desktop() {
 				}
 				case "message":
 					showDialog(e.text, e.title)
+					break
+				case "tip":
+					setTips((list) => [...list, e.text])
 					break
 				case "program":
 					openProgram(e.name, e.id)
@@ -265,6 +271,7 @@ export default function Desktop() {
 					}}
 				/>
 			)}
+			{tips.length > 0 && <TipToast text={tips[0]} more={tips.length - 1} onClose={() => setTips((list) => list.slice(1))} />}
 			{settingsOpen && <Settings game={game} onClose={() => setSettingsOpen(false)} />}
 
 			{askTutorial && (

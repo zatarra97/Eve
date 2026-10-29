@@ -526,6 +526,38 @@ describe("partita", () => {
 			expect(game.state.servers[LOGIN].seizedUntil).toBeDefined()
 		})
 
+		it("consigli del mentore: al primo incontro, una volta sola, anche dopo il ricaricamento", () => {
+			const game = setup()
+			const tips: string[] = []
+			game.onEvent((e) => e.type === "tip" && tips.push(e.id))
+			connect(game, LOGIN)
+			expect(tips).toEqual(["login"])
+			crackLogin(game)
+			expect(tips).toEqual(["login", "backtrace", "forced"])
+			// Il testo del consiglio sblocca i termini nella Guida
+			expect(game.glossary).toContain("log")
+
+			game.network.disconnect()
+			connect(game, LOGIN)
+			expect(tips).toEqual(["login", "backtrace", "forced"])
+
+			// Più nodi della banda disponibile: consiglio sulla banda, poi sui nodi alla prima connessione multinodo
+			game.network.disconnect()
+			for (const ip of ["547.2.8.791", "632.639.14.633", "666.underground.0.1"]) game.network.addNode(ip)
+			game.state.hardware.net.value = 60
+			expect(game.network.connect()).toContain("Banda insufficiente")
+			game.state.hardware.net.value = 80
+			for (const ip of ["547.2.8.791", "632.639.14.633"]) game.network.addNode(ip)
+			expect(game.network.connect()).toBeNull()
+			expect(tips.slice(3)).toEqual(["bandwidth", "multinode"])
+
+			const loaded = Game.load(diskPack(), JSON.parse(JSON.stringify(game.state)), { random: () => 0.5 })
+			const after: string[] = []
+			loaded.onEvent((e) => e.type === "tip" && after.push(e.id))
+			loaded.tips.show("login")
+			expect(after).toEqual([])
+		})
+
 		it("partita salvata durante l'accesso forzato: il ricaricamento vale come disconnessione", () => {
 			const game = setup()
 			const ranking = crackLogin(game)

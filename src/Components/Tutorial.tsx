@@ -101,7 +101,11 @@ const STEPS: Step[] = [
 		target: ["mailpanel"],
 	},
 	{
-		text: "Il tutorial base di Mother si conclude qui. Esercitati nell'uso dell'interfaccia e cerca altri tutorial in giro per il Network. Puoi anche collegarti a un chat server e cercare informazioni nei log pubblici. Buon divertimento!",
+		text: "Accanto alla posta c'è il Diario: elenca le missioni in corso, cosa devi fare e un suggerimento per farlo. Le parole sottolineate, come Flashram, si spiegano da sole passandoci sopra il mouse, e restano nella Guida del menu Applicazioni.",
+		target: ["journal"],
+	},
+	{
+		text: "Il tutorial base di Mother si conclude qui. Segui le mail e il Diario; 1ronCh4ng ti darà qualche consiglio quando incontrerai qualcosa di nuovo. Buon divertimento!",
 	},
 ]
 

@@ -6,6 +6,7 @@ import { parseCached, recordEnv, GmlRecord } from "./gml/record"
 import { normPath } from "./content"
 import type { Game } from "./game"
 import { loadMission } from "./loaders"
+import { objectiveOf, type Objective } from "./objectives"
 import type { ActiveMission, GameFile, Mail, MissionDef } from "./types"
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
@@ -64,7 +65,7 @@ export class Missions {
 		let delay = 0
 		for (const mail of def.begin) {
 			delay += g.randomDelay([2, 6])
-			g.sendMailLater(mail, delay)
+			g.sendMailLater({ ...mail, mission: def.path }, delay)
 		}
 		g.changed()
 		return m
@@ -182,8 +183,20 @@ export class Missions {
 		g.changed()
 	}
 
-	/** Missioni visibili al giocatore (comando missions) */
-	list(): { id: string; name: string; done: boolean; expiresAt?: number }[] {
-		return this.active.map((m) => ({ id: m.def.id, name: m.def.name, done: !!m.done, expiresAt: m.expiresAt }))
+	/** Missioni visibili al giocatore (Diario e comando missions), con l'obiettivo in parole semplici */
+	list(): { path: string; id: string; name: string; done: boolean; expiresAt?: number; objective: Objective | null }[] {
+		return this.active.map((m) => ({
+			path: m.def.path,
+			id: m.def.id,
+			name: m.def.name,
+			done: !!m.done,
+			expiresAt: m.expiresAt,
+			objective: objectiveOf(this.game, m.def),
+		}))
+	}
+
+	/** Missione attiva (non ancora completata) con questo percorso */
+	activeByPath(path: string): ActiveMission | undefined {
+		return this.active.find((m) => m.def.path === path && !m.done)
 	}
 }

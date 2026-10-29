@@ -16,6 +16,7 @@ import {
 	MISSGEN_VARIATION,
 } from "./balance"
 import type { Game } from "./game"
+import { objectiveOf } from "./objectives"
 import type { GameFile, MissionDef, ServerState } from "./types"
 
 /** Tipi di missione generati: i bersagli dei contenuti sono File Server con Login e CantBeDestroyed */
@@ -87,11 +88,9 @@ export class MissGen {
 		return (this.game.state.missgen ??= emptyMissGen())
 	}
 
-	/** Obiettivo dell'offerta in una riga, per il terminale */
+	/** Obiettivo dell'offerta, per il terminale */
 	objective(offer: MissGenOffer): string {
-		const target = this.game.network.server(offer.target)
-		const where = target ? `${target.name} [${target.ip}]` : offer.target
-		return offer.def.type === "FileDeleting" ? `Eliminare il file '${offer.file.name}' da ${where}.` : `Caricare il file '${offer.file.name}' su ${where}.`
+		return objectiveOf(this.game, offer.def)?.text ?? ""
 	}
 
 	get offers(): MissGenOffer[] {

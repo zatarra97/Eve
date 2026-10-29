@@ -303,7 +303,7 @@ export class Game {
 	// --- posta ---
 
 	/** Consegna una mail; l'eventuale allegato finisce subito in flashram */
-	receiveMail(msg: MailMessage, attachment?: GameFile): Mail {
+	receiveMail(msg: MailMessage & { mission?: string }, attachment?: GameFile): Mail {
 		const mail: Mail = {
 			...msg,
 			id: this.state.nextMailId++,
@@ -320,7 +320,7 @@ export class Game {
 	}
 
 	/** Programma una mail con il ritardo di consegna */
-	sendMailLater(msg: MailMessage, delaySeconds = this.randomDelay(), attachment?: GameFile) {
+	sendMailLater(msg: MailMessage & { mission?: string }, delaySeconds = this.randomDelay(), attachment?: GameFile) {
 		this.schedule(delaySeconds, "mail", { mail: msg, attachment })
 	}
 

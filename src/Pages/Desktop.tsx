@@ -15,6 +15,7 @@ import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
 import { Draggable, type Offset } from "@/Components/Draggable"
 import { GlossaryTooltip, Guide } from "@/Components/Glossary"
+import { Journal } from "@/Components/Journal"
 import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
@@ -38,6 +39,7 @@ const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => Rea
 	netpatch6231: NetPatch,
 	// Applicazioni di sistema di Eve, sempre presenti nel menu (non sono file in flashram)
 	guida: Guide,
+	diario: Journal,
 }
 
 interface OpenProgram {

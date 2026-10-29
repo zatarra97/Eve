@@ -137,6 +137,8 @@ export interface Mail extends MailMessage {
 	date: number
 	/** true per le mail inviate dal giocatore */
 	sent?: boolean
+	/** Missione di cui è la mail di inizio (percorso): la mail mostra il suo obiettivo */
+	mission?: string
 }
 
 export interface ActiveMission {

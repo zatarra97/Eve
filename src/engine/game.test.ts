@@ -21,6 +21,7 @@ import {
 import { addToPack, emptyPack, type ContentPack } from "./content"
 import { Game } from "./game"
 import { formatRemaining } from "./missgen"
+import { objectiveOf } from "./objectives"
 
 const GAME = join(process.cwd(), "public/game")
 
@@ -81,6 +82,29 @@ describe("partita", () => {
 		game.learn("rootbreaker")
 		game.learn("inesistente")
 		expect(game.glossary).toEqual(["rootbreaker", "log"])
+	})
+
+	it("obiettivi: ogni missione iniziale dice cosa fare, anche senza mail", () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		game.missions.load("def/tut0.miss")
+		const byId = Object.fromEntries(game.missions.list().map((m) => [m.path, m.objective?.text]))
+		// def/000 è solo una mail di benvenuto
+		expect(byId["def/000.miss"]).toBeUndefined()
+		expect(byId["uground/a00.miss"]).toMatch(/^Collegati al Chat Server /)
+		expect(byId["xmiss/nmcha-01.miss"]).toMatch(/^Elimina il file 'exe\.hotmeat' da /)
+		expect(byId["def/tut0.miss"]).toMatch(/^Rispondi alla mail di 1ronch4ng@mother/i)
+
+		// Server non ancora in mappa: l'obiettivo dice come trovarlo
+		const a01 = game.missions.load("uground/a01.miss")!
+		game.state.known = game.state.known.filter((ip) => ip !== game.network.server(a01.refServerIP)!.ip)
+		expect(objectiveOf(game, a01)?.text).toContain("resolve")
+
+		const a02 = game.missions.load("uground/a02.miss")!
+		expect(objectiveOf(game, a02)).toEqual({ text: expect.stringContaining("Raggiungi 250 punti di Ranking"), progress: "100/250" })
+
+		// Le mail di inizio portano il riferimento alla missione, per il riquadro Obiettivo
+		game.advance(60_000)
+		expect(game.state.mails.find((m) => m.mission === "uground/a02.miss")).toBeDefined()
 	})
 
 	it("risposta con allegato non richiesto: ignorata", () => {

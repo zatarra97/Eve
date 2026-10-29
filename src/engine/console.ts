@@ -232,6 +232,7 @@ export class Shell {
 			// Le missioni casuali (MissGen) accettate scadono: tempo residuo
 			const status = m.done ? " [completata]" : m.expiresAt !== undefined ? ` [scade tra ${formatRemaining(m.expiresAt - this.game.now)}]` : ""
 			this.out(`${m.id.padEnd(16)}${m.name}${status}`)
+			if (!m.done && m.objective) this.out(`${"".padEnd(16)}> ${m.objective.text}${m.objective.progress ? ` [${m.objective.progress}]` : ""}`)
 		}
 	}
 

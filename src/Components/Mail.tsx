@@ -6,7 +6,9 @@ import { useState } from "react"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
 import type { Mail } from "@/engine/types"
+import { objectiveOf } from "@/engine/objectives"
 import { GlossaryText } from "./Glossary"
+import { ObjectiveBox } from "./Journal"
 import { MailIcon } from "./Icons"
 import { TabButton, Typewriter } from "./ui"
 
@@ -96,11 +98,15 @@ export function MailPanel() {
 	if (right.kind === "mail") {
 		const mail = game.state.mails.find((m) => m.id === right.id)
 		if (!mail) return null
+		// Mail di inizio di una missione ancora in corso: in cima, cosa c'è da fare
+		const mission = mail.mission ? game.missions.activeByPath(mail.mission) : undefined
+		const objective = mission ? objectiveOf(game, mission.def) : null
 		return (
 			<div data-tut="mailpanel" className={frame}>
 				<div className="text-mo-accent">Da: {mail.from}</div>
 				<div className="mb-2 text-mo-accent">Oggetto: {mail.subject}</div>
 				{mail.attachment && <div className="mb-1 text-mo-accent">Allegato: {mail.attachment.name}</div>}
+				{objective && <ObjectiveBox objective={objective} className="mb-1.5" />}
 				<div className="mo-scroll min-h-0 flex-1 overflow-y-auto pr-1 whitespace-pre-wrap">
 					<GlossaryText text={mail.body} />
 				</div>

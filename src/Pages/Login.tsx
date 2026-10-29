@@ -11,7 +11,7 @@ import { Dialog, TabButton } from "@/Components/ui"
 import { InfoIcon, SettingsIcon } from "@/Components/Icons"
 import { asset } from "@/assets"
 
-type Prompt = { kind: "create" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "settings" } | { kind: "delete"; user: string } | null
+type Prompt = { kind: "missing" } | { kind: "error"; text: string } | { kind: "info" } | { kind: "settings" } | { kind: "delete"; user: string } | null
 
 /** Credenziali da riproporre: l'ultimo account usato, con la password se "Ricorda Password" è attivo */
 function remembered() {
@@ -26,6 +26,8 @@ export default function Login() {
 	const [user, setUser] = useState(() => remembered().user)
 	const [password, setPassword] = useState(() => remembered().password)
 	const [prompt, setPrompt] = useState<Prompt>(null)
+	// Il riquadro serve per accedere o, dal link "Registrati", per creare un nuovo account
+	const [mode, setMode] = useState<"login" | "register">("login")
 	// Incrementato per rileggere l'elenco account dopo un'eliminazione
 	const [, setRefresh] = useState(0)
 	const passRef = useRef<HTMLInputElement>(null)
@@ -33,15 +35,23 @@ export default function Login() {
 
 	const valid = /^[A-Za-z0-9_.-]{2,20}$/
 
+	function switchMode(next: "login" | "register") {
+		setMode(next)
+		if (next === "register" && loadAccount(user)) setUser("")
+		setPassword("")
+		setPrompt(null)
+	}
+
 	function submit() {
 		if (!pack) return
 		if (!valid.test(user)) {
 			setPrompt({ kind: "error", text: "Nome utente non valido: usa da 2 a 20 caratteri tra lettere, numeri, '.', '_' e '-'." })
 			return
 		}
+		if (mode === "register") return register()
 		const saved = loadAccount(user)
 		if (!saved) {
-			setPrompt({ kind: "create" })
+			setPrompt({ kind: "missing" })
 			return
 		}
 		if (saved.password !== password) {
@@ -51,6 +61,18 @@ export default function Login() {
 		}
 		useSettings.getState().set({ lastUser: saved.user })
 		startGame(Game.load(pack, saved))
+	}
+
+	function register() {
+		if (loadAccount(user)) {
+			setPrompt({ kind: "error", text: `L'account ${user}@mother esiste già: scegli un altro nome utente oppure accedi.` })
+			return
+		}
+		if (!password) {
+			setPrompt({ kind: "error", text: "Scegli una password per il nuovo account." })
+			return
+		}
+		create()
 	}
 
 	function create() {
@@ -71,7 +93,7 @@ export default function Login() {
 			</div>
 
 			<div className="absolute top-[310px] left-[calc(50%-124px)] h-[115px] w-[249px] border border-mo-line bg-[#071533]/90">
-				<div className="mt-2 ml-2.5 font-title text-[11px] tracking-wide text-[#cfd8e6]">LOGIN RICHIESTO</div>
+				<div className="mt-2 ml-2.5 font-title text-[11px] tracking-wide text-[#cfd8e6]">{mode === "login" ? "LOGIN RICHIESTO" : "NUOVO ACCOUNT"}</div>
 				<form
 					className="mt-4 ml-4 grid grid-cols-[70px_1fr] items-center gap-y-1.5 pr-3 text-mo-accent"
 					onSubmit={(e) => {
@@ -115,11 +137,18 @@ export default function Login() {
 					<button type="submit" className="hidden" />
 				</form>
 			</div>
+			<button
+				type="button"
+				className="absolute top-[431px] left-[calc(50%-124px)] cursor-pointer text-[12px] text-mo-accent underline hover:text-white"
+				onClick={() => switchMode(mode === "login" ? "register" : "login")}
+			>
+				{mode === "login" ? "Registrati" : "Torna al login"}
+			</button>
 			<TabButton className="absolute top-[428px] left-[calc(50%+8px)] w-[114px]" onClick={submit}>
-				Login...
+				{mode === "login" ? "Login..." : "Registrati"}
 			</TabButton>
 
-			{accounts.length > 0 && (
+			{mode === "login" && accounts.length > 0 && (
 				<div className="absolute top-[460px] left-[calc(50%-124px)] w-[249px] text-[12px]">
 					<div className="mb-1 text-mo-accent">Account disponibili:</div>
 					{accounts.map((a) => (
@@ -146,12 +175,12 @@ export default function Login() {
 			<InfoIcon className="absolute right-[34px] bottom-0" onClick={() => setPrompt({ kind: "info" })} />
 			<SettingsIcon className="absolute right-0 bottom-0" onClick={() => setPrompt({ kind: "settings" })} />
 
-			{prompt?.kind === "create" && (
+			{prompt?.kind === "missing" && (
 				<Dialog
-					text="Le credenziali specificate non esistono, vuoi registrare questi dati come un nuovo utente?"
+					text={`L'account ${user}@mother non esiste. Vuoi registrarlo come nuovo account con questa password?`}
 					actions={[
 						{ label: "Annulla", onClick: () => setPrompt(null) },
-						{ label: "Conferma", onClick: create },
+						{ label: "Registrati", onClick: register },
 					]}
 				/>
 			)}

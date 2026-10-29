@@ -7,7 +7,23 @@ import { normPath } from "./content"
 import type { Game } from "./game"
 import { loadMission } from "./loaders"
 import { objectiveOf, type Objective } from "./objectives"
-import type { ActiveMission, GameFile, Mail, MissionDef } from "./types"
+import type { ActiveMission, GameFile, Mail, MailMessage, MissionDef } from "./types"
+import { MISSION_TEXT, type MailText } from "../content/missions"
+
+/** Sovrappone i testi riscritti da Eve (src/content/missions.ts) a quelli del file originale */
+export function withEveText(def: MissionDef, user: string): MissionDef {
+	const t = MISSION_TEXT[def.path]
+	if (!t) return def
+	const fill = (s: string) => s.replaceAll("{user}", user)
+	const mails = (orig: MailMessage[], over?: MailText[]) =>
+		over ? over.map((m, i) => ({ from: m.from ?? orig[i]?.from ?? "", subject: m.subject ?? orig[i]?.subject ?? "", body: fill(m.body) })) : orig
+	return {
+		...def,
+		begin: mails(def.begin, t.begin),
+		end: mails(def.end, t.end),
+		replyMailText: t.replyMailText !== undefined ? fill(t.replyMailText) : def.replyMailText,
+	}
+}
 
 const same = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase()
 
@@ -49,6 +65,7 @@ export class Missions {
 			g.log(`Errore nella missione ${path}: ${(e as Error).message}`)
 			return null
 		}
+		def = withEveText(def, g.state.user)
 		g.debug(`Missione caricata: ${def.id} (${def.name})`)
 		this.start(def, opts)
 		return def

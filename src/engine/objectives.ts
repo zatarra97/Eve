@@ -4,12 +4,15 @@
 
 import type { Game } from "./game"
 import type { MissionDef, ServerState } from "./types"
+import { MISSION_TEXT } from "../content/missions"
 
 export interface Objective {
 	/** Cosa fare, in una o due frasi */
 	text: string
 	/** Avanzamento misurabile ("180/250") */
 	progress?: string
+	/** Consiglio pratico (testi di Eve, src/content/missions.ts) */
+	hint?: string
 }
 
 /** Server indicato per nome e IP, con l'indicazione per trovarlo se non è ancora nella Network Map */
@@ -64,5 +67,6 @@ export function objectiveOf(game: Game, d: MissionDef): Objective | null {
 	if (!main && !replyText) return null
 	const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 	const text = !main ? `${cap(replyText)}.` : replyText ? `${main} Poi ${replyText}.` : main
-	return { text, progress }
+	const hint = MISSION_TEXT[d.path]?.hint
+	return { text, ...(progress && { progress }), ...(hint && { hint }) }
 }

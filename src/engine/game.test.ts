@@ -64,7 +64,7 @@ describe("partita", () => {
 		game.advance(30_000)
 		const mail = game.state.mails.find((m) => m.subject === "Piccoli Lamer crescono!!")
 		expect(mail).toBeDefined()
-		expect(mail!.body).toContain("Hey eve!")
+		expect(mail!.body).toContain("Hey eve, benvenuto")
 		expect(game.replyText(mail!.id)).toContain("Ci conosciamo??")
 
 		game.reply(mail!.id)
@@ -100,11 +100,28 @@ describe("partita", () => {
 		expect(objectiveOf(game, a01)?.text).toContain("resolve")
 
 		const a02 = game.missions.load("uground/a02.miss")!
-		expect(objectiveOf(game, a02)).toEqual({ text: expect.stringContaining("Raggiungi 250 punti di Ranking"), progress: "100/250" })
+		expect(objectiveOf(game, a02)).toMatchObject({ text: expect.stringContaining("Raggiungi 250 punti di Ranking"), progress: "100/250", hint: expect.any(String) })
 
 		// Le mail di inizio portano il riferimento alla missione, per il riquadro Obiettivo
 		game.advance(60_000)
 		expect(game.state.mails.find((m) => m.mission === "uground/a02.miss")).toBeDefined()
+	})
+
+	it("testi di Eve: sostituiscono quelli originali solo dove sono riscritti", () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		const a01 = game.missions.load("uground/a01.miss")!
+		// Mittente e oggetto restano quelli dell'originale (servono per riconoscere la risposta)
+		expect(a01.begin[0]).toMatchObject({ from: "s0ftm4rk@mother", subject: "AIUTOOOOOO!!" })
+		expect(a01.begin[0].body).toMatch(/^Ciao eve, ti ho visto in chat/)
+		expect(a01.begin[0].body).toContain("rootbreaker")
+		// A05 non aveva mail di inizio: ora ne ha una
+		const a05 = game.missions.load("uground/a05.miss")!
+		expect(a05.begin).toHaveLength(1)
+		expect(a05.begin[0].from).toBe("1ronCh4ng@mother")
+		// Le missioni non riscritte restano come nell'originale
+		const a07 = game.missions.load("uground/a07.miss")!
+		expect(a07.begin[0].body).not.toContain("{user}")
+		expect(a07.begin[0].body.split(/\s+/).length).toBeGreaterThan(80)
 	})
 
 	it("risposta con allegato non richiesto: ignorata", () => {

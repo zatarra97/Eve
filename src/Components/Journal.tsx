@@ -17,6 +17,11 @@ export function ObjectiveBox({ objective, className }: { objective: Objective; c
 			<div className="text-white">
 				<GlossaryText text={objective.text} />
 			</div>
+			{objective.hint && (
+				<div className="mt-0.5 text-[11.5px] text-mo-accent">
+					<GlossaryText text={`Suggerimento: ${objective.hint}`} />
+				</div>
+			)}
 		</div>
 	)
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react"
 import { twMerge } from "tailwind-merge"
 import { STAGE_H, STAGE_W, asset } from "@/assets"
+import { useDragHandle } from "@/hooks/useDragHandle"
 import { StageWidth } from "@/stage"
 
 /** Dimensioni logiche e scala del palco per la finestra attuale */
@@ -92,6 +93,18 @@ export function Panel({ className, children, onClick }: { className?: string; ch
 	)
 }
 
+/** Finestra di un programma: titolo in alto, contenuto, pulsanti sotto a destra */
+export function Window({ title, className, actions, children }: { title: string; className?: string; actions: ReactNode; children: ReactNode }) {
+	const drag = useDragHandle()
+	return (
+		<Panel className={twMerge("absolute z-40 flex flex-col bg-[#071226]/95 p-1.5", className)}>
+			<div {...drag} className="cursor-move select-none mb-1 font-title text-[12px] text-mo-accent">{title}</div>
+			<div className="flex min-h-0 flex-1 flex-col">{children}</div>
+			<div className="mt-1 flex justify-end gap-2">{actions}</div>
+		</Panel>
+	)
+}
+
 /** Pulsante "a linguetta" con l'angolo smussato */
 export function TabButton({
 	children,
@@ -147,7 +160,18 @@ export function Dialog({ text, actions }: { text: ReactNode; actions: { label: s
 }
 
 /** Testo che compare carattere per carattere (effetto macchina da scrivere) */
-export function Typewriter({ text, speed = 60, className }: { text: string; speed?: number; className?: string }) {
+export function Typewriter({
+	text,
+	speed = 60,
+	className,
+	done,
+}: {
+	text: string
+	speed?: number
+	className?: string
+	/** Come mostrare il testo completo a fine animazione (es. con i termini del glossario) */
+	done?: (text: string) => ReactNode
+}) {
 	// Il contatore è legato al testo: se il testo cambia si riparte da zero
 	const [progress, setProgress] = useState({ text, shown: 0 })
 	const shown = progress.text === text ? progress.shown : 0
@@ -158,5 +182,5 @@ export function Typewriter({ text, speed = 60, className }: { text: string; spee
 		)
 		return () => clearInterval(id)
 	}, [text, speed])
-	return <span className={className}>{text.slice(0, shown)}</span>
+	return <span className={className}>{done && shown >= text.length ? done(text) : text.slice(0, shown)}</span>
 }

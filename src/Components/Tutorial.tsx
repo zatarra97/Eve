@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react"
 import type { Game } from "@/engine/game"
 import { useGame } from "@/hooks/useGame"
 import { useApp, type RightPanel } from "@/store/app"
+import { GlossaryText } from "./Glossary"
 import { TabButton, Typewriter } from "./ui"
 
 interface Ctx {
@@ -198,7 +199,7 @@ export default function Tutorial({ onClose }: { onClose: () => void }) {
 					</span>
 				</div>
 				<div className="min-h-[64px] text-white">
-					<Typewriter key={index} text={step.text} />
+					<Typewriter key={index} text={step.text} done={(t) => <GlossaryText text={t} />} />
 				</div>
 				<div className="mt-1.5 flex items-center justify-between">
 					<button type="button" className="cursor-pointer text-[11px] text-mo-line hover:text-mo-accent" onClick={onClose}>

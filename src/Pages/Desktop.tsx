@@ -14,6 +14,7 @@ import ConsolePanel from "@/Components/ConsolePanel"
 import { MailBar, MailPanel } from "@/Components/Mail"
 import NetworkMap from "@/Components/NetworkMap"
 import { Draggable, type Offset } from "@/Components/Draggable"
+import { GlossaryTooltip, Guide } from "@/Components/Glossary"
 import { BackMirror, FileForce, MomAmp, MomPad, NetPatch, NukeLord, RootBreaker, TutHack, UAVsys, WaveHacker } from "@/Components/Programs"
 import Settings from "@/Components/Settings"
 import Sysmon from "@/Components/Sysmon"
@@ -35,6 +36,8 @@ const PROGRAMS: Record<string, (p: { name: string; onClose: () => void }) => Rea
 	fileforce: FileForce,
 	nukelord: NukeLord,
 	netpatch6231: NetPatch,
+	// Applicazioni di sistema di Eve, sempre presenti nel menu (non sono file in flashram)
+	guida: Guide,
 }
 
 interface OpenProgram {
@@ -222,7 +225,7 @@ export default function Desktop() {
 	}
 
 	return (
-		<div className="absolute inset-0" style={{ background: `url("${asset(`graphics/wallpaper_${game.state.settings.wallpaper}.jpg`)}") center / cover` }}>
+		<div data-desktop className="absolute inset-0" style={{ background: `url("${asset(`graphics/wallpaper_${game.state.settings.wallpaper}.jpg`)}") center / cover` }}>
 			<StatusLine />
 			<Terminal />
 			{right ? <MailPanel /> : <Sysmon />}
@@ -266,6 +269,7 @@ export default function Desktop() {
 			)}
 			{tutorial && <Tutorial onClose={() => setTutorial(false)} />}
 			{dialog && !askTutorial && <Dialog text={dialog.text} actions={[{ label: "Ok", onClick: closeDialog }]} />}
+			<GlossaryTooltip />
 		</div>
 	)
 }

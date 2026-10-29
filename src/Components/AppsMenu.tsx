@@ -112,6 +112,7 @@ export default function AppsMenu({
 							<Section title="Sistema">
 								<Item label="Apri Network Map" onClick={run(onNetmap)} />
 								<Item label="Apri Console" onClick={run(() => setConsole(true))} />
+								<Item label="Guida" hint={`${game.glossary.length} voci`} onClick={run(() => onProgram("Guida", "guida"))} />
 								<Item label="Impostazioni" onClick={run(onSettings)} />
 							</Section>
 							<Section title={connection ? "Connessione" : "Sessione"}>

@@ -56,6 +56,8 @@ export interface GameState {
 	cluster: string[]
 	/** Sottoscrizioni casuali in offerta sui Subscription Server (MissGen) */
 	missgen: MissGenState
+	/** Voci del glossario incontrate (sbloccate nella Guida); assente nei salvataggi più vecchi */
+	glossary?: string[]
 	debug: boolean
 	/** File "sul disco" per le funzioni file_text_* degli script (cartella users/<nome>) */
 	vfs: Record<string, string>

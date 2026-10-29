@@ -8,6 +8,7 @@ import { STAGE_H } from "@/assets"
 import { useStageWidth } from "@/stage"
 import { useApp } from "@/store/app"
 import type { ServerState } from "@/engine/types"
+import { findTerms, glossaryEntry } from "@/content/glossary"
 import { Sprite, TabButton } from "./ui"
 import WorldMap from "./WorldMap"
 
@@ -79,13 +80,23 @@ export default function NetworkMap() {
 				})}
 				{hover && (
 					<div
-						className="pointer-events-none absolute z-10 w-[163px] border border-mo-line bg-[#0b2f6e] px-0.5 text-[12px] leading-[13px] text-mo-accent"
+						className="pointer-events-none absolute z-10 w-[210px] border border-mo-line bg-[#0b2f6e] px-0.5 text-[12px] leading-[13px] text-mo-accent"
 						// Sotto l'icona, oppure sopra se è vicina al bordo inferiore della mappa
-						style={{ left: Math.max(0, Math.min(pos(hover).x - 82, width - 165)), top: pos(hover).y + (pos(hover).y + 70 > mapH ? -52 : 22) }}
+						style={{
+							left: Math.max(0, Math.min(pos(hover).x - 105, width - 212)),
+							top: pos(hover).y + (pos(hover).y + 110 > mapH ? -8 : 22),
+							transform: pos(hover).y + 110 > mapH ? "translateY(-100%)" : undefined,
+						}}
 					>
 						<div>{hover.name}</div>
 						<div>[{hover.ip}]</div>
 						<div>{hover.type}</div>
+						{/* Cosa fa questo tipo di server, in una riga */}
+						{(() => {
+							const id = findTerms(hover.type)[0]?.id
+							const entry = id && glossaryEntry(id)
+							return entry ? <div className="mt-0.5 border-t border-mo-line-dim pt-0.5 text-[11px] leading-[13px] text-white/85">{entry.short}</div> : null
+						})()}
 					</div>
 				)}
 			</div>

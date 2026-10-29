@@ -1,10 +1,13 @@
 // Monitor di Sistema (in alto a destra): CPU, banda, flashram; espanso mostra anche l'account.
 
+import type { ReactNode } from "react"
+import { connectionBandwidth } from "@/engine/balance"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
+import { Term } from "./Glossary"
 import { ExpandBar } from "./Icons"
 
-function Meter({ label, pct, model, used, alert }: { label: string; pct: number; model: string; used: string; alert?: boolean }) {
+function Meter({ label, pct, model, used, note, alert }: { label: ReactNode; pct: number; model: string; used: string; note?: string; alert?: boolean }) {
 	const expanded = useApp((s) => s.sysmonExpanded)
 	const p = Math.max(0, Math.min(100, Math.round(pct)))
 	return (
@@ -17,6 +20,7 @@ function Meter({ label, pct, model, used, alert }: { label: string; pct: number;
 				<div className="relative">
 					<div>{model}</div>
 					<div>{used}</div>
+					{note && <div className="text-mo-accent">{note}</div>}
 				</div>
 			)}
 		</div>
@@ -35,16 +39,17 @@ export default function Sysmon() {
 				<div>Mother OS vers. 1.02</div>
 				<div>{game.formatDate()}</div>
 			</div>
-			<Meter label="Utilizzo CPU" pct={(game.cpuUsed / hardware.cpu.value) * 100} model={hardware.cpu.name} used={`Usati ${Math.round(game.cpuUsed)}/${hardware.cpu.value} Mhz`} />
+			<Meter label={<>Utilizzo <Term id="cpu">CPU</Term></>} pct={(game.cpuUsed / hardware.cpu.value) * 100} model={hardware.cpu.name} used={`Usati ${Math.round(game.cpuUsed)}/${hardware.cpu.value} Mhz`} />
 			<Meter
-				label="Utilizzo Banda"
+				label={<>Utilizzo <Term id="banda">Banda</Term></>}
 				pct={(game.netUsed / game.netTotal) * 100}
 				model={hardware.net.name}
 				used={`Usati ${Math.round(game.netUsed)}/${game.netTotal} MBps`}
+				note={`Connessione: ${[1, 2, 3].map((n) => `${n} nod${n > 1 ? "i" : "o"} ${connectionBandwidth(n)}`).join(", ")} MBps`}
 				alert={game.netUsed / game.netTotal >= 0.5}
 			/>
 			<Meter
-				label="Spazio Occupato"
+				label={<Term id="flashram">Spazio Occupato</Term>}
 				pct={(game.flashramUsed / hardware.flashram.value) * 100}
 				model={hardware.flashram.name}
 				used={`Usati ${game.flashramUsed}/${hardware.flashram.value} Mb`}
@@ -57,9 +62,13 @@ export default function Sysmon() {
 						<span className="h-px flex-1 bg-gradient-to-r from-mo-line to-transparent" />
 					</div>
 					<div className="truncate">Account : {game.address}</div>
-					<div className="truncate">Ranking : {ranking}</div>
+					<div className="truncate">
+						<Term id="ranking">Ranking</Term> : {ranking}
+					</div>
 					<div className="truncate">Classe : {game.userClass}</div>
-					<div className="truncate">Crediti : {Math.round(credits * 100) / 100}</div>
+					<div className="truncate">
+						<Term id="crediti">Crediti</Term> : {Math.round(credits * 100) / 100}
+					</div>
 				</div>
 			)}
 			{/* Nei contenuti non c'è un server con terminale Cluster: lo stato dei nodi sta qui */}

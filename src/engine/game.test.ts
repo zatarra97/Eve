@@ -73,6 +73,16 @@ describe("partita", () => {
 		expect(game.state.mails.some((m) => m.subject === "Ecco l'aiuto...")).toBe(true)
 	})
 
+	it("glossario: le mail sbloccano i termini nella Guida, anche nei salvataggi senza glossario", () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		delete game.state.glossary
+		game.receiveMail({ from: "x@mother", subject: "prova", body: "Usa rootbreaker e poi cancella log.connections." })
+		expect(game.glossary).toEqual(["rootbreaker", "log"])
+		game.learn("rootbreaker")
+		game.learn("inesistente")
+		expect(game.glossary).toEqual(["rootbreaker", "log"])
+	})
+
 	it("risposta con allegato non richiesto: ignorata", () => {
 		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
 		game.missions.load("def/tut0.miss")

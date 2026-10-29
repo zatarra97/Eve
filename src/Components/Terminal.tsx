@@ -10,6 +10,7 @@ import { acceptSubscription, buyHardware, buySoftware } from "@/engine/shop"
 import type { GameFile, ServerState } from "@/engine/types"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
+import { GlossaryText } from "./Glossary"
 import { Panel, Sprite, TabButton } from "./ui"
 
 /** Lista con scrollbar e pulsanti sotto a destra (nell'originale x 8-760, y 60-362) */
@@ -105,7 +106,9 @@ function LoginView({ host }: { host: ServerState }) {
 		return (
 			<div className="mt-2 w-[360px] border border-mo-line bg-[#071533]/90 p-2.5">
 				<div className="font-title text-[11px] tracking-wide text-[#cfd8e6]">RICONOSCIMENTO VOCALE RICHIESTO</div>
-				<div className="mt-3 text-mo-accent">L'accesso a questo server è protetto da un'interfaccia VRLS: è richiesta la voce di un utente autorizzato.</div>
+				<div className="mt-3 text-mo-accent">
+					<GlossaryText text="L'accesso a questo server è protetto da un'interfaccia VRLS: è richiesta la voce di un utente autorizzato. Se ne hai registrato un campione, usa wavehacker." />
+				</div>
 			</div>
 		)
 
@@ -113,7 +116,9 @@ function LoginView({ host }: { host: ServerState }) {
 		return (
 			<div className="mt-2 w-[360px] border border-mo-line bg-[#071533]/90 p-2.5">
 				<div className="font-title text-[11px] tracking-wide text-[#cfd8e6]">CHIAVE CIFRATA RICHIESTA</div>
-				<div className="mt-3 text-mo-accent">L'accesso a questo server richiede l'invio di un file chiave presente in Flashram.</div>
+				<div className="mt-3 text-mo-accent">
+					<GlossaryText text="L'accesso a questo server richiede l'invio di un file chiave presente in Flashram." />
+				</div>
 				<div className="mt-3 flex justify-end">
 					<TabButton onClick={sendKey}>Invia File Chiave...</TabButton>
 				</div>
@@ -164,6 +169,10 @@ function LoginView({ host }: { host: ServerState }) {
 				<TabButton className="w-[114px]" onClick={submit}>
 					Login...
 				</TabButton>
+			</div>
+			{/* Spiegazione per chi non ha le credenziali */}
+			<div className="mt-1.5 text-[11.5px] leading-[14px] text-mo-accent/90">
+				<GlossaryText text="Senza credenziali puoi forzare il login con rootbreaker, ma il server inizierà il backtrace." />
 			</div>
 		</div>
 	)

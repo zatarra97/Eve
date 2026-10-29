@@ -6,6 +6,7 @@ import { useState } from "react"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
 import type { Mail } from "@/engine/types"
+import { GlossaryText } from "./Glossary"
 import { MailIcon } from "./Icons"
 import { TabButton, Typewriter } from "./ui"
 
@@ -100,7 +101,9 @@ export function MailPanel() {
 				<div className="text-mo-accent">Da: {mail.from}</div>
 				<div className="mb-2 text-mo-accent">Oggetto: {mail.subject}</div>
 				{mail.attachment && <div className="mb-1 text-mo-accent">Allegato: {mail.attachment.name}</div>}
-				<div className="mo-scroll min-h-0 flex-1 overflow-y-auto pr-1 whitespace-pre-wrap">{mail.body}</div>
+				<div className="mo-scroll min-h-0 flex-1 overflow-y-auto pr-1 whitespace-pre-wrap">
+					<GlossaryText text={mail.body} />
+				</div>
 				<div className="mt-1 flex justify-between">
 					<TabButton onClick={() => setRight({ kind: "compose", replyTo: mail.id })}>Rispondi</TabButton>
 					<TabButton onClick={() => setRight(null)}>Chiudi</TabButton>

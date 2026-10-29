@@ -5,7 +5,6 @@
 // sui server simulati in memoria dal motore (vedi engine/network.ts).
 
 import { useEffect, useState, type ReactNode } from "react"
-import { twMerge } from "tailwind-merge"
 import { asset } from "@/assets"
 import { playTrack, stopTrack, trackTime } from "@/audio"
 import type { Task } from "@/engine/game"
@@ -13,19 +12,8 @@ import { NETPATCH_KERNEL, netPatchInstalled, netPatchTask, startNetPatch } from 
 import { useDragHandle } from "@/hooks/useDragHandle"
 import { useGame } from "@/hooks/useGame"
 import { useApp } from "@/store/app"
-import { Panel, Sprite, SpriteButton, TabButton } from "./ui"
-
-/** Finestra di un programma: titolo in alto, contenuto, pulsanti sotto a destra */
-function Window({ title, className, actions, children }: { title: string; className?: string; actions: ReactNode; children: ReactNode }) {
-	const drag = useDragHandle()
-	return (
-		<Panel className={twMerge("absolute z-40 flex flex-col bg-[#071226]/95 p-1.5", className)}>
-			<div {...drag} className="cursor-move select-none mb-1 font-title text-[12px] text-mo-accent">{title}</div>
-			<div className="flex min-h-0 flex-1 flex-col">{children}</div>
-			<div className="mt-1 flex justify-end gap-2">{actions}</div>
-		</Panel>
-	)
-}
+import { Term } from "./Glossary"
+import { Sprite, SpriteButton, TabButton, Window } from "./ui"
 
 /** MomPad: blocco note salvato con l'account */
 export function MomPad({ onClose }: { onClose: () => void }) {
@@ -291,7 +279,7 @@ export function RootBreaker({ name, onClose }: { name: string; onClose: () => vo
 	return (
 		<div className="absolute top-[200px] left-[calc(50%-148px)] z-40 flex h-[83px] w-[296px] flex-col px-2.5 pt-0.5 pb-1.5">
 			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/root_breaker.png")}")` }} />
-			<div {...drag} className="cursor-move select-none relative font-title text-[11px] text-mo-accent">{name}</div>
+			<div {...drag} className="cursor-move select-none relative font-title text-[11px] text-mo-accent"><Term id="rootbreaker">{name}</Term></div>
 			<div className="relative mt-2 min-h-0 flex-1 text-[12px] leading-[14px]">{status}</div>
 			<div className="relative flex justify-end gap-2">
 				{breach ? (
@@ -332,7 +320,7 @@ export function WaveHacker({ name, onClose }: { name: string; onClose: () => voi
 	return (
 		<div className="absolute top-[180px] left-[calc(50%-204px)] z-40 h-[167px] w-[409px]">
 			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/wavehacker_gui.png")}")` }} />
-			<div {...drag} className="cursor-move select-none absolute top-1 right-3 left-3 font-title text-[11px] text-mo-accent">{name}</div>
+			<div {...drag} className="cursor-move select-none absolute top-1 right-3 left-3 font-title text-[11px] text-mo-accent"><Term id="wavehacker">{name}</Term></div>
 			<div className="absolute top-[22px] right-3 left-6 text-[12px] leading-[14px]">
 				<div>{status}</div>
 				<div className="truncate text-mo-accent">Campioni in Flashram: {samples.length ? samples.map((f) => f.name).join(", ") : "nessuno"}</div>
@@ -374,7 +362,7 @@ export function FileForce({ name, onClose }: { name: string; onClose: () => void
 	return (
 		<div className="absolute top-[150px] left-[calc(50%-148px)] z-40 flex h-[270px] w-[296px] flex-col px-2.5 pt-0.5 pb-1.5">
 			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/fileforce.png")}")` }} />
-			<div {...drag} className="cursor-move select-none relative font-title text-[11px] text-mo-accent">{name} - Remote Upload</div>
+			<div {...drag} className="cursor-move select-none relative font-title text-[11px] text-mo-accent"><Term id="fileforce">{name}</Term> - Remote Upload</div>
 			<div className="relative mt-2 text-[12px] leading-[14px]">{status}</div>
 			<div className="mo-scroll relative mt-2 min-h-0 flex-1 overflow-y-auto text-[12px] leading-[14px]">
 				{uploads.length === 0 && <div className="text-mo-accent">Nessun caricamento in corso.</div>}
@@ -413,7 +401,7 @@ export function NukeLord({ name, onClose }: { name: string; onClose: () => void 
 	return (
 		<div className="absolute top-[220px] left-[calc(50%-110px)] z-40 h-[145px] w-[220px]">
 			<div className="pointer-events-none absolute inset-x-0 top-0 h-[119px]" style={{ background: `url("${asset("graphics/nukelord.png")}")` }} />
-			<div {...drag} className="cursor-move select-none absolute top-1 right-2 left-2.5 font-title text-[11px] text-mo-accent">{name}</div>
+			<div {...drag} className="cursor-move select-none absolute top-1 right-2 left-2.5 font-title text-[11px] text-mo-accent"><Term id="nukelord">{name}</Term></div>
 			<div className="absolute top-[57px] right-2 left-[24px] truncate text-[11px] leading-[19px] text-[#0b2a5e]" title={status}>
 				{status}
 			</div>
@@ -455,7 +443,7 @@ export function BackMirror({ name, onClose }: { name: string; onClose: () => voi
 	return (
 		<div className="absolute top-[60px] left-[calc(50%-110px)] z-40 h-[39px] w-[220px]">
 			<div className="pointer-events-none absolute inset-0" style={{ background: `url("${asset("graphics/backmirror.png")}")` }} />
-			<div {...drag} className="cursor-move select-none absolute top-[2px] right-8 left-2 font-title text-[10px] text-mo-accent">{name}</div>
+			<div {...drag} className="cursor-move select-none absolute top-[2px] right-8 left-2 font-title text-[10px] text-mo-accent"><Term id="backmirror">{name}</Term></div>
 			<button type="button" title="Chiudi" onClick={onClose} className="absolute top-0 right-3 cursor-pointer text-[11px] text-mo-accent hover:text-white">
 				x
 			</button>

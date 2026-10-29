@@ -13,6 +13,7 @@ import { Chat } from "./chat"
 import { Viruses } from "./viruses"
 import { createState, type GameState } from "./state"
 import type { GameFile, Mail, MailMessage, ScheduledEvent } from "./types"
+import { findTerms, glossaryEntry } from "../content/glossary"
 
 export type GameEvent =
 	| { type: "mail"; mail: Mail }
@@ -312,6 +313,7 @@ export class Game {
 		}
 		if (attachment) this.addLocalFile(attachment)
 		this.state.mails.push(mail)
+		this.learnFrom(msg.body)
 		this.emit({ type: "sound", name: "incoming" })
 		this.emit({ type: "mail", mail })
 		return mail
@@ -347,6 +349,25 @@ export class Game {
 		if (!mail) return
 		const attachment = attachmentName ? this.state.files[this.findLocalFile(attachmentName)] : undefined
 		this.missions.onReply(mail, attachment)
+	}
+
+	// --- glossario ---
+
+	/** Voci del glossario già incontrate */
+	get glossary(): string[] {
+		return (this.state.glossary ??= [])
+	}
+
+	/** Sblocca una voce del glossario nella Guida */
+	learn(id: string) {
+		if (!glossaryEntry(id) || this.glossary.includes(id)) return
+		this.glossary.push(id)
+		this.changed()
+	}
+
+	/** Sblocca le voci dei termini presenti nel testo */
+	learnFrom(text: string) {
+		for (const t of findTerms(text)) this.learn(t.id)
 	}
 
 	// --- console ---

@@ -141,7 +141,9 @@ describe("partita", () => {
 		// Mittente e oggetto restano quelli dell'originale (servono per riconoscere la risposta)
 		expect(a01.begin[0]).toMatchObject({ from: "s0ftm4rk@mother", subject: "AIUTOOOOOO!!" })
 		expect(a01.begin[0].body).toMatch(/^Ciao eve, scusa se ti scrivo così/)
-		expect(a01.begin[0].body).toContain("rootbreaker")
+		// Il programma per forzare il Login lo si scopre dalla chat, non dalla mail
+		expect(a01.begin[0].body).toContain("ivoice.mothernet")
+		expect(a01.begin[0].body).not.toContain("rootbreaker")
 		// A05 non aveva mail di inizio: ora ne ha una
 		const a05 = game.missions.load("uground/a05.miss")!
 		expect(a05.begin).toHaveLength(1)

@@ -172,7 +172,7 @@ function LoginView({ host }: { host: ServerState }) {
 			</div>
 			{/* Spiegazione per chi non ha le credenziali */}
 			<div className="mt-1.5 text-[11.5px] leading-[14px] text-mo-accent/90">
-				<GlossaryText text="Senza credenziali puoi forzare il login con rootbreaker, ma il server inizierà il backtrace." />
+				<GlossaryText text="Senza credenziali il login va forzato con un programma apposito, ma il server inizierà il backtrace." />
 			</div>
 		</div>
 	)

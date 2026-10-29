@@ -25,9 +25,9 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "CPU",
 		category: "Il tuo sistema",
 		aliases: ["CPU", "processore"],
-		short: "Il motore del tuo sistema: più MHz ha, più in fretta lavorano i programmi, per esempio rootbreaker.",
+		short: "Il motore del tuo sistema: più MHz ha, più in fretta lavorano i programmi, per esempio quelli che forzano un Login.",
 		long: "Si misura in MHz. Ogni programma in esecuzione ne occupa una parte, visibile nel Monitor di Sistema. Una CPU più veloce si compra su un Commerce Server.",
-		related: ["rootbreaker", "commerce"],
+		related: ["commerce"],
 	},
 	{
 		id: "net",
@@ -224,9 +224,9 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "Login",
 		category: "Protezioni",
 		aliases: ["login"],
-		short: "La porta d'ingresso di un server: servono nome utente e password. Senza, puoi forzarla con rootbreaker.",
+		short: "La porta d'ingresso di un server: servono nome utente e password. Senza, va forzata con un programma apposito.",
 		long: "Forzare un login fa partire il backtrace del server e lascia il tuo indirizzo nei log.",
-		related: ["rootbreaker", "backtrace", "log"],
+		related: ["backtrace", "log"],
 	},
 	{
 		id: "keyfile",

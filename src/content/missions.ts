@@ -75,10 +75,10 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 		begin: [
 			{
 				body:
-					"Ciao {user}, scusa se ti scrivo così: non ci conosciamo. Ti ho notato nella lista utenti della chat: sei nuovo nella comunità e non sei ancora nel giro di nessuno. Mi serve aiuto, subito.\n\n" +
-					"Ho violato un paio di account su eurodigibank.eurogroup e mi hanno scoperto: il mio IP è bannato e i log sono già arrivati a Intrapol. L'Underground mi ha chiuso l'account e da solo non posso più collegarmi a nessun server.\n\n" +
-					"Intrapol tiene un dossier su di me sul server crimediv.intrapol: te l'ho aggiunto alla Network Map. Trovalo e cancellalo, e in cambio ti passo qualche account di netbanking.\n\n" +
-					"Il server ha un Login: forzalo con rootbreaker. Per non farti rintracciare passa da questi proxy:\n" +
+					"Ciao {user}, scusa se ti scrivo così: non ci conosciamo. Ti ho notato nella lista utenti della chat, sei nuovo nella comunità. Mi serve aiuto, subito.\n\n" +
+					"Ho violato un paio di account su eurodigibank.eurogroup e mi hanno scoperto: il mio IP è bannato e i log sono arrivati a Intrapol. L'Underground mi ha chiuso l'account e da solo non posso più collegarmi a nessun server.\n\n" +
+					"Intrapol tiene un dossier su di me sul server crimediv.intrapol, che ti ho aggiunto alla Network Map. Trovalo e cancellalo: in cambio ti passo qualche account di netbanking.\n\n" +
+					"Il server ha un Login e non ho la password: nei log della chat ivoice.mothernet trovi come forzarlo. Passa da questi proxy e non lasciare tracce, o Intrapol arriverà anche a te:\n" +
 					"232.451.593.12 (proxy.devtest)\n" +
 					"212.192.168.3 (shadow.bellavista)\n\n" +
 					"s0ftm4rk",
@@ -96,7 +96,7 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 			},
 		],
 		objective: "Trova ed elimina il dossier su s0ftm4rk da {server}.",
-		hint: "rootbreaker costa 39 Cr. su warez.underground. Apri i file con 'Visualizza...' per trovare il dossier. Prima di uscire elimina log.connections.",
+		hint: "I log di ivoice.mothernet dicono quale programma forza un Login e dove comprarlo. Apri i file con 'Visualizza...' per trovare il dossier. Prima di uscire elimina log.connections.",
 	},
 	"uground/a02.miss": {
 		begin: [

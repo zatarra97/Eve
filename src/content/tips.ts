@@ -11,7 +11,7 @@ export const TIPS = {
 	firewall:
 		"Quel server ha un firewall: accetta connessioni solo da un indirizzo preciso, scritto nel messaggio di errore. Mettilo come ultimo nodo prima della destinazione.",
 	login:
-		"Questo server chiede un Login. Senza credenziali puoi forzarlo con rootbreaker, ma il server avvierà subito il backtrace: collegati passando da qualche nodo.",
+		"Questo server chiede un Login. Senza credenziali serve un programma che lo forzi (in chat se ne parla), ma il server avvierà subito il backtrace: collegati passando da qualche nodo.",
 	backtrace:
 		"Il server ha avviato il backtrace: sta risalendo i tuoi nodi. Fai in fretta e disconnettiti prima che arrivi a te. backmirror ti mostra quanto manca.",
 	forced:

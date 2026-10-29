@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { GLOSSARY, findTerms, glossaryEntry } from "./glossary"
 import { MISSION_TEXT } from "./missions"
+import { eveWording } from "./wording"
 
 describe("glossario", () => {
 	it("voci con id unici e collegamenti validi", () => {
@@ -35,5 +36,17 @@ describe("testi delle missioni riscritti", () => {
 
 	it("le mail nuove (senza originale) hanno mittente e oggetto", () => {
 		for (const path of ["uground/a00.miss", "uground/a05.miss"]) for (const m of MISSION_TEXT[path].begin!) expect(m.from && m.subject, path).toBeTruthy()
+	})
+})
+
+describe("diciture di Eve", () => {
+	it("Flashram diventa memoria nei testi originali, senza rompere la frase", () => {
+		expect(eveWording("la troverai nella tua Flashram.")).toBe("la troverai nella tua memoria.")
+		expect(eveWording("simile ad una Flash Ram, collegato")).toBe("simile ad una memoria, collegato")
+		expect(eveWording("il dispositivo flashram contenente la chiave")).toBe("il dispositivo di memoria contenente la chiave")
+	})
+	it("i termini memoria e SSD aprono la voce del glossario", () => {
+		expect(findTerms("spazio nella memoria").map((t) => t.id)).toEqual(["flashram"])
+		expect(findTerms("compra un SSD più grande").map((t) => t.id)).toEqual(["flashram"])
 	})
 })

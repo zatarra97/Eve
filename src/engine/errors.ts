@@ -4,7 +4,7 @@ import { connectionBandwidth } from "./balance"
 import type { Game } from "./game"
 
 export function noSpace(game: Game, dim: number): string {
-	return `Spazio insufficiente: servono ${dim} MB e nella Flashram ne restano ${Math.max(0, game.flashramFree)}. Elimina i file inutili con 'rm <file>' dalla console o compra una Flashram più grande.`
+	return `Spazio insufficiente: servono ${dim} MB e nella memoria ne restano ${Math.max(0, game.flashramFree)}. Elimina i file inutili con 'rm <file>' dalla console o compra un SSD più grande.`
 }
 
 export function noCredits(game: Game, cost: number): string {
@@ -13,7 +13,7 @@ export function noCredits(game: Game, cost: number): string {
 
 /** Programma da comprare: rootbreaker, wavehacker, fileforce e nukelord sono tutti su warez.underground */
 export function missingProgram(name: string): string {
-	return `${name} non è nella tua Flashram: puoi comprarlo su un Software Server, come warez.underground.`
+	return `${name} non è nella tua memoria: puoi comprarlo su un Software Server, come warez.underground.`
 }
 
 export function noBandwidth(game: Game, nodes: number): string {

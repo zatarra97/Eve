@@ -69,7 +69,7 @@ export function UAVsys({ name, onClose }: { name: string; onClose: () => void })
 	}
 
 	let body: ReactNode
-	if (scan.phase === "idle") body = <div>Sistema pronto per l'analisi. Clicca su 'Analizza...' per controllare la flashram.</div>
+	if (scan.phase === "idle") body = <div>Sistema pronto per l'analisi. Clicca su 'Analizza...' per controllare la memoria.</div>
 	else if (scan.phase === "scan")
 		body = (
 			<>
@@ -196,9 +196,9 @@ export function MomAmp({ name, onClose }: { name: string; onClose: () => void })
 const TUT_HACK_PAGES = [
 	"Ciao! Se stai leggendo queste righe vuol dire che hai seguito il mio consiglio. Questo programmino ti spiega come muovere i primi passi nel Network. Clicca su 'Avanti' per proseguire...",
 	"Le informazioni sono tutto. Il modo più semplice per trovarle è collegarti a un Chat Server e leggere i log pubblici: lì la gente parla di server, indirizzi e, a volte, di credenziali dimenticate in giro. Annota tutto nel MomPad.",
-	"Molti server sono protetti da un'interfaccia di autenticazione. Se conosci username e password puoi accedere normalmente; alcuni server usano invece una chiave cifrata, che deve trovarsi nella tua flashram al momento della connessione.",
+	"Molti server sono protetti da un'interfaccia di autenticazione. Se conosci username e password puoi accedere normalmente; alcuni server usano invece una chiave cifrata, che deve trovarsi nella tua memoria al momento della connessione.",
 	"Ogni accesso non autorizzato è un reato, e Intrapol non dorme mai: più nodi metti tra te e il server di destinazione, più sarà difficile rintracciarti. Ricorda però che la banda consumata cresce con ogni nodo, quindi non saturarla!",
-	"Dalla console puoi fare cose che la Network Map non permette: 'resolve <servername>' aggiunge alla mappa un server di cui conosci il nome, 'connect <ip>' ti collega direttamente a un indirizzo, 'ls' e 'run' gestiscono i programmi in flashram. Scrivi 'help' per l'elenco completo.",
+	"Dalla console puoi fare cose che la Network Map non permette: 'resolve <servername>' aggiunge alla mappa un server di cui conosci il nome, 'connect <ip>' ti collega direttamente a un indirizzo, 'ls' e 'run' gestiscono i programmi in memoria. Scrivi 'help' per l'elenco completo.",
 	"Sui Software Server dell'Underground trovi strumenti utili, e anche qualche brutta sorpresa: i download poco sicuri possono contenere virus. Procurati un antivirus come UAVsys e usalo spesso.",
 	"Per ora è tutto. Il resto lo imparerai sul campo: rispondi alle mail, accetta i lavori che ti vengono proposti e fatti un nome. Buona fortuna! -- 1ronCh4ng",
 ]
@@ -323,7 +323,7 @@ export function WaveHacker({ name, onClose }: { name: string; onClose: () => voi
 			<div {...drag} className="cursor-move select-none absolute top-1 right-3 left-3 font-title text-[11px] text-mo-accent"><Term id="wavehacker">{name}</Term></div>
 			<div className="absolute top-[22px] right-3 left-6 text-[12px] leading-[14px]">
 				<div>{status}</div>
-				<div className="truncate text-mo-accent">Campioni in Flashram: {samples.length ? samples.map((f) => f.name).join(", ") : "nessuno"}</div>
+				<div className="truncate text-mo-accent">Campioni in memoria: {samples.length ? samples.map((f) => f.name).join(", ") : "nessuno"}</div>
 			</div>
 			{/* Forma d'onda che si rivela con l'avanzamento */}
 			<div className="absolute top-[69px] left-[20px] h-[68px] overflow-hidden" style={{ width: `${(recording ?? forging ?? 0) * 388}px` }}>

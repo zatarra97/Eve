@@ -55,7 +55,7 @@ export class Shell {
 			help: { help: "elenco dei comandi", run: () => this.help() },
 			clear: { help: "pulisce la console", run: () => this.clear() },
 			exit: { help: "chiude la console", run: () => game.emit({ type: "ui", action: "console", arg: 0 }) },
-			ls: { help: "elenco dei file in flashram (del server remoto se autenticati)", run: () => this.ls() },
+			ls: { help: "elenco dei file in memoria (del server remoto se autenticati)", run: () => this.ls() },
 			rm: { help: "<file> elimina un file (dal server remoto se autenticati)", run: (a) => this.rm(a.join(" ")) },
 			reboot: { help: "riavvia il server remoto (solo Admin)", run: () => this.reboot() },
 			view: { help: "<file> mostra il contenuto di un file", run: (a) => this.view(a.join(" ")) },
@@ -158,7 +158,7 @@ export class Shell {
 	private ls() {
 		if (this.remote()) return this.lsRemote()
 		const files = this.game.state.files
-		if (!files.length) this.out("nessun file in flashram.")
+		if (!files.length) this.out("nessun file in memoria.")
 		for (const f of files) this.out(`${f.name.padEnd(32)}${f.dim} Mb`)
 		this.out(`${this.game.flashramFree} Mb liberi.`)
 	}
@@ -202,7 +202,7 @@ export class Shell {
 			const i = this.game.findLocalFile(name)
 			if (i < 0) return this.out("file inesistente!")
 			const f = this.game.state.files[i]
-			return this.out(this.game.deleteLocalFile(i) ? `${f.name} eliminato dalla flashram.` : "impossibile eliminare un file di sistema.")
+			return this.out(this.game.deleteLocalFile(i) ? `${f.name} eliminato dalla memoria.` : "impossibile eliminare un file di sistema.")
 		}
 		const net = this.game.network
 		const f = net.visibleFiles().find((x) => x.name.toLowerCase() === name.toLowerCase())

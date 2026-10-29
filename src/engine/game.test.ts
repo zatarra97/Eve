@@ -84,6 +84,12 @@ describe("partita", () => {
 		expect(game.glossary).toEqual(["rootbreaker", "log"])
 	})
 
+	it("diciture: nelle mail originali Flashram diventa memoria", () => {
+		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
+		const mail = game.receiveMail({ from: "x@mother", subject: "prova", body: "La troverai nella tua Flashram." })
+		expect(mail.body).toBe("La troverai nella tua memoria.")
+	})
+
 	it("obiettivi: ogni missione iniziale dice cosa fare, anche senza mail", () => {
 		const game = Game.newGame(diskPack(), "eve", "eve", NOW, { random: () => 0.5 })
 		game.missions.load("def/tut0.miss")
@@ -229,7 +235,7 @@ describe("partita", () => {
 			game.addLocalFile({ name: "dat.vecchio", dim: 50, img: -1, contents: "", owner: "eve" })
 			game.addLocalFile({ name: "sys.core", dim: 5, img: -1, contents: "%SYSTEM%", owner: "eve" })
 			const free = game.flashramFree
-			expect(exec(game, "rm dat.vecchio")).toContain("eliminato dalla flashram")
+			expect(exec(game, "rm dat.vecchio")).toContain("eliminato dalla memoria")
 			expect(game.flashramFree).toBe(free + 50)
 			expect(exec(game, "rm sys.core")).toContain("impossibile eliminare")
 		})
@@ -246,7 +252,7 @@ describe("partita", () => {
 
 		it("ls, view e run sui file in flashram", () => {
 			const game = setup()
-			expect(exec(game, "ls")).toContain("nessun file in flashram.")
+			expect(exec(game, "ls")).toContain("nessun file in memoria.")
 			game.addLocalFile({ name: "nota segreta", dim: 2, img: -1, contents: "riga uno\nriga due", owner: "eve" })
 			const ls = exec(game, "ls")
 			expect(ls).toContain("nota segreta")
@@ -383,7 +389,7 @@ describe("partita", () => {
 			connect(game, LOGIN)
 			const srv = game.state.servers[LOGIN]
 			expect(game.network.needsAuth()).toBe(true)
-			expect(game.network.startCrack()).toContain("rootbreaker non è nella tua Flashram")
+			expect(game.network.startCrack()).toContain("rootbreaker non è nella tua memoria")
 
 			install(game, "rootbreaker", "1.1")
 			const ranking = game.state.ranking
@@ -618,7 +624,7 @@ describe("partita", () => {
 
 			install(game, "rootbreaker", "1.1")
 			connect(game, PURESUN)
-			expect(game.network.upload(file)).toContain("fileforce non è nella tua Flashram")
+			expect(game.network.upload(file)).toContain("fileforce non è nella tua memoria")
 			install(game, "fileforce", "3.0")
 			expect(game.network.upload(file)).toContain("Nessun File Server")
 			expect(game.network.startCrack()).toBeNull()
@@ -797,7 +803,7 @@ describe("partita", () => {
 		it("wavehacker: registra la voce al telefono e la usa sul VRLS", () => {
 			const game = setup()
 			connect(game, PHONE_OK)
-			expect(game.network.recordVoice()).toContain("wavehacker non è nella tua Flashram")
+			expect(game.network.recordVoice()).toContain("wavehacker non è nella tua memoria")
 			install(game, "wavehacker", "4")
 
 			// Voce di un altro admin: il VRLS non la accetta
@@ -939,7 +945,7 @@ describe("partita", () => {
 			}
 
 			via()
-			expect(game.network.startNuke()).toContain("nukelord non è nella tua Flashram")
+			expect(game.network.startNuke()).toContain("nukelord non è nella tua memoria")
 			install(game, "nukelord", "8")
 			const srv = game.state.servers[WEB4]
 			// 80 MBps meno i 40 della connessione a due nodi: non bastano contro i 200 del server

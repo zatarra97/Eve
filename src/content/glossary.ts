@@ -49,11 +49,11 @@ export const GLOSSARY: GlossaryEntry[] = [
 	},
 	{
 		id: "flashram",
-		term: "Flashram",
+		term: "Memoria (SSD)",
 		category: "Il tuo sistema",
-		aliases: ["flashram", "flash ram"],
-		short: "Il disco del tuo sistema: qui stanno programmi, file scaricati e allegati delle mail.",
-		long: "Si misura in MB e il sistema operativo ne occupa già una parte. Quando è piena non puoi scaricare altro: elimina i file che non servono o compra una Flashram più grande.",
+		aliases: ["memoria", "ssd", "flashram", "flash ram"],
+		short: "L'SSD del tuo sistema: qui stanno programmi, file scaricati e allegati delle mail.",
+		long: "Si misura in MB e il sistema operativo ne occupa già una parte. Quando è piena non puoi scaricare altro: elimina i file che non servono o compra un SSD più grande.",
 		related: ["cpu", "net"],
 	},
 	{
@@ -166,7 +166,7 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "Software Server",
 		category: "Server",
 		aliases: ["software server", "warez"],
-		short: "Un negozio di programmi: si comprano con i crediti e finiscono nella tua Flashram.",
+		short: "Un negozio di programmi: si comprano con i crediti e finiscono nella tua memoria.",
 		related: ["crediti", "flashram"],
 	},
 	{
@@ -174,7 +174,7 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "Commerce Server",
 		category: "Server",
 		aliases: ["commerce server"],
-		short: "Un negozio di hardware: CPU, schede di rete e Flashram più potenti.",
+		short: "Un negozio di hardware: CPU, schede di rete e SSD più capienti.",
 		related: ["cpu", "net", "flashram"],
 	},
 	{
@@ -233,7 +233,7 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "Chiave crittografica",
 		category: "Protezioni",
 		aliases: ["keyfile", "chiave crittografica", "file chiave"],
-		short: "Al posto della password il server chiede un file chiave: se lo hai in Flashram, entri.",
+		short: "Al posto della password il server chiede un file chiave: se lo hai in memoria, entri.",
 		related: ["flashram"],
 	},
 	{
@@ -320,7 +320,7 @@ export const GLOSSARY: GlossaryEntry[] = [
 		term: "fileforce",
 		category: "Programmi",
 		aliases: ["fileforce"],
-		short: "Carica un file della tua Flashram su un server in cui sei entrato.",
+		short: "Carica un file della tua memoria su un server in cui sei entrato.",
 		related: ["fileserver", "flashram"],
 	},
 	{

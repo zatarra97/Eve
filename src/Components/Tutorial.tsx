@@ -38,12 +38,12 @@ const STEPS: Step[] = [
 		until: (c) => c.menuOpen,
 	},
 	{
-		text: "Il Pulsante Applicazioni apre questo menu di sistema. In alto trovi i programmi installati nella tua Flashram, sotto le componenti di Mother. Ogni volta che installerai nuovi software verranno aggiunte ulteriori voci.",
+		text: "Il Pulsante Applicazioni apre questo menu di sistema. In alto trovi i programmi installati nella tua memoria, sotto le componenti di Mother. Ogni volta che installerai nuovi software verranno aggiunte ulteriori voci.",
 		target: ["apps", "appsmenu"],
 	},
 	{ text: "Clicca nuovamente sul Pulsante Applicazioni per chiudere il menu di sistema...", target: ["apps", "appsmenu"], until: (c) => !c.menuOpen },
 	{
-		text: "In alto a destra c'è il Monitor di Sistema: riporta in tempo reale la percentuale di utilizzo dell'hardware, come il consumo di CPU e di banda, e lo spazio occupato nella Flashram.",
+		text: "In alto a destra c'è il Monitor di Sistema: riporta in tempo reale la percentuale di utilizzo dell'hardware, come il consumo di CPU e di banda, e lo spazio occupato nella memoria.",
 		target: ["sysmon"],
 	},
 	{ text: "Il Monitor di Sistema può essere espanso, fornendo così maggiori informazioni. Clicca sul pulsante di espansione posto appena sotto gli indicatori...", target: ["sysmon-expand"], until: (c) => c.sysmonExpanded },
@@ -97,11 +97,11 @@ const STEPS: Step[] = [
 		until: (c) => openMail(c)?.subject === "Ecco l'aiuto...",
 	},
 	{
-		text: "Il tuo amico ha allegato alla mail un programma: tutti gli allegati vengono salvati automaticamente nella Flashram, e nel menu del Pulsante Applicazioni troverai la voce 'tut_hack-1.0'. Avvialo quando vuoi: ti spiegherà i primi passi nel Network.",
+		text: "Il tuo amico ha allegato alla mail un programma: tutti gli allegati vengono salvati automaticamente nella memoria, e nel menu del Pulsante Applicazioni troverai la voce 'tut_hack-1.0'. Avvialo quando vuoi: ti spiegherà i primi passi nel Network.",
 		target: ["mailpanel"],
 	},
 	{
-		text: "Accanto alla posta c'è il Diario: elenca le missioni in corso, cosa devi fare e un suggerimento per farlo. Le parole sottolineate, come Flashram, si spiegano da sole passandoci sopra il mouse, e restano nella Guida del menu Applicazioni.",
+		text: "Accanto alla posta c'è il Diario: elenca le missioni in corso, cosa devi fare e un suggerimento per farlo. Le parole sottolineate, come Banda, si spiegano da sole passandoci sopra il mouse, e restano nella Guida del menu Applicazioni.",
 		target: ["journal"],
 	},
 	{

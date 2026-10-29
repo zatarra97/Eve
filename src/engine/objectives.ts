@@ -44,7 +44,7 @@ export function objectiveOf(game: Game, d: MissionDef): Objective | null {
 			main = `Carica il file '${d.refRemoteFileUploaded}' su ${where(game, d.refServerIP)}.`
 			break
 		case "LocalFileExists":
-			main = `Procurati il file '${d.localFileName}' e tienilo nella tua Flashram.`
+			main = `Procurati il file '${d.localFileName}' e tienilo nella tua memoria.`
 			break
 		case "GetRanking":
 			main = `Raggiungi ${d.rankingToGet} punti di Ranking.`

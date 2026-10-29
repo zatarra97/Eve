@@ -364,7 +364,7 @@ export class Network {
 		const t = this.breachTarget("VRLS")
 		if (typeof t === "string") return t
 		const sample = this.voiceSamples().find((f) => String(f.img) === t.admin.password)
-		if (!sample) return "Nessun campione vocale compatibile in Flashram."
+		if (!sample) return "Nessun campione vocale compatibile in memoria."
 		// Non c'è niente da decifrare: il tempo è quello dell'invio del campione al server
 		const free = Math.max(1, this.game.netFree)
 		this.startBreach("wavehacker", t.srv, t.admin, `Sintesi vocale ${t.srv.name}`, transferSeconds(sample.dim, free), Math.min(free, this.game.netFree))

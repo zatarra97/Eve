@@ -99,7 +99,7 @@ function LoginView({ host }: { host: ServerState }) {
 	}
 
 	function sendKey() {
-		if (!game.act(() => game.network.loginWithKeyFile())) showDialog("Accesso negato: nessun file chiave valido presente in Flashram.")
+		if (!game.act(() => game.network.loginWithKeyFile())) showDialog("Accesso negato: nessun file chiave valido presente in memoria.")
 	}
 
 	if (host.protection === "VRLS")
@@ -117,7 +117,7 @@ function LoginView({ host }: { host: ServerState }) {
 			<div className="mt-2 w-[360px] border border-mo-line bg-[#071533]/90 p-2.5">
 				<div className="font-title text-[11px] tracking-wide text-[#cfd8e6]">CHIAVE CIFRATA RICHIESTA</div>
 				<div className="mt-3 text-mo-accent">
-					<GlossaryText text="L'accesso a questo server richiede l'invio di un file chiave presente in Flashram." />
+					<GlossaryText text="L'accesso a questo server richiede l'invio di un file chiave presente in memoria." />
 				</div>
 				<div className="mt-3 flex justify-end">
 					<TabButton onClick={sendKey}>Invia File Chiave...</TabButton>
@@ -212,8 +212,8 @@ function UploadPicker({ onClose }: { onClose: () => void }) {
 				</>
 			}
 		>
-			<div className="mb-2 text-mo-accent">== Flashram: scegli il file da caricare ==</div>
-			{flashram.length === 0 && <Empty>Nessun file in Flashram.</Empty>}
+			<div className="mb-2 text-mo-accent">== Memoria: scegli il file da caricare ==</div>
+			{flashram.length === 0 && <Empty>Nessun file in memoria.</Empty>}
 			{flashram.map((f, i) => (
 				<Item key={`${f.name}-${i}`} selected={f === pick} onClick={() => setLocal(f)}>
 					{f.name} [{f.dim} Mb]
@@ -296,7 +296,7 @@ function ReadingView({ empty, deletable }: { empty: string; deletable?: boolean 
 const HARDWARE_LABEL: Record<string, [string, string]> = {
 	cpu: ["Cpu", "Mhz"],
 	net: ["Scheda di Rete", "Mbps"],
-	flashram: ["Flashram", "Mb"],
+	flashram: ["SSD", "Mb"],
 }
 
 /** Commerce Server: name = modello, dim = MHz/MBps/MB, img = costo, contents = descrizione, owner = tipo */

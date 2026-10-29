@@ -170,7 +170,7 @@ export class MissGen {
 		const task =
 			type === "FileDeleting"
 				? `eliminare il file '${fileName}' dal server ${where}`
-				: `caricare il file '${fileName}', che troverai in Flashram, sul server ${where}`
+				: `caricare il file '${fileName}', che troverai in memoria, sul server ${where}`
 		const def: MissionDef = {
 			path: `missgen/${id.toLowerCase()}`,
 			id,

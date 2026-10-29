@@ -12,6 +12,7 @@ import { Shell } from "./console"
 import { Chat } from "./chat"
 import { Viruses } from "./viruses"
 import { Tips } from "./tips"
+import { eveWording } from "../content/wording"
 import { createState, type GameState } from "./state"
 import type { GameFile, Mail, MailMessage, ScheduledEvent } from "./types"
 import { findTerms, glossaryEntry } from "../content/glossary"
@@ -315,6 +316,7 @@ export class Game {
 	receiveMail(msg: MailMessage & { mission?: string }, attachment?: GameFile): Mail {
 		const mail: Mail = {
 			...msg,
+			body: eveWording(msg.body),
 			id: this.state.nextMailId++,
 			read: false,
 			date: this.now,

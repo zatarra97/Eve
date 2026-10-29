@@ -13,7 +13,7 @@ const LINES = [
 	"Advanced Megabios Plug and Play BIOS Extension v2.02a",
 	"Copyright (C) 2009, Advanced Megabios Corp.",
 	`    Rilevamento CPU      ... ${START_HARDWARE.cpu.name} [ 1015 Mhz ]`,
-	`    Rilevamento Flashram ... ${START_HARDWARE.flashram.name} [ 1024 MByte ]`,
+	`    Rilevamento SSD      ... ${START_HARDWARE.flashram.name} [ 1024 MByte ]`,
 	"    Rilevamento Rete     ... " + START_HARDWARE.net.name,
 	"",
 	"Avvio di Mother OS...",

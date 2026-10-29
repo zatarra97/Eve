@@ -4,6 +4,7 @@
 import { toStr } from "./gml/interpreter"
 import { evalDefinition, type GmlRecord } from "./gml/record"
 import type { Game } from "./game"
+import { eveWording } from "../content/wording"
 
 export class Chat {
 	private game: Game
@@ -28,7 +29,7 @@ export class Chat {
 		if (!this.logCache) {
 			const r = this.evalFile()
 			const count = r ? Number(r.get("Logs") ?? 0) : 0
-			this.logCache = r ? Array.from({ length: count + 1 }, (_, i) => r.get("Log", [i])).filter((v) => v !== undefined).map((v) => toStr(v!)) : []
+			this.logCache = r ? Array.from({ length: count + 1 }, (_, i) => r.get("Log", [i])).filter((v) => v !== undefined).map((v) => eveWording(toStr(v!))) : []
 		}
 		const extra = this.game.network.server(ip)?.chatLog ?? []
 		return [...this.logCache, ...extra]
@@ -41,6 +42,6 @@ export class Chat {
 		const count = Number(r.get("Messages") ?? 0)
 		const i = Math.floor(this.game.random() * count)
 		const v = r.get("Message", [i])
-		return v === undefined ? "" : toStr(v)
+		return v === undefined ? "" : eveWording(toStr(v))
 	}
 }

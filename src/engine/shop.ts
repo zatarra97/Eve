@@ -20,7 +20,7 @@ export function buyHardware(game: Game, item: GameFile): string | null {
 	if (cost > game.state.credits) return noCredits(game, cost)
 	const current = game.state.hardware[slot]
 	if (current.name === item.name) return "Questo componente è già installato."
-	if (slot === "flashram" && item.dim < game.flashramUsed) return "La nuova Flashram non può contenere i file attuali."
+	if (slot === "flashram" && item.dim < game.flashramUsed) return "Il nuovo SSD non può contenere i file attuali."
 	const part: HardwarePart = { name: item.name, desc: item.contents, value: item.dim }
 	game.state.credits -= cost
 	game.state.hardware[slot] = part

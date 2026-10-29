@@ -22,10 +22,10 @@ export function netPatchInstalled(game: Game): boolean {
 
 /** Avvia l'aggiornamento; restituisce un messaggio di errore o null */
 export function startNetPatch(game: Game): string | null {
-	if (!game.hasProgram("netpatch6231")) return "netpatch6231 non è presente nella flashram."
+	if (!game.hasProgram("netpatch6231")) return "netpatch6231 non è presente in memoria."
 	if (netPatchInstalled(game)) return "Il kernel di NetComm è già aggiornato alla versione 6231."
 	if (netPatchTask(game)) return "Aggiornamento già in corso."
-	if (game.flashramFree < KERNEL_MB) return "Spazio insufficiente sulla Flashram per il nuovo kernel."
+	if (game.flashramFree < KERNEL_MB) return "Spazio insufficiente in memoria per il nuovo kernel."
 
 	game.log("netpatch6231: aggiornamento del sottosistema di rete avviato...")
 	game.startTask({

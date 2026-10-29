@@ -49,7 +49,7 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 			{
 				body:
 					"Ecco un aiutino: ti ho allegato tut_hack-1.0.\n\n" +
-					"Gli allegati finiscono da soli nella tua Flashram, e i programmi compaiono nel menu del Pulsante Applicazioni, in basso a sinistra. Aprilo e leggilo con calma.\n\n" +
+					"Gli allegati finiscono da soli nella tua memoria, e i programmi compaiono nel menu del Pulsante Applicazioni, in basso a sinistra. Aprilo e leggilo con calma.\n\n" +
 					"1ronCh4ng",
 			},
 		],

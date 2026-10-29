@@ -27,9 +27,11 @@ describe("glossario", () => {
 describe("testi delle missioni riscritti", () => {
 	const words = (s: string) => s.split(/\s+/).filter(Boolean).length
 
-	it("ogni mail sta sotto le 70 parole e i consigli in poche righe", () => {
+	// Mail che devono anche presentare chi scrive e perché si rivolge al giocatore
+	const LONGER_MAILS = ["uground/a01.miss"]
+	it("ogni mail sta sotto le 70 parole (130 se presenta un personaggio) e i consigli in poche righe", () => {
 		for (const [path, t] of Object.entries(MISSION_TEXT)) {
-			for (const m of [...(t.begin ?? []), ...(t.end ?? [])]) expect(words(m.body), path).toBeLessThanOrEqual(70)
+			for (const m of [...(t.begin ?? []), ...(t.end ?? [])]) expect(words(m.body), path).toBeLessThanOrEqual(LONGER_MAILS.includes(path) ? 130 : 70)
 			if (t.hint) expect(words(t.hint), path).toBeLessThanOrEqual(35)
 		}
 	})

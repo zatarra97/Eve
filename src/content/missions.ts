@@ -70,8 +70,9 @@ export const MISSION_TEXT: Record<string, MissionText> = {
 		begin: [
 			{
 				body:
-					"Ciao {user}, ti ho visto in chat: mi serve aiuto, subito.\n\n" +
-					"Intrapol tiene un dossier su di me: il file data.unsecure-8541569 sul server crimediv.intrapol (ora è nella tua Network Map). Cancellalo.\n\n" +
+					"Ciao {user}, scusa se ti scrivo così: non ci conosciamo. Ti ho notato nella lista utenti della chat: sei nuovo nella comunità e non sei ancora nel giro di nessuno. Mi serve aiuto, subito.\n\n" +
+					"Ho violato un paio di account su eurodigibank.eurogroup e mi hanno scoperto: il mio IP è bannato e i log sono già arrivati a Intrapol. L'Underground mi ha chiuso l'account e da solo non posso più collegarmi a nessun server.\n\n" +
+					"Intrapol tiene il dossier su di me nel file data.unsecure-8541569, sul server crimediv.intrapol: te l'ho aggiunto alla Network Map. Cancellalo, e in cambio ti passo qualche account di netbanking.\n\n" +
 					"Il server ha un Login: forzalo con rootbreaker. Per non farti rintracciare passa da questi proxy:\n" +
 					"232.451.593.12 (proxy.devtest)\n" +
 					"212.192.168.3 (shadow.bellavista)\n\n" +

@@ -137,13 +137,9 @@ export default function Login() {
 					<button type="submit" className="hidden" />
 				</form>
 			</div>
-			<button
-				type="button"
-				className="absolute top-[431px] left-[calc(50%-124px)] cursor-pointer text-[12px] text-mo-accent underline hover:text-white"
-				onClick={() => switchMode(mode === "login" ? "register" : "login")}
-			>
-				{mode === "login" ? "Registrati" : "Torna al login"}
-			</button>
+			<TabButton className="absolute top-[428px] left-[calc(50%-124px)] w-[114px]" onClick={() => switchMode(mode === "login" ? "register" : "login")}>
+				{mode === "login" ? "Registrati" : "Indietro"}
+			</TabButton>
 			<TabButton className="absolute top-[428px] left-[calc(50%+8px)] w-[114px]" onClick={submit}>
 				{mode === "login" ? "Login..." : "Registrati"}
 			</TabButton>

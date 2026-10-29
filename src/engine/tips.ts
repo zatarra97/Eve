@@ -4,9 +4,6 @@
 import { TIPS, type TipId } from "../content/tips"
 import type { Game } from "./game"
 
-/** Minuti di gioco senza completare una missione prima del consiglio "sei bloccato?" */
-export const STUCK_MINUTES = 10
-
 export class Tips {
 	private game: Game
 	/** Classe e ranking all'ultimo controllo: salire di classe merita un consiglio */
@@ -40,7 +37,5 @@ export class Tips {
 		if (cls !== this.lastClass && g.state.ranking > this.lastRanking && !cls.includes("Cracker")) this.show("class", { class: cls })
 		this.lastClass = cls
 		this.lastRanking = g.state.ranking
-		const stuck = g.state.missions.some((m) => !m.done && m.def.type && g.missions.visible(m) && g.now - m.startedAt > STUCK_MINUTES * 60_000)
-		if (stuck) this.show("stuck")
 	}
 }

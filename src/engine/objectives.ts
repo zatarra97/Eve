@@ -1,5 +1,5 @@
 // Obiettivi delle missioni in parole semplici, ricavati dal tipo e dai campi della missione: li
-// mostrano il Diario, il riquadro "Obiettivo" nelle mail e il comando missions della console.
+// mostrano il Diario e il comando missions della console.
 // Le mail originali raccontano la storia ma spesso non dicono cosa fare: qui lo si dice sempre.
 
 import type { Game } from "./game"
@@ -64,6 +64,8 @@ export function objectiveOf(game: Game, d: MissionDef): Objective | null {
 			break
 		}
 	}
+	const own = MISSION_TEXT[d.path]?.objective
+	if (own) main = own.replace("{server}", where(game, d.refServerIP))
 	if (!main && !replyText) return null
 	const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 	const text = !main ? `${cap(replyText)}.` : replyText ? `${main} Poi ${replyText}.` : main

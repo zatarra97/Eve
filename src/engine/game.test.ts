@@ -122,6 +122,10 @@ describe("partita", () => {
 		const a01 = game.missions.load("uground/a01.miss")!
 		game.state.known = game.state.known.filter((ip) => ip !== game.network.server(a01.refServerIP)!.ip)
 		expect(objectiveOf(game, a01)?.text).toContain("resolve")
+		// Il dossier da eliminare lo trova il giocatore: né la mail né il Diario dicono il nome del file
+		expect(objectiveOf(game, a01)?.text).toMatch(/^Trova ed elimina il dossier su s0ftm4rk da crimediv\.intrapol/)
+		expect(objectiveOf(game, a01)?.text).not.toContain("8541569")
+		expect(a01.begin[0].body).not.toContain("8541569")
 
 		const a02 = game.missions.load("uground/a02.miss")!
 		expect(objectiveOf(game, a02)).toMatchObject({ text: expect.stringContaining("Raggiungi 250 punti di Ranking"), progress: "100/250", hint: expect.any(String) })
